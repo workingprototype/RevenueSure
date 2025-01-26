@@ -13,7 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($user && password_verify($password, $user['password'])) {
         session_start();
         $_SESSION['user_id'] = $user['id'];
-        header("Location: dashboard.php"); // Redirect to dashboard
+        $_SESSION['role'] = $user['role'];
+        header("Location: dashboard.php");
         exit();
     } else {
         echo "<script>alert('Invalid credentials.');</script>";
@@ -26,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - RevenueSure</title>
+    <title>Login - Lead Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
