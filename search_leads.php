@@ -201,6 +201,7 @@ require 'header.php';
                     <th class="px-4 py-2">State</th>
                     <th class="px-4 py-2">Country</th>
                     <th class="px-4 py-2">Actions</th>
+                    <th class="px-4 py-2">Task Management</th>
                 </tr>
             </thead>
             <tbody>
@@ -220,6 +221,9 @@ require 'header.php';
                                 <a href="edit_lead.php?id=<?php echo $lead['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
                                 <a href="delete_lead.php?id=<?php echo $lead['id']; ?>" class="text-red-600 hover:underline ml-2">Delete</a>
                             </td>
+                            <td class="px-4 py-2">
+    <a href="view_tasks.php?lead_id=<?php echo $lead['id']; ?>" class="text-green-600 hover:underline">View Tasks</a>
+</td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
