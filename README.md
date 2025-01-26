@@ -8,3 +8,5 @@ Contact Management: Organize and track leads with ease.
 Data Accuracy: Ensure reliable and up-to-date contact information.
 Scalable: Designed for small businesses and large enterprises alike.
 Leverage RevenueSure to enhance your lead generation strategy and accelerate your revenue growth.
+
+![Dashboard](assets/dashboard.png)
