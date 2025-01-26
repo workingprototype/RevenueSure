@@ -20,33 +20,13 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 $stmt = $conn->prepare("SELECT COUNT(*) as total_leads FROM leads");
 $stmt->execute();
 $leads_count = $stmt->fetch(PDO::FETCH_ASSOC)['total_leads'];
+
+// Include header
+require 'header.php';
+
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - RevenueSure</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-    <nav class="bg-blue-600 p-4 text-white">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="index.php" class="text-2xl font-bold">RevenueSure</a>
-            <div class="flex space-x-4">
-                <a href="dashboard.php" class="hover:underline">Dashboard</a>
-                <a href="search_leads.php" class="hover:underline">Search Leads</a>
-                <a href="manage_credits.php" class="hover:underline">Manage Credits</a>
-                <?php if ($role === 'admin'): ?>
-                    <a href="admin_dashboard.php" class="hover:underline">Admin Dashboard</a>
-                <?php endif; ?>
-                <a href="logout.php" class="hover:underline">Logout</a>
-            </div>
-        </div>
-    </nav>
 
-    <div class="container mx-auto mt-10 px-4">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Welcome, <?php echo htmlspecialchars($user['username']); ?>!</h1>
 
         <!-- Stats Cards -->
@@ -76,6 +56,8 @@ $leads_count = $stmt->fetch(PDO::FETCH_ASSOC)['total_leads'];
                 </div>
             <?php endif; ?>
         </div>
-    </div>
-</body>
-</html>
+
+<?php
+// Include footer
+require 'footer.php';
+?>

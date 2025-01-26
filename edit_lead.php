@@ -40,27 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "<script>alert('Error updating lead.');</script>";
     }
 }
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Lead - RevenueSure</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-    <nav class="bg-blue-600 p-4 text-white">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="index.php" class="text-2xl font-bold">RevenueSure</a>
-            <div class="flex space-x-4">
-                <a href="dashboard.php" class="hover:underline">Dashboard</a>
-                <a href="admin_dashboard.php" class="hover:underline">Admin Dashboard</a>
-                <a href="logout.php" class="hover:underline">Logout</a>
-            </div>
-        </div>
-    </nav>
+// Include header
+require 'header.php';
+?>
 
     <div class="container mx-auto mt-10 px-4">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Edit Lead</h1>
@@ -91,6 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Update Lead</button>
         </form>
-    </div>
-</body>
-</html>
+
+<?php
+// Include footer
+require 'footer.php';
+?>

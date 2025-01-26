@@ -58,30 +58,11 @@ $leads = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt = $conn->prepare("SELECT * FROM categories");
 $stmt->execute();
 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Include header
+require 'header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - RevenueSure</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-<nav class="bg-blue-600 p-4 text-white">
-    <div class="container mx-auto flex justify-between items-center">
-        <a href="index.php" class="text-2xl font-bold">RevenueSure</a>
-        <div class="flex space-x-4">
-            <a href="dashboard.php" class="hover:underline">Dashboard</a>
-            <a href="admin_dashboard.php" class="hover:underline">Admin Dashboard</a>
-            <a href="add_category.php" class="hover:underline">Add Category</a>
-            <a href="logout.php" class="hover:underline">Logout</a>
-        </div>
-    </div>
-</nav>
-
-    <div class="container mx-auto mt-10 px-4">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Admin Dashboard</h1>
 
         <!-- Import Leads Section -->
@@ -182,5 +163,8 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
             checkboxes.forEach(checkbox => checkbox.checked = this.checked);
         });
     </script>
-</body>
-</html>
+
+<?php
+// Include footer
+require 'footer.php';
+?>
