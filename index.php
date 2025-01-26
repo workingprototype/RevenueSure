@@ -8,14 +8,14 @@ require 'db.php'; // Include the database connection
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lead Platform</title>
+    <title>RevenueSure</title>
     <script src="https://cdn.tailwindcss.com"></script> <!-- Include Tailwind CSS -->
 </head>
 <body class="bg-gray-100">
     <!-- Navigation Bar -->
     <nav class="bg-blue-600 p-4 text-white">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="index.php" class="text-2xl font-bold">Lead Platform</a>
+            <a href="index.php" class="text-2xl font-bold">RevenueSure</a>
             <div class="flex space-x-4">
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <a href="search_leads.php" class="hover:underline">Search Leads</a>
@@ -32,7 +32,7 @@ require 'db.php'; // Include the database connection
     <!-- Hero Section -->
     <div class="container mx-auto mt-10 px-4">
         <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-            <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Lead Platform</h1>
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome to RevenueSure</h1>
             <p class="text-gray-600 mb-6">Find and connect with businesses effortlessly. Access leads, manage credits, and grow your network.</p>
             <?php if (isset($_SESSION['user_id'])): ?>
                 <a href="search_leads.php" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Search Leads</a>
@@ -67,7 +67,7 @@ require 'db.php'; // Include the database connection
     <!-- Footer -->
     <footer class="bg-blue-600 mt-16 py-6 text-white">
         <div class="container mx-auto text-center">
-            <p>&copy; 2023 Lead Platform. All rights reserved.</p>
+            <p>&copy; 2023 RevenueSure. All rights reserved.</p>
         </div>
     </footer>
 </body>
