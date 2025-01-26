@@ -47,13 +47,13 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Credits - Lead Platform</title>
+    <title>Manage Credits - RevenueSure</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
     <nav class="bg-blue-600 p-4 text-white">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="index.php" class="text-2xl font-bold">Lead Platform</a>
+            <a href="index.php" class="text-2xl font-bold">RevenueSure</a>
             <div class="flex space-x-4">
                 <a href="dashboard.php" class="hover:underline">Dashboard</a>
                 <a href="search_leads.php" class="hover:underline">Search Leads</a>

@@ -8,9 +8,10 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
+$role = $_SESSION['role']; // Get the user's role from the session
 
 // Fetch user details
-$stmt = $conn->prepare("SELECT username, credits, role FROM users WHERE id = :user_id");
+$stmt = $conn->prepare("SELECT username, credits FROM users WHERE id = :user_id");
 $stmt->bindParam(':user_id', $user_id);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -26,17 +27,20 @@ $leads_count = $stmt->fetch(PDO::FETCH_ASSOC)['total_leads'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Lead Platform</title>
+    <title>Dashboard - RevenueSure</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
     <nav class="bg-blue-600 p-4 text-white">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="index.php" class="text-2xl font-bold">Lead Platform</a>
+            <a href="index.php" class="text-2xl font-bold">RevenueSure</a>
             <div class="flex space-x-4">
                 <a href="dashboard.php" class="hover:underline">Dashboard</a>
                 <a href="search_leads.php" class="hover:underline">Search Leads</a>
                 <a href="manage_credits.php" class="hover:underline">Manage Credits</a>
+                <?php if ($role === 'admin'): ?>
+                    <a href="admin_dashboard.php" class="hover:underline">Admin Dashboard</a>
+                <?php endif; ?>
                 <a href="logout.php" class="hover:underline">Logout</a>
             </div>
         </div>
@@ -63,11 +67,14 @@ $leads_count = $stmt->fetch(PDO::FETCH_ASSOC)['total_leads'];
                 <a href="search_leads.php" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Search Leads</a>
             </div>
 
-            <!-- Recent Activity Card -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-gray-800 mb-2">Recent Activity</h3>
-                <p class="text-gray-600">No recent activity.</p>
-            </div>
+            <!-- Admin-Specific Card -->
+            <?php if ($role === 'admin'): ?>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Admin Actions</h3>
+                    <p class="text-gray-600">Manage users and leads.</p>
+                    <a href="admin_dashboard.php" class="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Go to Admin Dashboard</a>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </body>
