@@ -13,9 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($user && password_verify($password, $user['password'])) {
         session_start();
         $_SESSION['user_id'] = $user['id'];
-        echo "Login successful!";
+        header("Location: dashboard.php"); // Redirect to dashboard
+        exit();
     } else {
-        echo "Invalid credentials.";
+        echo "<script>alert('Invalid credentials.');</script>";
     }
 }
 ?>
@@ -32,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-md w-96">
             <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
-            <form method="POST" action="login.php">
+            <form method="POST" action="">
                 <div class="mb-4">
                     <label for="email" class="block text-gray-700">Email</label>
                     <input type="email" name="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
