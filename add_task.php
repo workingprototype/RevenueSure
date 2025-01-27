@@ -28,6 +28,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         echo "<script>alert('Error adding task.');</script>";
     }
+
+    // Handle reminder
+    if (!empty($_POST['reminder'])) {
+        $reminder_time = $_POST['reminder'];
+        $stmt = $conn->prepare("INSERT INTO notifications (user_id, message, related_id, type, created_at) VALUES (:user_id, :message, :related_id, 'task_reminder', :created_at)");
+        $message = "Reminder: Task '{$task['description']}' is due on {$task['due_date']}.";
+        $stmt->bindParam(':user_id', $_SESSION['user_id']);
+        $stmt->bindParam(':message', $message);
+        $stmt->bindParam(':related_id', $task_id);
+        $stmt->bindParam(':created_at', $reminder_time);
+        $stmt->execute();
+    }
 }
 
 // Include header
@@ -58,7 +70,10 @@ require 'header.php';
         <label for="due_date" class="block text-gray-700">Due Date</label>
         <input type="datetime-local" name="due_date" id="due_date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
     </div>
-
+    <div class="mb-4">
+    <label for="reminder" class="block text-gray-700">Set Reminder</label>
+    <input type="datetime-local" name="reminder" id="reminder" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+</div>
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Task</button>
 </form>
 

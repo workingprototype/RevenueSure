@@ -10,3 +10,20 @@ Scalable: Designed for small businesses and large enterprises alike.
 Leverage RevenueSure to enhance your lead generation strategy and accelerate your revenue growth.
 
 ![Dashboard](assets/dashboard.png)
+
+
+Config:
+
+1) DB changes in db.php
+
+2) Set Up Cronjob
+
+Add the following cronjob to your server to run cron.php every hour:
+
+Open the terminal and type:
+
+crontab -e
+
+Add this line to run the script every hour:
+
+0 * * * * /usr/bin/php /path/to/your/project/cron.php
