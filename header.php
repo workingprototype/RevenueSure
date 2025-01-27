@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +10,7 @@
     <meta name="keywords" content="leads, businesses, management, platform">
     <meta name="author" content="Your Name">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
 </head>
 <body class="bg-gray-100">
     <!-- Navigation Bar -->

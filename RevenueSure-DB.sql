@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 27, 2025 at 07:25 AM
+-- Generation Time: Jan 27, 2025 at 07:30 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -31,10 +31,17 @@ CREATE TABLE `attachments` (
   `id` int(11) NOT NULL,
   `lead_id` int(11) NOT NULL,
   `file_name` varchar(255) NOT NULL,
-  `file_path` varchar(255) NOT NULL,
+  `file_path` varchar(255) DEFAULT NULL,
   `file_type` enum('contract','proposal','notes') NOT NULL,
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `attachments`
+--
+
+INSERT INTO `attachments` (`id`, `lead_id`, `file_name`, `file_path`, `file_type`, `uploaded_at`) VALUES
+(1, 2, 'test', NULL, 'notes', '2025-01-27 15:12:13');
 
 -- --------------------------------------------------------
 
@@ -82,6 +89,29 @@ CREATE TABLE `leads` (
 INSERT INTO `leads` (`id`, `name`, `phone`, `email`, `category_id`, `created_at`, `status`, `city`, `state`, `country`) VALUES
 (1, 'John Doe', '+91 123456789', 'john@demo.com', 1, '2025-01-26 06:53:45', 'New', NULL, NULL, NULL),
 (2, 'Jane Dane', '+ 1 6458898766', 'jane@demo.com', 2, '2025-01-26 06:54:43', 'New', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lead_scores`
+--
+
+CREATE TABLE `lead_scores` (
+  `id` int(11) NOT NULL,
+  `lead_id` int(11) NOT NULL,
+  `website_visits` int(11) DEFAULT 0,
+  `email_opens` int(11) DEFAULT 0,
+  `form_submissions` int(11) DEFAULT 0,
+  `total_score` int(11) DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `lead_scores`
+--
+
+INSERT INTO `lead_scores` (`id`, `lead_id`, `website_visits`, `email_opens`, `form_submissions`, `total_score`, `last_updated`) VALUES
+(1, 2, 2, 1, 1, 7, '2025-01-27 11:08:55');
 
 -- --------------------------------------------------------
 
@@ -162,6 +192,13 @@ ALTER TABLE `leads`
   ADD KEY `category_id` (`category_id`);
 
 --
+-- Indexes for table `lead_scores`
+--
+ALTER TABLE `lead_scores`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `lead_id` (`lead_id`);
+
+--
 -- Indexes for table `tasks`
 --
 ALTER TABLE `tasks`
@@ -191,7 +228,7 @@ ALTER TABLE `user_credits`
 -- AUTO_INCREMENT for table `attachments`
 --
 ALTER TABLE `attachments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -204,6 +241,12 @@ ALTER TABLE `categories`
 --
 ALTER TABLE `leads`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `lead_scores`
+--
+ALTER TABLE `lead_scores`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `tasks`
@@ -238,6 +281,12 @@ ALTER TABLE `attachments`
 --
 ALTER TABLE `leads`
   ADD CONSTRAINT `leads_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
+
+--
+-- Constraints for table `lead_scores`
+--
+ALTER TABLE `lead_scores`
+  ADD CONSTRAINT `lead_scores_ibfk_1` FOREIGN KEY (`lead_id`) REFERENCES `leads` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `tasks`
