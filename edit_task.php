@@ -64,4 +64,22 @@ require 'header.php';
     </div>
 
     <div class="mb-4">
-        <label for="due_date" class="block text-gray-700">Due Date</
+        <label for="due_date" class="block text-gray-700">Due Date</label>
+        <input type="datetime-local" name="due_date" id="due_date" value="<?php echo date('Y-m-d\TH:i', strtotime($task['due_date'])); ?>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+    </div>
+
+    <div class="mb-4">
+        <label for="status" class="block text-gray-700">Status</label>
+        <select name="status" id="status" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+            <option value="Pending" <?php echo $task['status'] === 'Pending' ? 'selected' : ''; ?>>Pending</option>
+            <option value="Completed" <?php echo $task['status'] === 'Completed' ? 'selected' : ''; ?>>Completed</option>
+        </select>
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Update Task</button>
+</form>
+
+<?php
+// Include footer
+require 'footer.php';
+?>
