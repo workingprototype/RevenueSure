@@ -200,6 +200,8 @@ require 'header.php';
                     <th class="px-4 py-2">City</th>
                     <th class="px-4 py-2">State</th>
                     <th class="px-4 py-2">Country</th>
+                    <th class="px-4 py-2">Score</th>
+                    <th class="px-4 py-2">Category</th>
                     <th class="px-4 py-2">Actions</th>
                     <th class="px-4 py-2">Task Management</th>
                 </tr>
@@ -217,6 +219,8 @@ require 'header.php';
                             <td class="px-4 py-2"><?php echo htmlspecialchars($lead['city']); ?></td>
                             <td class="px-4 py-2"><?php echo htmlspecialchars($lead['state']); ?></td>
                             <td class="px-4 py-2"><?php echo htmlspecialchars($lead['country']); ?></td>
+                            <td class="px-4 py-2"><?php echo $lead_score ? $lead_score['total_score'] : 0; ?></td>
+                            <td class="px-4 py-2"><?php echo $lead_score ? categorize_lead($lead_score['total_score']) : "Cold"; ?></td>
                             <td class="px-4 py-2">
                             <a href="view_lead.php?id=<?php echo $lead['id']; ?>" class="text-purple-600 hover:underline">View Lead</a>
                                 <a href="edit_lead.php?id=<?php echo $lead['id']; ?>" class="text-blue-600 hover:underline">Edit</a>

@@ -21,6 +21,25 @@ $stmt->bindParam(':lead_id', $lead_id);
 $stmt->execute();
 $attachments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Fetch lead score
+$stmt = $conn->prepare("SELECT * FROM lead_scores WHERE lead_id = :lead_id");
+$stmt->bindParam(':lead_id', $lead_id);
+$stmt->execute();
+$lead_score = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Define the categorize_lead function
+function categorize_lead($score) {
+    if ($score >= 10) {
+        return "Hot";
+    } elseif ($score >= 5) {
+        return "Warm";
+    } else {
+        return "Cold";
+    }
+}
+
+$lead_category = $lead_score ? categorize_lead($lead_score['total_score']) : "Cold";
+
 // Include header
 require 'header.php';
 ?>
@@ -32,6 +51,18 @@ require 'header.php';
     <p><strong>Email:</strong> <?php echo htmlspecialchars($lead['email']); ?></p>
     <p><strong>Phone:</strong> <?php echo htmlspecialchars($lead['phone']); ?></p>
     <p><strong>Category:</strong> <?php echo htmlspecialchars($lead['category_id']); ?></p>
+</div>
+
+<div class="bg-white p-6 rounded-lg shadow-md mb-8">
+    <p><strong>Lead Score:</strong> <?php echo $lead_score ? $lead_score['total_score'] : 0; ?></p>
+    <p><strong>Lead Category:</strong> <?php echo $lead_category; ?></p>
+</div>
+
+<div class="bg-white p-6 rounded-lg shadow-md mb-8">
+    <h3 class="text-xl font-bold text-gray-800 mb-4">Track Behavior</h3>
+    <a href="track_behavior.php?lead_id=<?php echo $lead_id; ?>&action=website_visit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Website Visit</a>
+    <a href="track_behavior.php?lead_id=<?php echo $lead_id; ?>&action=email_open" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Email Open</a>
+    <a href="track_behavior.php?lead_id=<?php echo $lead_id; ?>&action=form_submission" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-300">Form Submission</a>
 </div>
 
 <!-- Attachments Section -->
