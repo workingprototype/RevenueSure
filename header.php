@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lead Platform</title>
+    <title>RevenueSure</title>
     <meta name="description" content="A platform to manage leads and businesses efficiently.">
     <meta name="keywords" content="leads, businesses, management, platform">
     <meta name="author" content="Your Name">
@@ -13,7 +13,7 @@
     <!-- Navigation Bar -->
     <nav class="bg-blue-600 p-4 text-white">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="index.php" class="text-2xl font-bold">Lead Platform</a>
+            <a href="index.php" class="text-2xl font-bold">RevenueSure</a>
             <div class="flex space-x-4">
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <a href="dashboard.php" class="hover:underline">Dashboard</a>
