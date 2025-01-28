@@ -76,7 +76,7 @@
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <!-- User Menu -->
                      <a href="dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'dashboard.php') echo 'active'; ?>"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
-                     <a href="your_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'your_leads.php') echo 'active'; ?>"><i class="fas fa-user-circle mr-2"></i>Your Leads</a>
+                    <a href="your_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'your_leads.php') echo 'active'; ?>"><i class="fas fa-user-circle mr-2"></i>Your Leads</a>
                     <a href="search_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'search_leads.php') echo 'active'; ?>"><i class="fas fa-search mr-2"></i>Search Leads</a>
                    <a href="view_tasks.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'view_tasks.php') echo 'active'; ?>"><i class="fas fa-tasks mr-2"></i>View Tasks</a>
                     <a href="manage_credits.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'manage_credits.php') echo 'active'; ?>"><i class="fas fa-credit-card mr-2"></i>Manage Credits</a>
@@ -129,47 +129,72 @@
             <!-- Top Navigation (for Notifications) -->
             <nav class="bg-blue-600 p-4 text-white mb-6 rounded-md">
                 <div class="container mx-auto flex justify-end items-center">
-                <div class="relative">
-                        <button id="notificationButton" class="hover:underline relative">
-                            <!-- Bell Icon -->
-                            <i class="fas fa-bell"></i>
-                            <?php
-                            $stmt = $conn->prepare("SELECT COUNT(*) as unread FROM notifications WHERE user_id = :user_id AND is_read = 0");
-                            $stmt->bindParam(':user_id', $_SESSION['user_id']);
-                            $stmt->execute();
-                            $unread = $stmt->fetch(PDO::FETCH_ASSOC)['unread'];
-                            if ($unread > 0) : ?>
-                                <!-- Notification Count -->
-                                <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full absolute -top-2 -right-2"><?php echo $unread; ?></span>
-                            <?php endif; ?>
-                        </button>
-                        <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg">
-                            <?php
-                            $stmt = $conn->prepare("SELECT * FROM notifications WHERE user_id = :user_id ORDER BY created_at DESC LIMIT 5");
-                            $stmt->bindParam(':user_id', $_SESSION['user_id']);
-                            $stmt->execute();
-                            $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                            ?>
-                            <?php if ($notifications) : ?>
-                                <?php foreach ($notifications as $notification) : ?>
-                                    <a href="view_notification.php?id=<?php echo $notification['id']; ?>" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
-                                        <?php echo htmlspecialchars($notification['message']); ?>
-                                        <?php if (!$notification['is_read']) : ?>
-                                            <span class="text-xs text-blue-600">New</span>
-                                        <?php endif; ?>
-                                    </a>
-                                <?php endforeach; ?>
-                            <?php else : ?>
-                                <p class="px-4 py-2 text-gray-600">No notifications.</p>
-                            <?php endif; ?>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <div class="relative mr-4">
+                            <button id="profileButton" class="hover:underline relative flex items-center">
+                                <?php
+                                $stmt = $conn->prepare("SELECT profile_picture FROM users WHERE id = :user_id");
+                                $stmt->bindParam(':user_id', $_SESSION['user_id']);
+                                $stmt->execute();
+                                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                                $profile_picture = $user['profile_picture'];
+
+                                if ($profile_picture) : ?>
+                                    <img src="<?php echo $profile_picture; ?>" alt="Profile Picture" class="rounded-full w-8 h-8 object-cover">
+                                <?php else : ?>
+                                    <i class="fas fa-user-circle fa-lg"></i>
+                                <?php endif; ?>
+                            </button>
+                             <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
+                                <a href="profile.php" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
+                                <a href="logout.php" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</a>
+                              </div>
+                         </div>
+                        <div class="relative">
+                            <button id="notificationButton" class="hover:underline relative">
+                                <!-- Bell Icon -->
+                                <i class="fas fa-bell"></i>
+                                <?php
+                                $stmt = $conn->prepare("SELECT COUNT(*) as unread FROM notifications WHERE user_id = :user_id AND is_read = 0");
+                                $stmt->bindParam(':user_id', $_SESSION['user_id']);
+                                $stmt->execute();
+                                $unread = $stmt->fetch(PDO::FETCH_ASSOC)['unread'];
+                                if ($unread > 0) : ?>
+                                    <!-- Notification Count -->
+                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full absolute -top-2 -right-2"><?php echo $unread; ?></span>
+                                <?php endif; ?>
+                            </button>
+                            <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg">
+                                <?php
+                                $stmt = $conn->prepare("SELECT * FROM notifications WHERE user_id = :user_id ORDER BY created_at DESC LIMIT 5");
+                                $stmt->bindParam(':user_id', $_SESSION['user_id']);
+                                $stmt->execute();
+                                $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                ?>
+                                <?php if ($notifications) : ?>
+                                    <?php foreach ($notifications as $notification) : ?>
+                                        <a href="view_notification.php?id=<?php echo $notification['id']; ?>" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                            <?php echo htmlspecialchars($notification['message']); ?>
+                                            <?php if (!$notification['is_read']) : ?>
+                                                <span class="text-xs text-blue-600">New</span>
+                                            <?php endif; ?>
+                                        </a>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
+                                    <p class="px-4 py-2 text-gray-600">No notifications.</p>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                    </div>
+                   <?php endif; ?>
                 </div>
             </nav>
             <script>
-            document.getElementById('notificationButton').addEventListener('click', function() {
-                document.getElementById('notificationDropdown').classList.toggle('hidden');
-            });
+                document.getElementById('notificationButton').addEventListener('click', function() {
+                    document.getElementById('notificationDropdown').classList.toggle('hidden');
+                });
+                 document.getElementById('profileButton').addEventListener('click', function() {
+                    document.getElementById('profileDropdown').classList.toggle('hidden');
+                 });
             </script>
             <!-- Main Content Area -->
              <div class="container mx-auto px-4">
