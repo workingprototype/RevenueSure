@@ -1,5 +1,6 @@
 <?php
-ini_set('display_errors', 1);
+
+ini_set('display_errors' , 1);
 error_reporting(E_ALL);
 
 session_start();
@@ -35,8 +36,7 @@ $stmt->execute();
 $lead_score = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Define the categorize_lead function
-function categorize_lead($score)
-{
+function categorize_lead($score) {
     if ($score >= 10) {
         return "Hot";
     } elseif ($score >= 5) {
@@ -73,17 +73,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['convert_to_customer'])
             }
         }
     }
-    
-     $stmt = $conn->prepare("UPDATE leads SET status = 'Converted', converted_by = :converted_by WHERE id = :id");
-    $stmt->bindParam(':id', $lead_id);
-     $stmt->bindParam(':converted_by', $attributed_employee);
-    if ($stmt->execute()) {
-        echo "<script>alert('Lead converted successfully!'); window.location.href='view_lead.php?id=$lead_id';</script>";
-    } else {
-        echo "<script>alert('Error converting lead.'); window.location.href='view_lead.php?id=$lead_id';</script>";
-    }
-}
+        // Create a customer if it was a lead
+        $stmt = $conn->prepare("INSERT INTO customers (name, email, phone) VALUES (:name, :email, :phone)");
+        $stmt->bindParam(':name', $lead['name']);
+        $stmt->bindParam(':email', $lead['email']);
+        $stmt->bindParam(':phone', $lead['phone']);
+         if ($stmt->execute()) {
+              $customer_id = $conn->lastInsertId();
+              $stmt = $conn->prepare("UPDATE leads SET status = 'Converted', converted_by = :converted_by, customer_id = :customer_id WHERE id = :id");
+              $stmt->bindParam(':id', $lead_id);
+               $stmt->bindParam(':customer_id', $customer_id);
+                $stmt->bindParam(':converted_by', $attributed_employee);
+            if ($stmt->execute()) {
+                 echo "<script>alert('Lead converted successfully!'); window.location.href='view_lead.php?id=$lead_id';</script>";
+            } else {
+                echo "<script>alert('Error converting lead.');</script>";
+            }
 
+        } else {
+            echo "<script>alert('Error converting lead.');</script>";
+        }
+
+
+}
 
 // Include header
 require 'header.php';
@@ -116,14 +128,18 @@ require 'header.php';
 </div>
 <div class="bg-white p-6 rounded-lg shadow-md mb-8">
     <p><strong>Status:</strong> <?php echo htmlspecialchars($lead['status']); ?></p>
+        <?php if ($lead['customer_id']): ?>
+             <p><strong>Customer:</strong>  <a href="edit_customer.php?id=<?php echo $lead['customer_id']; ?>" class="text-blue-600 hover:underline"> View Customer </a></p>
+        <?php endif; ?>
 </div>
+
 <div class="bg-white p-6 rounded-lg shadow-md mb-8">
     <p><strong>Lead Score:</strong> <?php echo $lead_score ? $lead_score['total_score'] : 0; ?></p>
     <p><strong>Lead Category:</strong> <?php echo $lead_category; ?></p>
     <!-- Convert to Customer Button -->
     <?php if ($lead['status'] !== 'Converted'): ?>
-        <form method="POST" action="">
-            <div class="mb-4">
+         <form method="POST" action="">
+             <div class="mb-4">
                 <label for="attribution_type" class="block text-gray-700">Convert to Customer By:</label>
                 <select name="attribution_type" id="attribution_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="showOtherEmployeeInput(this.value)">
                     <option value="self">Self</option>
@@ -134,11 +150,11 @@ require 'header.php';
             <div id="other_employee_input" class="mb-4 hidden">
                 <label for="other_employee_name" class="block text-gray-700">Employee Name</label>
                 <input type="text" name="other_employee_name" id="other_employee_name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" data-autocomplete-id="employee-autocomplete">
-                    <div id="employee-autocomplete-suggestions" class="absolute z-10 mt-2 bg-white border rounded shadow-md w-full hidden"></div>
-            </div>
-            <button type="submit" name="convert_to_customer" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Convert to Customer</button>
+                    <div id="employee-autocomplete-suggestions" class="absolute z-10 mt-2 w-full bg-white border rounded shadow-md hidden"></div>
+             </div>
+             <button type="submit" name="convert_to_customer" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Convert to Customer</button>
         </form>
-    <?php endif; ?>
+     <?php endif; ?>
 </div>
 
 <div class="bg-white p-6 rounded-lg shadow-md mb-8">
@@ -215,15 +231,15 @@ require 'header.php';
         $stmt->execute();
         $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if ($notes) : ?>
-            <?php foreach ($notes as $note) : ?>
+        if ($notes): ?>
+            <?php foreach ($notes as $note): ?>
                 <div class="bg-yellow-100 p-4 rounded-lg shadow-md mb-4">
                     <p class="text-gray-800"><?php echo htmlspecialchars($note['file_name']); ?></p>
                     <p class="text-gray-600 text-sm"><?php echo date('M d, Y H:i', strtotime($note['uploaded_at'])); ?></p>
                     <a href="delete_attachment.php?id=<?php echo $note['id']; ?>" class="text-red-600 hover:underline">Delete</a>
                 </div>
             <?php endforeach; ?>
-        <?php else : ?>
+        <?php else: ?>
             <p class="text-gray-600">No notes found.</p>
         <?php endif; ?>
     </div>
@@ -259,7 +275,7 @@ require 'header.php';
     // Initialize the form based on the default selection
     document.addEventListener('DOMContentLoaded', function() {
         showAttachmentForm(document.getElementById('attachment_type').value);
-        showOtherEmployeeInput(document.getElementById('attribution_type').value);
+           showOtherEmployeeInput(document.getElementById('attribution_type').value);
     });
 </script>
 
@@ -274,8 +290,8 @@ require 'header.php';
             </tr>
         </thead>
         <tbody>
-            <?php if ($attachments) : ?>
-                <?php foreach ($attachments as $attachment) : ?>
+            <?php if ($attachments): ?>
+                <?php foreach ($attachments as $attachment): ?>
                     <tr class="border-b">
                         <td class="px-4 py-2"><?php echo htmlspecialchars($attachment['file_name']); ?></td>
                         <td class="px-4 py-2"><?php echo htmlspecialchars($attachment['file_type']); ?></td>
@@ -285,7 +301,7 @@ require 'header.php';
                         </td>
                     </tr>
                 <?php endforeach; ?>
-            <?php else : ?>
+            <?php else: ?>
                 <tr>
                     <td colspan="3" class="px-4 py-2 text-center text-gray-600">No attachments found.</td>
                 </tr>
@@ -339,20 +355,20 @@ require 'header.php';
                     suggestionsDiv.classList.add('hidden');
                 }
             });
-            
+
            const form =  employeeInput.closest('form');
            form.addEventListener('submit', function(event) {
                if (employeeInput.value.trim() && selectedEmployeeId == null ) {
                     event.preventDefault();
                     alert("Please select a valid employee from the suggestions before saving.");
                 }
-                 if (employeeInput.value.trim() && selectedEmployeeId != null ) {
-                    const hiddenInput = document.createElement('input');
+                if (employeeInput.value.trim() && selectedEmployeeId != null ) {
+                  const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
                     hiddenInput.name = 'other_employee_name';
                     hiddenInput.value =  employeeInput.value;
                     form.appendChild(hiddenInput);
-               }
+                }
            });
         });
     </script>

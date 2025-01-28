@@ -50,6 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':id', $customer_id);
 
             if ($stmt->execute()) {
+                 // Update leads
+                    $stmt = $conn->prepare("UPDATE leads SET name = :name, email = :email, phone = :phone WHERE customer_id = :customer_id");
+                    $stmt->bindParam(':name', $name);
+                    $stmt->bindParam(':email', $email);
+                    $stmt->bindParam(':phone', $phone);
+                    $stmt->bindParam(':customer_id', $customer_id);
+                    $stmt->execute();
+
                 $success = "Customer updated successfully!";
             } else {
                 $error = "Error updating customer.";

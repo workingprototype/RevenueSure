@@ -64,9 +64,10 @@ if (!empty($_GET['country'])) {
 }
 
 // Build the base query with JOIN
-$query = "SELECT leads.*, employees.name as assigned_employee
+$query = "SELECT leads.*, employees.name as assigned_employee, customers.name as customer_name, customers.id as customer_id_new
           FROM leads
-          LEFT JOIN employees ON leads.assigned_to = employees.id";
+          LEFT JOIN employees ON leads.assigned_to = employees.id
+          LEFT JOIN customers ON leads.customer_id = customers.id";
 
 // Add filters to the query
 if (!empty($filters)) {
@@ -112,8 +113,8 @@ function categorize_lead($score) {
 ?>
   <div data-total-pages="<?php echo $total_pages; ?>">
  <form method="POST" action="mass_delete_leads.php">
-       <div id="delete_button_container" class="hidden mb-4">
-           <button type="submit" name="delete_selected" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300">Delete Selected</button>
+    <div id="delete_button_container" class="hidden mb-4">
+        <button type="submit" name="delete_selected" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300">Delete Selected</button>
     </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
         <?php if ($leads): ?>
@@ -177,73 +178,40 @@ function categorize_lead($score) {
                                     ?>
                             </p>
                              <p class="text-gray-600 mb-2"><strong>Category:</strong> <?php echo $lead_score ? categorize_lead($lead_score['total_score']) : "Cold"; ?></p>
-                                <p class="text-gray-600 mb-2"><strong>Assigned To:</strong> <?php echo htmlspecialchars($lead['assigned_employee'] ? $lead['assigned_employee'] : 'Unassigned'); ?></p>
-                   </div>
+                            <p class="text-gray-600 mb-2">
+                                <strong>Customer:</strong> 
+                                <?php if($lead['customer_id_new']): ?>
+                                    <a href="edit_customer.php?id=<?php echo $lead['customer_id_new']; ?>" class="text-blue-600 hover:underline"><?php echo htmlspecialchars($lead['customer_name'] ? $lead['customer_name'] : $lead['customer_id_new']); ?></a>
+                                <?php else: ?>
+                                  N/A
+                                <?php endif; ?>
+                             </p>
+                            <p class="text-gray-600 mb-2"><strong>Assigned To:</strong> <?php echo htmlspecialchars($lead['assigned_employee'] ? $lead['assigned_employee'] : 'Unassigned'); ?></p>
+                    </div>
                       <div class="flex justify-between items-center">
                         <div class="flex space-x-2">
                             <a href="view_lead.php?id=<?php echo $lead['id']; ?>" class="text-purple-600 hover:underline">View Lead</a>
                             <a href="edit_lead.php?id=<?php echo $lead['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
                         </div>
-                            <div class="flex space-x-2">
+                           <div class="flex space-x-2">
                                 <a href="view_tasks.php?lead_id=<?php echo $lead['id']; ?>" class="text-green-600 hover:underline">View Tasks</a>
                                 <a href="delete_lead.php?id=<?php echo $lead['id']; ?>" class="text-red-600 hover:underline">Delete</a>
-                            </div>
-                       </div>
-                   </div>
+                           </div>
+                      </div>
+                  </div>
                 <?php endforeach; ?>
-             <?php else: ?>
-            <p class="text-gray-600 text-center">No leads found.</p>
-         <?php endif; ?>
-     </div>
- </form>
+            <?php else: ?>
+                 <p class="text-gray-600 text-center">No leads found.</p>
+             <?php endif; ?>
+        </div>
+     </form>
 </div>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-      const selectAllCheckbox = document.createElement('input');
-        selectAllCheckbox.type = 'checkbox';
-         selectAllCheckbox.id = 'select_all';
-         const formContainer = document.querySelector('form');
-        const container = document.createElement('div');
-        container.classList.add('flex', 'items-center', 'justify-end', 'mb-4', 'gap-2');
-        const label = document.createElement('label');
-          label.for = 'select_all';
-         label.textContent = 'Select All';
-       container.appendChild(selectAllCheckbox);
-       container.appendChild(label)
-         formContainer.insertBefore(container, formContainer.firstChild);
-
+    // Select All Checkbox
+    document.getElementById('select_all')?.addEventListener('click', function() {
         const checkboxes = document.querySelectorAll('input[name="selected_leads[]"]');
-        const deleteButtonContainer = document.getElementById('delete_button_container');
-
-        function updateDeleteButtonVisibility() {
-            let checkedCount = 0;
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    checkedCount++;
-                }
-            });
-            if (checkedCount > 0) {
-                deleteButtonContainer.classList.remove('hidden');
-            } else {
-                deleteButtonContainer.classList.add('hidden');
-            }
-        }
-            // Initial check
-       updateDeleteButtonVisibility();
-
-
-        // Select All Checkbox
-        selectAllCheckbox.addEventListener('click', function() {
-          checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-            updateDeleteButtonVisibility();
-        });
-
-        checkboxes.forEach(checkbox => {
-          checkbox.addEventListener('change', () => {
-                 updateDeleteButtonVisibility();
-          });
-         });
-     });
+        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+    });
 </script>
 <?php
 ?>
