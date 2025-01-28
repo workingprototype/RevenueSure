@@ -19,6 +19,12 @@
         .menu-item:hover .submenu {
           display: block;
         }
+         .active {
+           background-color: #434f5c;
+        }
+          aside {
+            min-width: 256px;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -30,10 +36,11 @@
             <nav>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <!-- User Menu -->
-                     <a href="dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
-                    <a href="search_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-search mr-2"></i>Search Leads</a>
-                   <a href="view_tasks.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-tasks mr-2"></i>View Tasks</a>
-                    <a href="manage_credits.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-credit-card mr-2"></i>Manage Credits</a>
+                     <a href="dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'dashboard.php') echo 'active'; ?>"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
+                     <a href="your_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'your_leads.php') echo 'active'; ?>"><i class="fas fa-user-circle mr-2"></i>Your Leads</a>
+                    <a href="search_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'search_leads.php') echo 'active'; ?>"><i class="fas fa-search mr-2"></i>Search Leads</a>
+                   <a href="view_tasks.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'view_tasks.php') echo 'active'; ?>"><i class="fas fa-tasks mr-2"></i>View Tasks</a>
+                    <a href="manage_credits.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'manage_credits.php') echo 'active'; ?>"><i class="fas fa-credit-card mr-2"></i>Manage Credits</a>
 
 
                     <!-- Admin Menu -->
@@ -42,34 +49,32 @@
                          <div class="menu-item">
                             <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-user-tie mr-2"></i>Manage Leads</a>
                             <div class="submenu">
-                                  <a href="add_lead.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-plus mr-2"></i>Add Lead</a>
-                                   <a href="import_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-file-import mr-2"></i>Import Leads</a>
-
-
+                                  <a href="add_lead.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'add_lead.php') echo 'active'; ?>"><i class="fas fa-plus mr-2"></i>Add Lead</a>
+                                   <a href="import_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'import_leads.php') echo 'active'; ?>"><i class="fas fa-file-import mr-2"></i>Import Leads</a>
                             </div>
                         </div>
                           <div class="menu-item">
                             <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-user-check mr-2"></i>Manage Customers</a>
                                <div class="submenu">
-                                   
+
                                 </div>
                         </div>
                          <div class="menu-item">
                             <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-users mr-2"></i>Manage Employees</a>
                              <div class="submenu">
-                                <a href="add_employee.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-user-plus mr-2"></i>Add Employee</a>
-                                <a href="manage_employees.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-users-cog mr-2"></i>View Employees</a>
+                                <a href="add_employee.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'add_employee.php') echo 'active'; ?>"><i class="fas fa-user-plus mr-2"></i>Add Employee</a>
+                                <a href="manage_employees.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'manage_employees.php') echo 'active'; ?>"><i class="fas fa-users-cog mr-2"></i>View Employees</a>
                                    </div>
                         </div>
 
                          <div class="menu-item">
                             <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-list mr-2"></i>Manage Categories</a>
                              <div class="submenu">
-                                 <a href="manage_categories.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-list-alt mr-2"></i>View Categories</a>
-                                   <a href="add_category.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-plus mr-2"></i>Add Category</a>
+                                 <a href="manage_categories.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'manage_categories.php') echo 'active'; ?>"><i class="fas fa-list-alt mr-2"></i>View Categories</a>
+                                   <a href="add_category.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'add_category.php') echo 'active'; ?>"><i class="fas fa-plus mr-2"></i>Add Category</a>
                                </div>
                         </div>
-                         <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
+                         <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'reporting_dashboard.php') echo 'active'; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                     <?php endif; ?>
                      <a href="logout.php" class="block py-2 px-4 hover:bg-gray-700 rounded mt-4"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
                 <?php else: ?>
