@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 28, 2025 at 10:01 AM
+-- Generation Time: Jan 28, 2025 at 10:15 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -74,15 +74,18 @@ CREATE TABLE `customers` (
   `name` varchar(100) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `company` varchar(255) DEFAULT NULL,
+  `preferences` text DEFAULT NULL,
+  `last_interaction` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customers`
 --
 
-INSERT INTO `customers` (`id`, `name`, `email`, `phone`, `created_at`) VALUES
-(1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01');
+INSERT INTO `customers` (`id`, `name`, `email`, `phone`, `created_at`, `company`, `preferences`, `last_interaction`) VALUES
+(1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01', 'Jabbar Corporations', 'Likes to talk about his work more.', '2025-01-28 09:13:46');
 
 -- --------------------------------------------------------
 

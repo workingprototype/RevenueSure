@@ -28,7 +28,9 @@ require 'header.php';
             <tr>
                 <th class="px-4 py-2">Name</th>
                 <th class="px-4 py-2">Email</th>
+                 <th class="px-4 py-2">Company</th>
                 <th class="px-4 py-2">Phone</th>
+                 <th class="px-4 py-2">Last Interaction</th>
                 <th class="px-4 py-2">Actions</th>
             </tr>
         </thead>
@@ -38,16 +40,19 @@ require 'header.php';
                     <tr class="border-b">
                         <td class="px-4 py-2"><?php echo htmlspecialchars($customer['name']); ?></td>
                         <td class="px-4 py-2"><?php echo htmlspecialchars($customer['email']); ?></td>
-                        <td class="px-4 py-2"><?php echo htmlspecialchars($customer['phone']); ?></td>
+                        <td class="px-4 py-2"><?php echo htmlspecialchars($customer['company']); ?></td>
+                       <td class="px-4 py-2"><?php echo htmlspecialchars($customer['phone']); ?></td>
+                        <td class="px-4 py-2"><?php echo $customer['last_interaction'] ? date('Y-m-d H:i', strtotime($customer['last_interaction'])) : "N/A"; ?></td>
                         <td class="px-4 py-2">
-                            <a href="edit_customer.php?id=<?php echo $customer['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
+                            <a href="view_customer.php?id=<?php echo $customer['id']; ?>" class="text-purple-600 hover:underline">View</a>
+                           <a href="edit_customer.php?id=<?php echo $customer['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
                             <a href="delete_customer.php?id=<?php echo $customer['id']; ?>" class="text-red-600 hover:underline ml-2">Delete</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="4" class="px-4 py-2 text-center text-gray-600">No customers found.</td>
+                    <td colspan="5" class="px-4 py-2 text-center text-gray-600">No customers found.</td>
                 </tr>
             <?php endif; ?>
         </tbody>

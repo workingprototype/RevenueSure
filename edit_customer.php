@@ -27,6 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $phone = trim($_POST['phone']);
+    $company = trim($_POST['company']);
+    $preferences = trim($_POST['preferences']);
+
 
     // Validate inputs
     if (empty($name) || empty($email)) {
@@ -43,10 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = "A customer with this email already exists.";
         } else {
             // Update customer
-            $stmt = $conn->prepare("UPDATE customers SET name = :name, email = :email, phone = :phone WHERE id = :id");
+            $stmt = $conn->prepare("UPDATE customers SET name = :name, email = :email, phone = :phone, company = :company, preferences = :preferences WHERE id = :id");
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':phone', $phone);
+            $stmt->bindParam(':company', $company);
+            $stmt->bindParam(':preferences', $preferences);
             $stmt->bindParam(':id', $customer_id);
 
             if ($stmt->execute()) {
@@ -98,6 +103,14 @@ require 'header.php';
     <div class="mb-4">
         <label for="phone" class="block text-gray-700">Phone</label>
         <input type="text" name="phone" id="phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($customer['phone']); ?>">
+    </div>
+    <div class="mb-4">
+        <label for="company" class="block text-gray-700">Company</label>
+        <input type="text" name="company" id="company" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($customer['company'] ?? ''); ?>">
+    </div>
+     <div class="mb-4">
+       <label for="preferences" class="block text-gray-700">Preferences</label>
+       <textarea name="preferences" id="preferences" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"><?php echo htmlspecialchars($customer['preferences'] ?? ''); ?></textarea>
     </div>
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Update Customer</button>
 </form>
