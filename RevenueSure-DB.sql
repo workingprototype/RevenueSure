@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 28, 2025 at 10:22 AM
+-- Generation Time: Jan 28, 2025 at 10:35 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -76,15 +76,37 @@ CREATE TABLE `customers` (
   `phone` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `company` varchar(255) DEFAULT NULL,
-  `last_interaction` timestamp NULL DEFAULT NULL
+  `last_interaction` timestamp NULL DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `social_media_profiles` text DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
+  `gender` enum('Male','Female','Other') DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `job_title` varchar(255) DEFAULT NULL,
+  `industry` varchar(255) DEFAULT NULL,
+  `profile_picture` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customers`
 --
 
-INSERT INTO `customers` (`id`, `name`, `email`, `phone`, `created_at`, `company`, `last_interaction`) VALUES
-(1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01', 'Jabbar Corporations', '2025-01-28 09:13:46');
+INSERT INTO `customers` (`id`, `name`, `email`, `phone`, `created_at`, `company`, `last_interaction`, `address`, `social_media_profiles`, `age`, `gender`, `location`, `job_title`, `industry`, `profile_picture`) VALUES
+(1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01', 'Jabbar Corporations', '2025-01-28 09:13:46', 'NYC', 'https://instagram.com', 44, 'Male', 'NYC', 'Chairman', 'IT', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer_custom_fields`
+--
+
+CREATE TABLE `customer_custom_fields` (
+  `id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `field_name` varchar(255) NOT NULL,
+  `field_value` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -106,7 +128,8 @@ CREATE TABLE `customer_interactions` (
 
 INSERT INTO `customer_interactions` (`id`, `customer_id`, `interaction_type`, `details`, `interaction_at`) VALUES
 (1, 1, 'Email', 'Customer wants to discuss more over call.', '2025-01-28 09:18:57'),
-(2, 1, 'Call', 'Customer wants to meet IRL', '2025-01-28 09:19:30');
+(2, 1, 'Call', 'Customer wants to meet IRL', '2025-01-28 09:19:30'),
+(3, 1, 'Meeting', 'Meeting went great! Wants to discuss more!', '2025-01-28 09:29:58');
 
 -- --------------------------------------------------------
 
@@ -126,7 +149,30 @@ CREATE TABLE `customer_preferences` (
 --
 
 INSERT INTO `customer_preferences` (`id`, `customer_id`, `preference`, `created_at`) VALUES
-(1, 1, 'Likes to talk', '2025-01-28 09:18:17');
+(1, 1, 'Likes to talk', '2025-01-28 09:18:17'),
+(2, 1, 'Wears great suit', '2025-01-28 09:29:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer_tags`
+--
+
+CREATE TABLE `customer_tags` (
+  `id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `tag` varchar(255) NOT NULL,
+  `color` varchar(20) DEFAULT 'gray',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `customer_tags`
+--
+
+INSERT INTO `customer_tags` (`id`, `customer_id`, `tag`, `color`, `created_at`) VALUES
+(1, 1, 'VIP', 'gray', '2025-01-28 09:25:13'),
+(2, 1, 'High value', 'red', '2025-01-28 09:30:26');
 
 -- --------------------------------------------------------
 
@@ -304,6 +350,13 @@ ALTER TABLE `customers`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `customer_custom_fields`
+--
+ALTER TABLE `customer_custom_fields`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `customer_id` (`customer_id`);
+
+--
 -- Indexes for table `customer_interactions`
 --
 ALTER TABLE `customer_interactions`
@@ -314,6 +367,13 @@ ALTER TABLE `customer_interactions`
 -- Indexes for table `customer_preferences`
 --
 ALTER TABLE `customer_preferences`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `customer_id` (`customer_id`);
+
+--
+-- Indexes for table `customer_tags`
+--
+ALTER TABLE `customer_tags`
   ADD PRIMARY KEY (`id`),
   ADD KEY `customer_id` (`customer_id`);
 
@@ -390,16 +450,28 @@ ALTER TABLE `customers`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `customer_custom_fields`
+--
+ALTER TABLE `customer_custom_fields`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `customer_interactions`
 --
 ALTER TABLE `customer_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `customer_preferences`
 --
 ALTER TABLE `customer_preferences`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `customer_tags`
+--
+ALTER TABLE `customer_tags`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `employees`
@@ -454,6 +526,12 @@ ALTER TABLE `attachments`
   ADD CONSTRAINT `attachments_ibfk_1` FOREIGN KEY (`lead_id`) REFERENCES `leads` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `customer_custom_fields`
+--
+ALTER TABLE `customer_custom_fields`
+  ADD CONSTRAINT `customer_custom_fields_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `customer_interactions`
 --
 ALTER TABLE `customer_interactions`
@@ -464,6 +542,12 @@ ALTER TABLE `customer_interactions`
 --
 ALTER TABLE `customer_preferences`
   ADD CONSTRAINT `customer_preferences_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `customer_tags`
+--
+ALTER TABLE `customer_tags`
+  ADD CONSTRAINT `customer_tags_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `leads`

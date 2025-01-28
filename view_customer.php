@@ -24,15 +24,16 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['update_company'])) {
+    if (isset($_POST['update_company_preferences'])) {
          $company = trim($_POST['company']);
-
-         $stmt = $conn->prepare("UPDATE customers SET company = :company WHERE id = :id");
+          $preferences = trim($_POST['preferences']);
+         $stmt = $conn->prepare("UPDATE customers SET company = :company, preferences = :preferences WHERE id = :id");
         $stmt->bindParam(':company', $company);
+        $stmt->bindParam(':preferences', $preferences);
         $stmt->bindParam(':id', $customer_id);
 
-         if($stmt->execute()){
-           $success = "Company details updated successfully!";
+        if($stmt->execute()){
+           $success = "Customer details updated successfully!";
             header("Location: view_customer.php?id=$customer_id&success=true");
              exit();
         }else {
@@ -71,13 +72,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 } else {
                       $error = "Error adding interaction.";
                   }
+        }  elseif (isset($_POST['add_custom_field'])) {
+         $field_name = trim($_POST['field_name']);
+            $field_value = trim($_POST['field_value']);
+         if(!empty($field_name) && !empty($field_value)){
+             $stmt = $conn->prepare("INSERT INTO customer_custom_fields (customer_id, field_name, field_value) VALUES (:customer_id, :field_name, :field_value)");
+            $stmt->bindParam(':customer_id', $customer_id);
+            $stmt->bindParam(':field_name', $field_name);
+             $stmt->bindParam(':field_value', $field_value);
+             if ($stmt->execute()) {
+                $success = "Custom field added successfully!";
+                    header("Location: view_customer.php?id=$customer_id&success=true");
+                     exit();
+             } else {
+                $error = "Error adding custom field.";
+             }
+        } else {
+            $error = "Custom field cannot be empty.";
+         }
+    }  elseif(isset($_POST['add_tag'])){
+         $tag = trim($_POST['tag']);
+         $color = trim($_POST['color']);
+         if(!empty($tag)){
+                $stmt = $conn->prepare("INSERT INTO customer_tags (customer_id, tag, color) VALUES (:customer_id, :tag, :color)");
+                $stmt->bindParam(':customer_id', $customer_id);
+                $stmt->bindParam(':tag', $tag);
+                $stmt->bindParam(':color', $color);
+                 if ($stmt->execute()) {
+                $success = "Tag added successfully!";
+                 header("Location: view_customer.php?id=$customer_id&success=true");
+                 exit();
+            } else {
+                $error = "Error adding tag.";
+            }
+         }else {
+                $error = "Tag cannot be empty.";
+         }
+    }  elseif (isset($_POST['update_demographics'])) {
+          $address = trim($_POST['address']);
+          $social_media_profiles = trim($_POST['social_media_profiles']);
+        $age = trim($_POST['age']);
+        $gender = trim($_POST['gender']);
+        $location = trim($_POST['location']);
+        $job_title = trim($_POST['job_title']);
+        $industry = trim($_POST['industry']);
+
+         $stmt = $conn->prepare("UPDATE customers SET address = :address, social_media_profiles = :social_media_profiles, age = :age, gender = :gender, location = :location, job_title = :job_title, industry = :industry WHERE id = :id");
+                $stmt->bindParam(':address', $address);
+             $stmt->bindParam(':social_media_profiles', $social_media_profiles);
+             $stmt->bindParam(':age', $age);
+            $stmt->bindParam(':gender', $gender);
+              $stmt->bindParam(':location', $location);
+                $stmt->bindParam(':job_title', $job_title);
+                 $stmt->bindParam(':industry', $industry);
+                $stmt->bindParam(':id', $customer_id);
+
+        if($stmt->execute()){
+          $success = "Demographic data updated successfully!";
+              header("Location: view_customer.php?id=$customer_id&success=true");
+                 exit();
+        } else {
+           $error =  "There was an error updating customer info.";
+         }
     }
+
 }
  if(isset($_GET['success']) && $_GET['success'] == 'true'){
        $success = "Customer details updated successfully!";
   }
-
-
 // Fetch customer preferences
 $stmt = $conn->prepare("SELECT * FROM customer_preferences WHERE customer_id = :customer_id ORDER BY created_at ASC");
 $stmt->bindParam(':customer_id', $customer_id);
@@ -89,6 +151,18 @@ $stmt = $conn->prepare("SELECT * FROM customer_interactions WHERE customer_id = 
 $stmt->bindParam(':customer_id', $customer_id);
 $stmt->execute();
 $interactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch custom fields
+$stmt = $conn->prepare("SELECT * FROM customer_custom_fields WHERE customer_id = :customer_id ORDER BY created_at ASC");
+$stmt->bindParam(':customer_id', $customer_id);
+$stmt->execute();
+$custom_fields = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Fetch customer tags
+$stmt = $conn->prepare("SELECT * FROM customer_tags WHERE customer_id = :customer_id ORDER BY created_at ASC");
+$stmt->bindParam(':customer_id', $customer_id);
+$stmt->execute();
+$tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Include header
 require 'header.php';
 ?>
@@ -111,16 +185,23 @@ require 'header.php';
         <p><strong>Name:</strong> <?php echo htmlspecialchars($customer['name']); ?></p>
         <p><strong>Email:</strong> <?php echo htmlspecialchars($customer['email']); ?></p>
         <p><strong>Phone:</strong> <?php echo htmlspecialchars($customer['phone']); ?></p>
+           <?php if($customer['profile_picture']): ?>
+                         <img src="<?php echo $customer['profile_picture']; ?>" alt="Profile Picture" class="rounded-full w-32 h-32 object-cover">
+                      <?php else: ?>
+                         <div class="rounded-full w-32 h-32 bg-gray-200 flex items-center justify-center">
+                             <i class="fas fa-user fa-3x text-gray-500"></i>
+                         </div>
+                      <?php endif; ?>
     </div>
      <form method="post" action="">
-         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Company Profile</h2>
-               <div class="mb-4">
-                   <label for="company" class="block text-gray-700">Company</label>
-                      <input type="text" name="company" id="company" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($customer['company'] ?? ''); ?>">
-                 </div>
-         </div>
         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Company Profile</h2>
+                 <div class="mb-4">
+                   <label for="company" class="block text-gray-700">Company</label>
+                       <input type="text" name="company" id="company" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($customer['company'] ?? ''); ?>">
+                </div>
+        </div>
+         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Preferences</h2>
              <ul class="mb-4">
                  <?php if($preferences): ?>
@@ -142,10 +223,47 @@ require 'header.php';
                 </div>
                 <button type="submit" name="add_preference" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Preference</button>
         </div>
-           <button type="submit" name="update_company_preferences" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mb-4">Update Company</button>
-    </form>
+           <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Demographic Information</h2>
+             <div class="mb-4">
+                    <label for="address" class="block text-gray-700">Address</label>
+                        <input type="text" name="address" id="address" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"  value="<?php echo htmlspecialchars($customer['address'] ?? ''); ?>">
+                   </div>
+               <div class="mb-4">
+                   <label for="social_media_profiles" class="block text-gray-700">Social Media Profiles</label>
+                       <textarea name="social_media_profiles" id="social_media_profiles" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"><?php echo htmlspecialchars($customer['social_media_profiles'] ?? ''); ?></textarea>
+                 </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                      <label for="age" class="block text-gray-700">Age</label>
+                       <input type="number" name="age" id="age" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"  value="<?php echo htmlspecialchars($customer['age'] ?? ''); ?>">
+                    </div>
+                     <div class="mb-4">
+                          <label for="gender" class="block text-gray-700">Gender</label>
+                           <select name="gender" id="gender" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                              <option value="" <?php if(empty($customer['gender'])) echo 'selected'; ?>>Select</option>
+                               <option value="Male" <?php if($customer['gender'] == 'Male') echo 'selected'; ?>>Male</option>
+                                <option value="Female" <?php if($customer['gender'] == 'Female') echo 'selected'; ?>>Female</option>
+                                <option value="Other" <?php if($customer['gender'] == 'Other') echo 'selected'; ?>>Other</option>
+                        </select>
+                     </div>
+                     <div class="mb-4">
+                       <label for="location" class="block text-gray-700">Location</label>
+                      <input type="text" name="location" id="location" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"  value="<?php echo htmlspecialchars($customer['location'] ?? ''); ?>">
+                 </div>
+                <div class="mb-4">
+                   <label for="job_title" class="block text-gray-700">Job Title</label>
+                   <input type="text" name="job_title" id="job_title" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"  value="<?php echo htmlspecialchars($customer['job_title'] ?? ''); ?>">
+             </div>
+             <div class="mb-4">
+                  <label for="industry" class="block text-gray-700">Industry</label>
+                  <input type="text" name="industry" id="industry" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($customer['industry'] ?? ''); ?>">
+                </div>
+        </div>
+           <button type="submit" name="update_demographics" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-4">Update Demographics</button>
+         </div>
         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Past Interactions</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Past Interactions</h2>
              <ul>
                    <?php if($interactions): ?>
                          <?php foreach ($interactions as $interaction): ?>
@@ -160,7 +278,7 @@ require 'header.php';
                       <p class="text-gray-600">No interactions found.</p>
                   <?php endif; ?>
              </ul>
-             <form method="POST" action="">
+              <form method="POST" action="">
                 <div class="mb-4">
                     <label for="interaction_type" class="block text-gray-700">Interaction Type</label>
                         <select name="interaction_type" id="interaction_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
@@ -174,10 +292,40 @@ require 'header.php';
                      <label for="details" class="block text-gray-700">Details</label>
                         <textarea name="details" id="details" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
                 </div>
-                  <button type="submit" name="add_interaction" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Interaction</button>
+                 <button type="submit" name="add_interaction" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Interaction</button>
            </form>
     </div>
-    <div class="mb-4">
+     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+         <h2 class="text-xl font-bold text-gray-800 mb-4">Tags</h2>
+             <div class="flex gap-2 mb-4">
+                    <?php if($tags): ?>
+                       <?php foreach($tags as $tag): ?>
+                          <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <?php if(!empty($tag['color'])) echo 'bg-' . $tag['color'] . '-100 text-' . $tag['color'] . '-800' ?>"><?php echo $tag['tag'] ?></span>
+                        <?php endforeach; ?>
+                     <?php else: ?>
+                     <p class="text-gray-600">No tags added.</p>
+                    <?php endif; ?>
+                </div>
+                  <form method="post" action="" class="flex gap-2 items-end">
+                    <div class="mb-4 flex-1">
+                       <label for="tag" class="block text-gray-700">Tag Name</label>
+                          <input type="text" name="tag" id="tag" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                 </div>
+                    <div class="mb-4">
+                       <label for="color" class="block text-gray-700">Tag Color</label>
+                             <select name="color" id="color" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                   <option value="gray">Gray</option>
+                                   <option value="red">Red</option>
+                                   <option value="green">Green</option>
+                                   <option value="blue">Blue</option>
+                                   <option value="yellow">Yellow</option>
+                                   <option value="purple">Purple</option>
+                                </select>
+                    </div>
+                        <button type="submit" name="add_tag" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Tag</button>
+            </form>
+        </div>
+     <div class="mb-4">
         <a href="manage_customers.php"  class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Back To Customers</a>
    </div>
 

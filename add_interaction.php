@@ -7,22 +7,25 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-if (!isset($_GET['id']) || !isset($_GET['customer_id'])) {
-    header("Location: manage_customers.php");
-    exit();
-}
+$customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : 0;
+$interaction_type = $_POST['interaction_type'];
+$details = $_POST['details'];
 
-$preference_id = $_GET['id'];
-$customer_id = $_GET['customer_id'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $customer_id) {
 
+  $stmt = $conn->prepare("INSERT INTO customer_interactions (customer_id, interaction_type, details) VALUES (:customer_id, :interaction_type, :details)");
+    $stmt->bindParam(':customer_id', $customer_id);
+     $stmt->bindParam(':interaction_type', $interaction_type);
+     $stmt->bindParam(':details', $details);
+    if ($stmt->execute()) {
+        header("Location: view_customer.php?id=$customer_id&success=true");
+        exit();
+    } else {
+        echo "<script>alert('Error adding interaction.');</script>";
+    }
 
-$stmt = $conn->prepare("DELETE FROM customer_preferences WHERE id = :id");
-$stmt->bindParam(':id', $preference_id);
-
-if ($stmt->execute()) {
+} else {
     header("Location: view_customer.php?id=$customer_id");
     exit();
-} else {
-    echo "<script>alert('Error deleting preference.');</script>";
 }
 ?>
