@@ -206,7 +206,7 @@
                     <a href="dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
                     <a href="your_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('your_leads.php') ? 'active' : ''; ?>"><i class="fas fa-user-circle mr-2"></i>Your Leads</a>
                     <a href="search_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('search_leads.php') ? 'active' : ''; ?>"><i class="fas fa-search mr-2"></i>Search Leads</a>
-                    <a href="view_tasks.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('view_tasks.php') ? 'active' : ''; ?>"><i class="fas fa-tasks mr-2"></i>View Tasks</a>
+                   <a href="view_tasks.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('view_tasks.php') ? 'active' : ''; ?>"><i class="fas fa-tasks mr-2"></i>View Tasks</a>
                     <a href="manage_credits.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_credits.php') ? 'active' : ''; ?>"><i class="fas fa-credit-card mr-2"></i>Manage Credits</a>
 
                     <!-- Admin Menu -->
@@ -223,7 +223,8 @@
                           <div class="menu-item <?php if (isParentActive('add_customer.php') || isParentActive('manage_customers.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-user-check mr-2"></i>Manage Customers</a>
                                <div class="submenu">
-
+                                  <a href="add_customer.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_customer.php') ? 'active' : ''; ?>"> <i class="fas fa-plus mr-2"></i> Add Customer</a>
+                                     <a href="manage_customers.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_customers.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Customers</a>
                                 </div>
                         </div>
                          <div class="menu-item <?php if (isParentActive('add_employee.php') || isParentActive('manage_employees.php')) echo 'active'; ?>">

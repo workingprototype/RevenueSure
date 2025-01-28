@@ -15,6 +15,7 @@ $stmt = $conn->prepare("SELECT username, credits FROM users WHERE id = :user_id"
 $stmt->bindParam(':user_id', $user_id);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
+$username = $user['username'];
 
 // Fetch leads count
 $stmt = $conn->prepare("SELECT COUNT(*) as total_leads FROM leads");
@@ -25,9 +26,7 @@ $leads_count = $stmt->fetch(PDO::FETCH_ASSOC)['total_leads'];
 require 'header.php';
 
 ?>
-
-
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Welcome, <?php echo htmlspecialchars($user['username']); ?>!</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Welcome, <?php echo htmlspecialchars($username); ?>!</h1>
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -52,8 +51,8 @@ require 'header.php';
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold text-gray-800 mb-2">Admin Actions</h3>
                     <p class="text-gray-600">Manage users and leads.</p>
-                    <a href="admin_dashboard.php" class="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Go to Admin Dashboard</a>
-                </div>
+                      <a href="reporting_dashboard.php" class="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Go to Reporting Dashboard</a>
+                   </div>
             <?php endif; ?>
         </div>
 
