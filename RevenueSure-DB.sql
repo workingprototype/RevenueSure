@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 28, 2025 at 10:15 AM
+-- Generation Time: Jan 28, 2025 at 10:22 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -76,7 +76,6 @@ CREATE TABLE `customers` (
   `phone` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `company` varchar(255) DEFAULT NULL,
-  `preferences` text DEFAULT NULL,
   `last_interaction` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -84,8 +83,50 @@ CREATE TABLE `customers` (
 -- Dumping data for table `customers`
 --
 
-INSERT INTO `customers` (`id`, `name`, `email`, `phone`, `created_at`, `company`, `preferences`, `last_interaction`) VALUES
-(1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01', 'Jabbar Corporations', 'Likes to talk about his work more.', '2025-01-28 09:13:46');
+INSERT INTO `customers` (`id`, `name`, `email`, `phone`, `created_at`, `company`, `last_interaction`) VALUES
+(1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01', 'Jabbar Corporations', '2025-01-28 09:13:46');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer_interactions`
+--
+
+CREATE TABLE `customer_interactions` (
+  `id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `interaction_type` enum('Call','Email','Meeting','Other') NOT NULL,
+  `details` text DEFAULT NULL,
+  `interaction_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `customer_interactions`
+--
+
+INSERT INTO `customer_interactions` (`id`, `customer_id`, `interaction_type`, `details`, `interaction_at`) VALUES
+(1, 1, 'Email', 'Customer wants to discuss more over call.', '2025-01-28 09:18:57'),
+(2, 1, 'Call', 'Customer wants to meet IRL', '2025-01-28 09:19:30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer_preferences`
+--
+
+CREATE TABLE `customer_preferences` (
+  `id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `preference` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `customer_preferences`
+--
+
+INSERT INTO `customer_preferences` (`id`, `customer_id`, `preference`, `created_at`) VALUES
+(1, 1, 'Likes to talk', '2025-01-28 09:18:17');
 
 -- --------------------------------------------------------
 
@@ -263,6 +304,20 @@ ALTER TABLE `customers`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `customer_interactions`
+--
+ALTER TABLE `customer_interactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `customer_id` (`customer_id`);
+
+--
+-- Indexes for table `customer_preferences`
+--
+ALTER TABLE `customer_preferences`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `customer_id` (`customer_id`);
+
+--
 -- Indexes for table `employees`
 --
 ALTER TABLE `employees`
@@ -335,6 +390,18 @@ ALTER TABLE `customers`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `customer_interactions`
+--
+ALTER TABLE `customer_interactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `customer_preferences`
+--
+ALTER TABLE `customer_preferences`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
@@ -385,6 +452,18 @@ ALTER TABLE `user_credits`
 --
 ALTER TABLE `attachments`
   ADD CONSTRAINT `attachments_ibfk_1` FOREIGN KEY (`lead_id`) REFERENCES `leads` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `customer_interactions`
+--
+ALTER TABLE `customer_interactions`
+  ADD CONSTRAINT `customer_interactions_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `customer_preferences`
+--
+ALTER TABLE `customer_preferences`
+  ADD CONSTRAINT `customer_preferences_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `leads`
