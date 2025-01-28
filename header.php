@@ -11,25 +11,64 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
     <!-- Include FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
      <style>
         .submenu {
             display: none;
             padding-left: 20px;
         }
-        .menu-item:hover .submenu {
-          display: block;
+       .menu-item:hover .submenu {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out; /* Apply the fade-in animation on hover */
         }
          .active {
            background-color: #434f5c;
         }
           aside {
             min-width: 256px;
+             transition: all 0.3s ease-in-out;
+        }
+         button {
+              transition: background-color 0.3s ease, color 0.3s ease;
+           }
+           .bg-white {
+             transition: all 0.3s ease-in-out;
+             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+             }
+         input,select, textarea {
+          transition: all 0.3s ease-in-out;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+           }
+             .fade-in-up {
+            animation: fadeInUp 0.3s ease-in-out; /* Apply the fade-in-up animation on load */
+            }
+            .fade-in {
+                animation: fadeIn 0.3s ease-in-out; /* Apply the fade-in animation on load */
+            }
+           @keyframes fadeIn {
+            from {
+                opacity: 0;
+             }
+             to {
+                opacity: 1;
+            }
+          }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+             transform: translateY(20px);
+           }
+          to {
+             opacity: 1;
+             transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body class="bg-gray-100">
     <!-- Navigation Bar -->
-    <div class="flex h-screen">
+    <div class="flex h-screen fade-in-up">
         <!-- Left Sidebar -->
         <aside class="bg-gray-800 text-white w-64 p-4">
             <a href="index.php" class="text-2xl font-bold block mb-6">RevenueSure</a>
@@ -50,6 +89,7 @@
                             <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-user-tie mr-2"></i>Manage Leads</a>
                             <div class="submenu">
                                   <a href="add_lead.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'add_lead.php') echo 'active'; ?>"><i class="fas fa-plus mr-2"></i>Add Lead</a>
+                                  <a href="leads_list.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'leads_list.php') echo 'active'; ?>"><i class="fas fa-list-ul mr-2"></i>View Leads</a>
                                    <a href="import_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php if(basename($_SERVER['PHP_SELF']) === 'import_leads.php') echo 'active'; ?>"><i class="fas fa-file-import mr-2"></i>Import Leads</a>
                             </div>
                         </div>
@@ -85,7 +125,7 @@
         </aside>
 
         <!-- Main Content -->
-        <div class="flex-1 p-4">
+        <div class="flex-1 p-4 fade-in">
             <!-- Top Navigation (for Notifications) -->
             <nav class="bg-blue-600 p-4 text-white mb-6 rounded-md">
                 <div class="container mx-auto flex justify-end items-center">
