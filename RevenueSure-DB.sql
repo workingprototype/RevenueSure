@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 27, 2025 at 07:50 PM
+-- Generation Time: Jan 28, 2025 at 03:55 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -79,16 +79,18 @@ CREATE TABLE `leads` (
   `status` enum('New','Contacted','Converted') DEFAULT 'New',
   `city` varchar(100) DEFAULT NULL,
   `state` varchar(100) DEFAULT NULL,
-  `country` varchar(100) DEFAULT NULL
+  `country` varchar(100) DEFAULT NULL,
+  `source` varchar(100) DEFAULT 'Website',
+  `assigned_to` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `leads`
 --
 
-INSERT INTO `leads` (`id`, `name`, `phone`, `email`, `category_id`, `created_at`, `status`, `city`, `state`, `country`) VALUES
-(1, 'John Doe', '+91 123456789', 'john@demo.com', 1, '2025-01-26 06:53:45', 'New', NULL, NULL, NULL),
-(2, 'Jane Dane', '+ 1 6458898766', 'jane@demo.com', 2, '2025-01-26 06:54:43', 'New', NULL, NULL, NULL);
+INSERT INTO `leads` (`id`, `name`, `phone`, `email`, `category_id`, `created_at`, `status`, `city`, `state`, `country`, `source`, `assigned_to`) VALUES
+(1, 'John Doe', '+91 123456789', 'john@demo.com', 1, '2025-01-26 06:53:45', 'New', NULL, NULL, NULL, 'Website', NULL),
+(2, 'Jane Dane', '+ 1 6458898766', 'jane@demo.com', 2, '2025-01-26 06:54:43', 'New', NULL, NULL, NULL, 'Website', NULL);
 
 -- --------------------------------------------------------
 
@@ -205,7 +207,8 @@ ALTER TABLE `categories`
 --
 ALTER TABLE `leads`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `category_id` (`category_id`);
+  ADD KEY `category_id` (`category_id`),
+  ADD KEY `fk_assigned_to` (`assigned_to`);
 
 --
 -- Indexes for table `lead_scores`
@@ -309,6 +312,7 @@ ALTER TABLE `attachments`
 -- Constraints for table `leads`
 --
 ALTER TABLE `leads`
+  ADD CONSTRAINT `fk_assigned_to` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `leads_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
 
 --

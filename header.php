@@ -59,6 +59,9 @@
                     <a href="manage_credits.php" class="hover:underline">Manage Credits</a>
                     <a href="view_tasks.php" class="hover:underline">View Tasks</a>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
+    <a href="reporting_dashboard.php" class="hover:underline">Reporting</a>
+<?php endif; ?>
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
                         <a href="admin_dashboard.php" class="hover:underline">Admin Dashboard</a>
                         <a href="manage_categories.php" class="hover:underline">Manage Categories</a>
                     <?php endif; ?>
