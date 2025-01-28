@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 28, 2025 at 11:18 AM
+-- Generation Time: Jan 28, 2025 at 11:37 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -271,6 +271,14 @@ CREATE TABLE `notifications` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `user_id`, `message`, `related_id`, `type`, `is_read`, `created_at`) VALUES
+(1, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
+(2, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 0, '2025-01-29 10:24:00');
+
 -- --------------------------------------------------------
 
 --
@@ -279,7 +287,7 @@ CREATE TABLE `notifications` (
 
 CREATE TABLE `tasks` (
   `id` int(11) NOT NULL,
-  `lead_id` int(11) NOT NULL,
+  `lead_id` int(11) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   `task_type` enum('Follow-Up','Meeting','Deadline') NOT NULL,
   `description` text DEFAULT NULL,
@@ -287,6 +295,13 @@ CREATE TABLE `tasks` (
   `status` enum('Pending','Completed') DEFAULT 'Pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tasks`
+--
+
+INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `task_type`, `description`, `due_date`, `status`, `created_at`) VALUES
+(2, NULL, 2, 'Meeting', 'jkj', '2025-01-29 15:54:00', 'Pending', '2025-01-28 10:27:02');
 
 -- --------------------------------------------------------
 
@@ -527,13 +542,13 @@ ALTER TABLE `lead_scores`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `todos`

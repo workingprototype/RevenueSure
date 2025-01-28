@@ -7,22 +7,30 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$lead_id = isset($_GET['lead_id']) ? (int)$_GET['lead_id'] : 0;
+$lead_id = isset($_GET['lead_id']) ? (int)$_GET['lead_id'] : null;
+$user_id = $_SESSION['user_id'];
 
 // Fetch tasks for the lead
-$stmt = $conn->prepare("SELECT tasks.*, users.username FROM tasks JOIN users ON tasks.user_id = users.id WHERE lead_id = :lead_id ORDER BY due_date ASC");
-$stmt->bindParam(':lead_id', $lead_id);
-$stmt->execute();
-$tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+if($lead_id){
+    $stmt = $conn->prepare("SELECT tasks.*, users.username FROM tasks JOIN users ON tasks.user_id = users.id WHERE lead_id = :lead_id ORDER BY due_date ASC");
+    $stmt->bindParam(':lead_id', $lead_id);
+     $stmt->execute();
+    $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}else {
+      $stmt = $conn->prepare("SELECT tasks.*, users.username FROM tasks JOIN users ON tasks.user_id = users.id WHERE user_id = :user_id ORDER BY due_date ASC");
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->execute();
+    $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 // Include header
 require 'header.php';
 ?>
 
-<h1 class="text-3xl font-bold text-gray-800 mb-6">Tasks for Lead #<?php echo $lead_id; ?></h1>
+<h1 class="text-3xl font-bold text-gray-800 mb-6">Tasks for Lead #<?php echo $lead_id ? $lead_id : "All"; ?></h1>
 
 <!-- Add Task Button -->
-<a href="add_task.php?lead_id=<?php echo $lead_id; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mb-6 inline-block">Add Task</a>
+<a href="add_task.php<?php if($lead_id) echo "?lead_id=$lead_id"; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mb-6 inline-block">Add Task</a>
 
 <!-- Tasks Table -->
 <div class="bg-white p-6 rounded-lg shadow-md">
@@ -32,7 +40,7 @@ require 'header.php';
                 <th class="px-4 py-2">Task Type</th>
                 <th class="px-4 py-2">Description</th>
                 <th class="px-4 py-2">Due Date</th>
-                <th class="px-4 py-2">Assigned To</th>
+                 <th class="px-4 py-2">Assigned To</th>
                 <th class="px-4 py-2">Status</th>
                 <th class="px-4 py-2">Actions</th>
             </tr>
@@ -53,6 +61,12 @@ require 'header.php';
                         <td class="px-4 py-2">
                             <a href="edit_task.php?id=<?php echo $task['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
                             <a href="delete_task.php?id=<?php echo $task['id']; ?>" class="text-red-600 hover:underline ml-2">Delete</a>
+                             <a href="toggle_task_status.php?id=<?php echo $task['id']; ?>&status=<?php echo $task['status'] === 'Pending' ? 'Completed' : 'Pending'; ?>" class="text-gray-600 hover:underline ml-2">
+                                 <?php echo $task['status'] === 'Pending' ? 'Mark Complete' : 'Mark Pending'; ?>
+                                </a>
+                             <a href="add_reminder.php?id=<?php echo $task['id']; ?>&due_date=<?php echo urlencode($task['due_date']); ?>" class="text-gray-600 hover:underline ml-2">
+                                  <i class="fas fa-bell"></i>
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

@@ -7,24 +7,31 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$lead_id = isset($_GET['lead_id']) ? (int)$_GET['lead_id'] : 0;
+$lead_id = isset($_GET['lead_id']) ? (int)$_GET['lead_id'] : null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $task_type = $_POST['task_type'];
     $description = $_POST['description'];
     $due_date = $_POST['due_date'];
     $user_id = $_SESSION['user_id'];
-
-    $stmt = $conn->prepare("INSERT INTO tasks (lead_id, user_id, task_type, description, due_date) VALUES (:lead_id, :user_id, :task_type, :description, :due_date)");
-    $stmt->bindParam(':lead_id', $lead_id);
-    $stmt->bindParam(':user_id', $user_id);
+    if($lead_id){
+       $stmt = $conn->prepare("INSERT INTO tasks (lead_id, user_id, task_type, description, due_date) VALUES (:lead_id, :user_id, :task_type, :description, :due_date)");
+       $stmt->bindParam(':lead_id', $lead_id);
+    }else {
+         $stmt = $conn->prepare("INSERT INTO tasks (user_id, task_type, description, due_date) VALUES (:user_id, :task_type, :description, :due_date)");
+    }
+     $stmt->bindParam(':user_id', $user_id);
     $stmt->bindParam(':task_type', $task_type);
     $stmt->bindParam(':description', $description);
     $stmt->bindParam(':due_date', $due_date);
 
     if ($stmt->execute()) {
-        header("Location: view_tasks.php?lead_id=$lead_id");
-        exit();
+      if($lead_id){
+            header("Location: view_tasks.php?lead_id=$lead_id");
+      }else {
+           header("Location: view_tasks.php");
+       }
+         exit();
     } else {
         echo "<script>alert('Error adding task.');</script>";
     }
@@ -50,8 +57,9 @@ require 'header.php';
 
 <!-- Add Task Form -->
 <form method="POST" action="" class="bg-white p-6 rounded-lg shadow-md">
-    <input type="hidden" name="lead_id" value="<?php echo $lead_id; ?>">
-
+  <?php if($lead_id): ?>
+      <input type="hidden" name="lead_id" value="<?php echo $lead_id; ?>">
+  <?php endif; ?>
     <div class="mb-4">
         <label for="task_type" class="block text-gray-700">Task Type</label>
         <select name="task_type" id="task_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
