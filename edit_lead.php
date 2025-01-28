@@ -72,6 +72,19 @@ require 'header.php';
                     <?php endforeach; ?>
                 </select>
             </div>
+            <div class="mb-4">
+    <label for="assigned_to" class="block text-gray-700">Assign To</label>
+    <select name="assigned_to" id="assigned_to" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+        <option value="">Unassigned</option>
+        <?php
+        $stmt = $conn->prepare("SELECT * FROM employees ORDER BY name ASC");
+        $stmt->execute();
+        $employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($employees as $employee): ?>
+            <option value="<?php echo $employee['id']; ?>"><?php echo htmlspecialchars($employee['name']); ?></option>
+        <?php endforeach; ?>
+    </select>
+</div>
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Update Lead</button>
         </form>
 

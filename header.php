@@ -55,11 +55,13 @@
                 </div>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <a href="dashboard.php" class="hover:underline">Dashboard</a>
-                    <a href="search_leads.php" class="hover:underline">Leads</a>
+                    <a href="search_leads.php" class="hover:underline">Search</a>
+                    <a href="add_lead.php" class="hover:underline">Leads</a>
                     <a href="manage_credits.php" class="hover:underline">Manage Credits</a>
                     <a href="view_tasks.php" class="hover:underline">View Tasks</a>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
     <a href="reporting_dashboard.php" class="hover:underline">Reporting</a>
+    <a href="add_employee.php" class="hover:underline">Add Employees</a>
 <?php endif; ?>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <a href="admin_dashboard.php" class="hover:underline">Admin Dashboard</a>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 28, 2025 at 03:55 AM
+-- Generation Time: Jan 28, 2025 at 04:48 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -66,6 +66,27 @@ INSERT INTO `categories` (`id`, `name`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `employees`
+--
+
+CREATE TABLE `employees` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `employees`
+--
+
+INSERT INTO `employees` (`id`, `name`, `email`, `phone`, `created_at`) VALUES
+(1, 'Jordan Belfort', 'sales@demo.com', '123456789', '2025-01-28 03:04:22');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `leads`
 --
 
@@ -90,7 +111,8 @@ CREATE TABLE `leads` (
 
 INSERT INTO `leads` (`id`, `name`, `phone`, `email`, `category_id`, `created_at`, `status`, `city`, `state`, `country`, `source`, `assigned_to`) VALUES
 (1, 'John Doe', '+91 123456789', 'john@demo.com', 1, '2025-01-26 06:53:45', 'New', NULL, NULL, NULL, 'Website', NULL),
-(2, 'Jane Dane', '+ 1 6458898766', 'jane@demo.com', 2, '2025-01-26 06:54:43', 'New', NULL, NULL, NULL, 'Website', NULL);
+(2, 'Jane Dane', '+ 1 6458898766', 'jane@demo.com', 2, '2025-01-26 06:54:43', 'New', NULL, NULL, NULL, 'Website', NULL),
+(3, 'TEST LEAD', '123456789', 'testlead@demo.com', 1, '2025-01-28 03:34:51', 'New', NULL, NULL, NULL, 'Website', NULL);
 
 -- --------------------------------------------------------
 
@@ -113,7 +135,8 @@ CREATE TABLE `lead_scores` (
 --
 
 INSERT INTO `lead_scores` (`id`, `lead_id`, `website_visits`, `email_opens`, `form_submissions`, `total_score`, `last_updated`) VALUES
-(1, 2, 2, 1, 1, 7, '2025-01-27 11:08:55');
+(1, 2, 2, 1, 1, 7, '2025-01-27 11:08:55'),
+(2, 3, 2, 2, 2, 12, '2025-01-28 03:40:34');
 
 -- --------------------------------------------------------
 
@@ -203,6 +226,12 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `employees`
+--
+ALTER TABLE `employees`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `leads`
 --
 ALTER TABLE `leads`
@@ -263,16 +292,22 @@ ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `employees`
+--
+ALTER TABLE `employees`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `leads`
 --
 ALTER TABLE `leads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `lead_scores`
 --
 ALTER TABLE `lead_scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `notifications`
