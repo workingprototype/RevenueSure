@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 28, 2025 at 04:48 AM
+-- Generation Time: Jan 28, 2025 at 05:13 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -82,7 +82,8 @@ CREATE TABLE `employees` (
 --
 
 INSERT INTO `employees` (`id`, `name`, `email`, `phone`, `created_at`) VALUES
-(1, 'Jordan Belfort', 'sales@demo.com', '123456789', '2025-01-28 03:04:22');
+(1, 'Jordan Belfort', 'sales@demo.com', '123456789', '2025-01-28 03:04:22'),
+(2, 'David', 'david@employee.com', '123456678', '2025-01-28 04:04:54');
 
 -- --------------------------------------------------------
 
@@ -98,6 +99,7 @@ CREATE TABLE `leads` (
   `category_id` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `status` enum('New','Contacted','Converted') DEFAULT 'New',
+  `converted_by` int(11) DEFAULT NULL,
   `city` varchar(100) DEFAULT NULL,
   `state` varchar(100) DEFAULT NULL,
   `country` varchar(100) DEFAULT NULL,
@@ -109,10 +111,12 @@ CREATE TABLE `leads` (
 -- Dumping data for table `leads`
 --
 
-INSERT INTO `leads` (`id`, `name`, `phone`, `email`, `category_id`, `created_at`, `status`, `city`, `state`, `country`, `source`, `assigned_to`) VALUES
-(1, 'John Doe', '+91 123456789', 'john@demo.com', 1, '2025-01-26 06:53:45', 'New', NULL, NULL, NULL, 'Website', NULL),
-(2, 'Jane Dane', '+ 1 6458898766', 'jane@demo.com', 2, '2025-01-26 06:54:43', 'New', NULL, NULL, NULL, 'Website', NULL),
-(3, 'TEST LEAD', '123456789', 'testlead@demo.com', 1, '2025-01-28 03:34:51', 'New', NULL, NULL, NULL, 'Website', NULL);
+INSERT INTO `leads` (`id`, `name`, `phone`, `email`, `category_id`, `created_at`, `status`, `converted_by`, `city`, `state`, `country`, `source`, `assigned_to`) VALUES
+(1, 'John Doe', '+91 123456789', 'john@demo.com', 1, '2025-01-26 06:53:45', 'New', NULL, NULL, NULL, NULL, 'Website', NULL),
+(2, 'Jane Dane', '+ 1 6458898766', 'jane@demo.com', 2, '2025-01-26 06:54:43', 'Converted', NULL, NULL, NULL, NULL, 'Website', NULL),
+(5, 'TEST LEAD', '123345', 'test@assigneddemo.com', 1, '2025-01-28 03:57:53', 'Converted', NULL, NULL, NULL, NULL, 'Website', 1),
+(6, 'jakegyk', '1231238123', 'jake@demo.com', 2, '2025-01-28 04:04:31', 'New', NULL, NULL, NULL, NULL, 'Website', 1),
+(7, 'PowerLead', '1231823918', 'power@demo.com', 1, '2025-01-28 04:05:31', 'Converted', 1, NULL, NULL, NULL, 'Website', 2);
 
 -- --------------------------------------------------------
 
@@ -136,7 +140,7 @@ CREATE TABLE `lead_scores` (
 
 INSERT INTO `lead_scores` (`id`, `lead_id`, `website_visits`, `email_opens`, `form_submissions`, `total_score`, `last_updated`) VALUES
 (1, 2, 2, 1, 1, 7, '2025-01-27 11:08:55'),
-(2, 3, 2, 2, 2, 12, '2025-01-28 03:40:34');
+(3, 5, 0, 1, 1, 5, '2025-01-28 03:59:32');
 
 -- --------------------------------------------------------
 
@@ -295,19 +299,19 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `leads`
 --
 ALTER TABLE `leads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `lead_scores`
 --
 ALTER TABLE `lead_scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `notifications`

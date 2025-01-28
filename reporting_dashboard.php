@@ -23,14 +23,16 @@ $stmt = $conn->prepare("SELECT source, COUNT(*) as lead_count FROM leads GROUP B
 $stmt->execute();
 $lead_sources = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
 // 3. Sales Performance
 $stmt = $conn->prepare("SELECT 
-    users.username, 
-    COUNT(leads.id) as total_leads, 
-    SUM(CASE WHEN leads.status = 'Converted' THEN 1 ELSE 0 END) as converted_leads 
-    FROM leads 
-    JOIN users ON leads.assigned_to = users.id 
-    GROUP BY users.username");
+    COALESCE(e.name, u.username) as converted_by_name,
+    COUNT(l.id) as total_leads,
+    SUM(CASE WHEN l.status = 'Converted' THEN 1 ELSE 0 END) as converted_leads
+FROM leads l
+LEFT JOIN users u ON l.converted_by = u.id
+LEFT JOIN employees e ON l.converted_by = e.id
+GROUP BY converted_by_name");
 $stmt->execute();
 $sales_performance = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -58,14 +60,14 @@ require 'header.php';
             </tr>
         </thead>
         <tbody>
-            <?php if ($lead_sources): ?>
-                <?php foreach ($lead_sources as $source): ?>
+            <?php if ($lead_sources) : ?>
+                <?php foreach ($lead_sources as $source) : ?>
                     <tr class="border-b">
                         <td class="px-4 py-2"><?php echo htmlspecialchars($source['source']); ?></td>
                         <td class="px-4 py-2"><?php echo htmlspecialchars($source['lead_count']); ?></td>
                     </tr>
                 <?php endforeach; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <tr>
                     <td colspan="2" class="px-4 py-2 text-center text-gray-600">No lead sources found.</td>
                 </tr>
@@ -87,22 +89,22 @@ require 'header.php';
             </tr>
         </thead>
         <tbody>
-            <?php if ($sales_performance): ?>
-                <?php foreach ($sales_performance as $performance): ?>
+            <?php if ($sales_performance) : ?>
+                <?php foreach ($sales_performance as $performance) : ?>
                     <tr class="border-b">
-                        <td class="px-4 py-2"><?php echo htmlspecialchars($performance['username']); ?></td>
+                        <td class="px-4 py-2"><?php echo htmlspecialchars($performance['converted_by_name'] ? $performance['converted_by_name'] : 'Unassigned'); ?></td>
                         <td class="px-4 py-2"><?php echo htmlspecialchars($performance['total_leads']); ?></td>
                         <td class="px-4 py-2"><?php echo htmlspecialchars($performance['converted_leads']); ?></td>
                         <td class="px-4 py-2">
-                            <?php 
-                            $rate = $performance['total_leads'] > 0 ? 
+                            <?php
+                            $rate = $performance['total_leads'] > 0 ?
                                 round(($performance['converted_leads'] / $performance['total_leads']) * 100, 2) : 0;
                             echo $rate . '%';
                             ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <tr>
                     <td colspan="4" class="px-4 py-2 text-center text-gray-600">No sales performance data found.</td>
                 </tr>

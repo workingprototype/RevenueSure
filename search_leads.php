@@ -25,48 +25,51 @@ $params = [];
 
 // Search by name, email, or phone
 if (!empty($search)) {
-    $filters[] = "(name LIKE :search OR email LIKE :search OR phone LIKE :search)";
+    $filters[] = "(leads.name LIKE :search OR leads.email LIKE :search OR leads.phone LIKE :search)";
     $params[':search'] = "%$search%";
 }
 
 // Filter by category
 if (!empty($_GET['category_id'])) {
-    $filters[] = "category_id = :category_id";
+    $filters[] = "leads.category_id = :category_id";
     $params[':category_id'] = $_GET['category_id'];
 }
 
 // Filter by status
 if (!empty($_GET['status'])) {
-    $filters[] = "status = :status";
+    $filters[] = "leads.status = :status";
     $params[':status'] = $_GET['status'];
 }
 
 // Filter by date range
 if (!empty($_GET['start_date'])) {
-    $filters[] = "created_at >= :start_date";
+    $filters[] = "leads.created_at >= :start_date";
     $params[':start_date'] = $_GET['start_date'];
 }
 if (!empty($_GET['end_date'])) {
-    $filters[] = "created_at <= :end_date";
+    $filters[] = "leads.created_at <= :end_date";
     $params[':end_date'] = $_GET['end_date'] . ' 23:59:59'; // Include the entire end date
 }
 
 // Filter by location
 if (!empty($_GET['city'])) {
-    $filters[] = "city LIKE :city";
+    $filters[] = "leads.city LIKE :city";
     $params[':city'] = "%{$_GET['city']}%";
 }
 if (!empty($_GET['state'])) {
-    $filters[] = "state LIKE :state";
+    $filters[] = "leads.state LIKE :state";
     $params[':state'] = "%{$_GET['state']}%";
 }
 if (!empty($_GET['country'])) {
-    $filters[] = "country LIKE :country";
+    $filters[] = "leads.country LIKE :country";
     $params[':country'] = "%{$_GET['country']}%";
 }
 
-// Build the base query
-$query = "SELECT * FROM leads";
+// Build the base query with JOIN
+$query = "SELECT leads.*, employees.name as assigned_employee
+          FROM leads
+          LEFT JOIN employees ON leads.assigned_to = employees.id";
+
 
 // Add filters to the query
 if (!empty($filters)) {
@@ -175,10 +178,11 @@ require 'header.php';
         <div>
             <label for="sort_by" class="text-gray-700">Sort By:</label>
             <select name="sort_by" id="sort_by" onchange="window.location.href = '?search=<?php echo urlencode($search); ?>&sort_by=' + this.value + '&order=<?php echo $order; ?>'" class="px-4 py-2 border rounded-lg">
-                <option value="name" <?php echo $sort_by === 'name' ? 'selected' : ''; ?>>Name</option>
-                <option value="email" <?php echo $sort_by === 'email' ? 'selected' : ''; ?>>Email</option>
-                <option value="phone" <?php echo $sort_by === 'phone' ? 'selected' : ''; ?>>Phone</option>
-                <option value="category_id" <?php echo $sort_by === 'category_id' ? 'selected' : ''; ?>>Category</option>
+                <option value="leads.name" <?php echo $sort_by === 'leads.name' ? 'selected' : ''; ?>>Name</option>
+                <option value="leads.email" <?php echo $sort_by === 'leads.email' ? 'selected' : ''; ?>>Email</option>
+                <option value="leads.phone" <?php echo $sort_by === 'leads.phone' ? 'selected' : ''; ?>>Phone</option>
+                <option value="leads.category_id" <?php echo $sort_by === 'leads.category_id' ? 'selected' : ''; ?>>Category</option>
+                <option value="leads.created_at" <?php echo $sort_by === 'leads.created_at' ? 'selected' : ''; ?>>Created At</option>
             </select>
             <label for="order" class="text-gray-700 ml-4">Order:</label>
             <select name="order" id="order" onchange="window.location.href = '?search=<?php echo urlencode($search); ?>&sort_by=<?php echo $sort_by; ?>&order=' + this.value" class="px-4 py-2 border rounded-lg">
@@ -197,11 +201,12 @@ require 'header.php';
                     <th class="px-4 py-2">Phone</th>
                     <th class="px-4 py-2">Category</th>
                     <th class="px-4 py-2">Status</th>
-                    <th class="px-4 py-2">City</th>
+                     <th class="px-4 py-2">City</th>
                     <th class="px-4 py-2">State</th>
                     <th class="px-4 py-2">Country</th>
                     <th class="px-4 py-2">Score</th>
                     <th class="px-4 py-2">Category</th>
+                     <th class="px-4 py-2">Assigned To</th>
                     <th class="px-4 py-2">Actions</th>
                     <th class="px-4 py-2">Task Management</th>
                 </tr>
@@ -216,19 +221,20 @@ require 'header.php';
                             <td class="px-4 py-2"><?php echo htmlspecialchars($lead['phone']); ?></td>
                             <td class="px-4 py-2"><?php echo htmlspecialchars($lead['category_id']); ?></td>
                             <td class="px-4 py-2"><?php echo htmlspecialchars($lead['status']); ?></td>
-                            <td class="px-4 py-2"><?php echo htmlspecialchars($lead['city']); ?></td>
+                             <td class="px-4 py-2"><?php echo htmlspecialchars($lead['city']); ?></td>
                             <td class="px-4 py-2"><?php echo htmlspecialchars($lead['state']); ?></td>
                             <td class="px-4 py-2"><?php echo htmlspecialchars($lead['country']); ?></td>
                             <td class="px-4 py-2"><?php echo $lead_score ? $lead_score['total_score'] : 0; ?></td>
                             <td class="px-4 py-2"><?php echo $lead_score ? categorize_lead($lead_score['total_score']) : "Cold"; ?></td>
+                            <td class="px-4 py-2"><?php echo htmlspecialchars($lead['assigned_employee'] ? $lead['assigned_employee'] : 'Unassigned'); ?></td>
                             <td class="px-4 py-2">
                             <a href="view_lead.php?id=<?php echo $lead['id']; ?>" class="text-purple-600 hover:underline">View Lead</a>
                                 <a href="edit_lead.php?id=<?php echo $lead['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
                                 <a href="delete_lead.php?id=<?php echo $lead['id']; ?>" class="text-red-600 hover:underline ml-2">Delete</a>
                             </td>
                             <td class="px-4 py-2">
-    <a href="view_tasks.php?lead_id=<?php echo $lead['id']; ?>" class="text-green-600 hover:underline">View Tasks</a>
-</td>
+                                <a href="view_tasks.php?lead_id=<?php echo $lead['id']; ?>" class="text-green-600 hover:underline">View Tasks</a>
+                             </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>

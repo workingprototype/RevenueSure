@@ -15,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $phone = trim($_POST['phone']);
     $email = trim($_POST['email']);
     $category_id = $_POST['category_id'];
+    $assigned_to = isset($_POST['assigned_to']) && !empty($_POST['assigned_to']) ? $_POST['assigned_to'] : null; // Get the assigned_to value. Default to NULL if not set.
+
 
     // Validate inputs
     if (empty($name) || empty($phone) || empty($email) || empty($category_id)) {
@@ -29,12 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($stmt->fetch(PDO::FETCH_ASSOC)) {
             $error = "A lead with this email already exists.";
         } else {
-            // Insert the lead
-            $stmt = $conn->prepare("INSERT INTO leads (name, phone, email, category_id) VALUES (:name, :phone, :email, :category_id)");
-            $stmt->bindParam(':name', $name);
+             // Insert the lead
+            $stmt = $conn->prepare("INSERT INTO leads (name, phone, email, category_id, assigned_to) VALUES (:name, :phone, :email, :category_id, :assigned_to)");
+             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':phone', $phone);
-            $stmt->bindParam(':email', $email);
+             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':category_id', $category_id);
+             $stmt->bindParam(':assigned_to', $assigned_to);
 
             if ($stmt->execute()) {
                 $success = "Lead added successfully!";
