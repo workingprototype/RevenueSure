@@ -22,9 +22,14 @@ $stmt = $conn->prepare("SELECT COUNT(*) as total_leads FROM leads");
 $stmt->execute();
 $leads_count = $stmt->fetch(PDO::FETCH_ASSOC)['total_leads'];
 
+// Fetch todos
+$stmt = $conn->prepare("SELECT * FROM todos WHERE user_id = :user_id ORDER BY due_date ASC");
+$stmt->bindParam(':user_id', $user_id);
+$stmt->execute();
+$todos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Include header
 require 'header.php';
-
 ?>
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Welcome, <?php echo htmlspecialchars($username); ?>!</h1>
 
@@ -51,11 +56,175 @@ require 'header.php';
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold text-gray-800 mb-2">Admin Actions</h3>
                     <p class="text-gray-600">Manage users and leads.</p>
-                      <a href="reporting_dashboard.php" class="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Go to Reporting Dashboard</a>
+                     <a href="reporting_dashboard.php" class="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Go to Reporting Dashboard</a>
                    </div>
             <?php endif; ?>
         </div>
+         <div class="bg-white p-6 rounded-lg shadow-md mt-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">To-Do List</h2>
+         <form method="POST" action="add_todo.php">
+            <div class="mb-4">
+               <label for="title" class="block text-gray-700">Title</label>
+               <input type="text" name="title" id="title" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+            </div>
+            <div class="mb-4">
+               <label for="description" class="block text-gray-700">Description</label>
+               <textarea name="description" id="description" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="due_date" class="block text-gray-700">Due Date</label>
+                 <input type="datetime-local" name="due_date" id="due_date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+           <div class="mb-4">
+                 <label for="related_type" class="block text-gray-700">Related to</label>
+                <select name="related_type" id="related_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="showRelatedInput(this.value)">
+                      <option value="">None</option>
+                     <option value="task">Task</option>
+                   <option value="lead">Lead</option>
+                    <option value="customer">Customer</option>
+                </select>
+            </div>
+             <div id="related_id_container" class="mb-4 hidden">
+                 <label for="related_id" class="block text-gray-700">Related</label>
+                   <input type="text" name="related_id" id="related_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"  data-autocomplete-id="related-autocomplete">
+                    <div id="related-autocomplete-suggestions" class="absolute z-10 mt-2 w-full bg-white border rounded shadow-md hidden"></div>
+              </div>
+               <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add To Do</button>
+       </form>
+         <?php if ($todos): ?>
+              <div class="mt-6">
+               <label class="inline-flex items-center">
+                     <input type="checkbox" id="show_completed" class="mr-2" >
+                        <span class="text-gray-700">Show Completed</span>
+                   </label>
+              </div>
+               <ul id="todo_items" class="mt-4">
+                 <?php foreach ($todos as $todo): ?>
+                  <li class="mb-2 p-3 rounded-lg border relative <?php echo $todo['is_completed'] ? 'bg-green-100 border-green-200 line-through completed-todo' : 'border-gray-200'; ?>">
+                        <div class="flex justify-between items-center">
+                          <div>
+                            <h3 class="font-semibold <?php echo $todo['is_completed'] ? 'text-green-700' : 'text-gray-800'; ?>"> <?php echo htmlspecialchars($todo['title']); ?></h3>
+                             <p class="text-gray-600"> <?php echo htmlspecialchars($todo['description'] ? $todo['description'] : ""); ?></p>
+                                   <?php if($todo['due_date']): ?>
+                                        <p class="text-gray-600 text-sm">
+                                          Due Date:  <?php echo date('Y-m-d H:i', strtotime($todo['due_date'])); ?>
+                                       </p>
+                                    <?php endif; ?>
+                             <?php if ($todo['related_type'] && $todo['related_id']): ?>
+                                <p class="text-gray-500 text-sm">
+                                    <strong>Related:</strong>
+                                    <?php echo ucfirst(htmlspecialchars($todo['related_type'])); ?> #<?php echo htmlspecialchars($todo['related_id']); ?>
+                                </p>
+                             <?php endif; ?>
+                        </div>
+                            <div class="flex gap-2">
+                                 <a href="edit_todo.php?id=<?php echo $todo['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
+                                 <a href="delete_todo.php?id=<?php echo $todo['id']; ?>" class="text-red-600 hover:underline">Delete</a>
+                              <a href="mark_complete.php?id=<?php echo $todo['id']; ?>&completed=<?php echo $todo['is_completed'] == 1 ? 0 : 1 ?>" class="text-green-600 hover:underline"><?php echo $todo['is_completed'] == 1 ? 'Mark Incomplete' : 'Mark Complete'; ?></a>
+                           </div>
+                        </div>
+                     </li>
+                 <?php endforeach; ?>
+                </ul>
+          <?php else: ?>
+                 <p class="text-gray-600">No to-dos added.</p>
+          <?php endif; ?>
+    </div>
+<script>
+      function showRelatedInput(type) {
+        const relatedIdContainer = document.getElementById('related_id_container');
+        if (type === 'task' || type === 'lead' || type === 'customer') {
+             relatedIdContainer.classList.remove('hidden');
+        } else {
+             relatedIdContainer.classList.add('hidden');
+              document.getElementById('related_id').value = '';
+        }
+        //Clear input field when no relation
+        if(type == ""){
+          document.getElementById('related_id').value = "";
+        }
+    }
+   document.addEventListener('DOMContentLoaded', function() {
+        const relatedTypeSelect = document.getElementById('related_type');
+        const relatedIdInput = document.querySelector('input[data-autocomplete-id="related-autocomplete"]');
+         const suggestionsDiv = document.getElementById('related-autocomplete-suggestions');
+           let selectedRelatedId = null;
+            relatedIdInput.addEventListener('input', function () {
+                const query = this.value.trim();
+                const type = relatedTypeSelect.value.trim();
+                if (query.length < 1 || type === "") {
+                    suggestionsDiv.classList.add('hidden');
+                    return;
+                }
 
+                fetch(`fetch_related_entities.php?search=${query}&type=${type}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsDiv.innerHTML = '';
+                        if(data.length > 0){
+                            data.slice(0, 10).forEach(related => {
+                                const suggestion = document.createElement('div');
+                                suggestion.textContent = related.name ? related.name : related.title;
+                                suggestion.classList.add('px-4', 'py-2', 'hover:bg-gray-100', 'cursor-pointer');
+                                suggestion.addEventListener('click', function () {
+                                    relatedIdInput.value = related.name ? related.name : related.title;
+                                     selectedRelatedId = related.id;
+                                    suggestionsDiv.classList.add('hidden');
+                                });
+                                suggestionsDiv.appendChild(suggestion);
+                            });
+                            suggestionsDiv.classList.remove('hidden');
+                        } else {
+                                suggestionsDiv.classList.add('hidden');
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error('Error fetching results:', error);
+                        suggestionsDiv.classList.add('hidden');
+                    });
+
+            });
+            document.addEventListener('click', function (event) {
+                if (!relatedIdInput.contains(event.target) && !suggestionsDiv.contains(event.target)) {
+                    suggestionsDiv.classList.add('hidden');
+                }
+            });
+
+           const form =  relatedIdInput.closest('form');
+           form.addEventListener('submit', function(event) {
+                if (relatedIdInput.value.trim() && selectedRelatedId == null ) {
+                  if(relatedTypeSelect.value != ""){
+                        event.preventDefault();
+                      alert("Please select a valid from the suggestions before saving.");
+                  }
+                }
+                 if (relatedIdInput.value.trim() && selectedRelatedId != null ) {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'related_id';
+                    hiddenInput.value =  selectedRelatedId;
+                    form.appendChild(hiddenInput);
+               }
+           });
+            showRelatedInput(document.getElementById('related_type').value);
+              const showCompletedCheckbox = document.getElementById('show_completed');
+         const todoItems = document.querySelectorAll('#todo_items li');
+              showCompletedCheckbox.addEventListener('change', function() {
+               todoItems.forEach(function(todo){
+                     if (this.checked) {
+                      todo.classList.remove('hidden')
+                     }else {
+                          if (todo.classList.contains('completed-todo')) {
+                                   todo.classList.add('hidden')
+                             }else {
+                                   todo.classList.remove('hidden')
+                             }
+                        }
+                 });
+           });
+    });
+</script>
 <?php
 // Include footer
 require 'footer.php';

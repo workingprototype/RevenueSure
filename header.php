@@ -180,6 +180,9 @@
             outline: 2px solid var(--primary-color);
             outline-offset: 2px;
         }
+         #profileDropdown {
+            transition: all 0.3s ease-in-out;
+           }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -220,11 +223,12 @@
                                    <a href="import_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('import_leads.php') ? 'active' : ''; ?>"><i class="fas fa-file-import mr-2"></i>Import Leads</a>
                             </div>
                         </div>
-                          <div class="menu-item <?php if (isParentActive('add_customer.php') || isParentActive('manage_customers.php')) echo 'active'; ?>">
+                          <div class="menu-item <?php if (isParentActive('add_customer.php') || isParentActive('manage_customers.php') || isParentActive('view_customer.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-user-check mr-2"></i>Manage Customers</a>
                                <div class="submenu">
                                   <a href="add_customer.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_customer.php') ? 'active' : ''; ?>"> <i class="fas fa-plus mr-2"></i> Add Customer</a>
                                      <a href="manage_customers.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_customers.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Customers</a>
+                                       <a href="view_customer.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isParentActive('view_customer.php') ? 'active' : ''; ?>"><i class="fas fa-eye mr-2"></i>Customer Profile</a>
                                 </div>
                         </div>
                          <div class="menu-item <?php if (isParentActive('add_employee.php') || isParentActive('manage_employees.php')) echo 'active'; ?>">
