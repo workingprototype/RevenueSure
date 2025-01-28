@@ -134,12 +134,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
            $error =  "There was an error updating customer info.";
          }
+    }  elseif (isset($_POST['remove_profile_picture'])) {
+        // Set profile_picture to NULL
+        $stmt = $conn->prepare("UPDATE customers SET profile_picture = NULL WHERE id = :id");
+        $stmt->bindParam(':id', $customer_id);
+           if ($stmt->execute()) {
+                    $success = "Profile picture removed successfully!";
+                       header("Location: view_customer.php?id=$customer_id&success=true"); // Redirect back to profile page
+                        exit();
+                } else {
+                    $error = "Error removing profile picture.";
+                      header("Location: view_customer.php?id=$customer_id"); // Redirect back to profile page
+                        exit();
+           }
+
     }
 
+}
+
+// Handle profile picture upload
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === 0) {
+    $file_name = basename($_FILES['profile_picture']['name']);
+    $file_tmp = $_FILES['profile_picture']['tmp_name'];
+    $file_path = "uploads/profile/" . uniqid() . "_" . $file_name;
+
+     if (!is_dir('uploads/profile')) {
+                mkdir('uploads/profile', 0777, true);
+            }
+
+
+    if (move_uploaded_file($file_tmp, $file_path)) {
+        $stmt = $conn->prepare("UPDATE customers SET profile_picture = :profile_picture WHERE id = :id");
+        $stmt->bindParam(':profile_picture', $file_path);
+        $stmt->bindParam(':id', $customer_id);
+          if ($stmt->execute()) {
+                $success = "Profile picture uploaded successfully!";
+                header("Location: view_customer.php?id=$customer_id&success=true"); // Redirect back to profile page
+                exit();
+            } else {
+                $error = "Error updating profile.";
+                 header("Location: view_customer.php?id=$customer_id");
+                  exit();
+            }
+    } else {
+        $error = "Error moving profile picture.";
+         header("Location: view_customer.php?id=$customer_id");
+         exit();
+    }
 }
  if(isset($_GET['success']) && $_GET['success'] == 'true'){
        $success = "Customer details updated successfully!";
   }
+
 // Fetch customer preferences
 $stmt = $conn->prepare("SELECT * FROM customer_preferences WHERE customer_id = :customer_id ORDER BY created_at ASC");
 $stmt->bindParam(':customer_id', $customer_id);
@@ -162,13 +208,12 @@ $stmt = $conn->prepare("SELECT * FROM customer_tags WHERE customer_id = :custome
 $stmt->bindParam(':customer_id', $customer_id);
 $stmt->execute();
 $tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 // Include header
 require 'header.php';
 ?>
 
 <h1 class="text-3xl font-bold text-gray-800 mb-6">Customer Details: <?php echo htmlspecialchars($customer['name']); ?></h1>
-  <?php if ($error): ?>
+    <?php if ($error): ?>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
             <?php echo $error; ?>
         </div>
@@ -185,13 +230,27 @@ require 'header.php';
         <p><strong>Name:</strong> <?php echo htmlspecialchars($customer['name']); ?></p>
         <p><strong>Email:</strong> <?php echo htmlspecialchars($customer['email']); ?></p>
         <p><strong>Phone:</strong> <?php echo htmlspecialchars($customer['phone']); ?></p>
-           <?php if($customer['profile_picture']): ?>
-                         <img src="<?php echo $customer['profile_picture']; ?>" alt="Profile Picture" class="rounded-full w-32 h-32 object-cover">
+         <div class="mb-4 flex justify-center relative">
+                     <?php if($customer['profile_picture']): ?>
+                          <img src="<?php echo $customer['profile_picture']; ?>" alt="Profile Picture" class="rounded-full w-32 h-32 object-cover">
+                           <form method="post" action="" class="absolute top-0 right-0">
+                                 <button type="submit" name="remove_profile_picture" class="bg-red-500 text-white p-1 rounded-full hover:bg-red-700 transition duration-300">
+                                      <i class="fas fa-trash-alt fa-xs"></i>
+                                  </button>
+                           </form>
                       <?php else: ?>
                          <div class="rounded-full w-32 h-32 bg-gray-200 flex items-center justify-center">
                              <i class="fas fa-user fa-3x text-gray-500"></i>
                          </div>
                       <?php endif; ?>
+                </div>
+         <form method="POST" action="" enctype="multipart/form-data">
+                    <div class="mb-4">
+                       <label for="profile_picture" class="block text-gray-700">Profile Picture</label>
+                       <input type="file" name="profile_picture" id="profile_picture" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    </div>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Upload Picture</button>
+         </form>
     </div>
      <form method="post" action="">
         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
@@ -201,7 +260,7 @@ require 'header.php';
                        <input type="text" name="company" id="company" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($customer['company'] ?? ''); ?>">
                 </div>
         </div>
-         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+           <div class="bg-white p-6 rounded-lg shadow-md mb-8">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Preferences</h2>
              <ul class="mb-4">
                  <?php if($preferences): ?>
@@ -223,7 +282,7 @@ require 'header.php';
                 </div>
                 <button type="submit" name="add_preference" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Preference</button>
         </div>
-           <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Demographic Information</h2>
              <div class="mb-4">
                     <label for="address" class="block text-gray-700">Address</label>
@@ -261,9 +320,10 @@ require 'header.php';
                 </div>
         </div>
            <button type="submit" name="update_demographics" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-4">Update Demographics</button>
-         </div>
+        </div>
+       
         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Past Interactions</h2>
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Past Interactions</h2>
              <ul>
                    <?php if($interactions): ?>
                          <?php foreach ($interactions as $interaction): ?>
@@ -295,7 +355,7 @@ require 'header.php';
                  <button type="submit" name="add_interaction" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Interaction</button>
            </form>
     </div>
-     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+          <div class="bg-white p-6 rounded-lg shadow-md mb-8">
          <h2 class="text-xl font-bold text-gray-800 mb-4">Tags</h2>
              <div class="flex gap-2 mb-4">
                     <?php if($tags): ?>
@@ -325,7 +385,7 @@ require 'header.php';
                         <button type="submit" name="add_tag" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Tag</button>
             </form>
         </div>
-     <div class="mb-4">
+    <div class="mb-4">
         <a href="manage_customers.php"  class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Back To Customers</a>
    </div>
 
