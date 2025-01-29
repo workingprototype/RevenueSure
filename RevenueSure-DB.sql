@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 29, 2025 at 11:37 PM
+-- Generation Time: Jan 30, 2025 at 12:08 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -513,7 +513,8 @@ INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `task_id`, `task_name`, `projec
 (7, NULL, 2, 'TASK-20250129-007', 'testing Related stuff', 6, 'Follow-Up', 'Test related', '2025-02-01 03:34:00', 'In Progress', 10.00, 1, 'Low', '2025-01-29 22:05:22'),
 (8, NULL, 2, 'TASK-20250129-008', 'procuring cement', 6, 'Follow-Up', 'procure cement after buying steel', '2025-01-31 03:36:00', 'Completed', 100.00, 1, 'Low', '2025-01-29 22:07:12'),
 (9, NULL, 2, 'TASK-20250129-009', 'Buy water', 6, 'Follow-Up', 'Buy water for the plant', '2025-01-31 03:42:00', 'In Progress', 10.00, 0, 'High', '2025-01-29 22:13:15'),
-(10, NULL, 2, 'TASK-20250129-010', 'fgf', 6, 'Follow-Up', 'jhj', '2025-01-31 03:50:00', 'In Progress', 6.00, 0, 'Low', '2025-01-29 22:20:23');
+(10, NULL, 2, 'TASK-20250129-010', 'fgf', 6, 'Follow-Up', 'jhj', '2025-01-31 03:50:00', 'In Progress', 6.00, 0, 'Low', '2025-01-29 22:20:23'),
+(11, NULL, 2, 'TASK-20250129-011', 'test', 6, 'Follow-Up', 'test', '2025-01-31 04:23:00', 'In Progress', 100.00, 0, 'Low', '2025-01-29 22:54:26');
 
 -- --------------------------------------------------------
 
@@ -943,7 +944,7 @@ ALTER TABLE `subtasks`
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `task_attachments`

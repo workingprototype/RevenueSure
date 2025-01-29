@@ -59,9 +59,9 @@ require 'header.php';
            </p>
             <p><strong>Status:</strong> <?php echo htmlspecialchars($project['status']); ?></p>
            <p><strong>Priority:</strong> <?php echo htmlspecialchars($project['priority']); ?></p>
-        <div class="mt-4">
-          <a href="gantt_chart.php?project_id=<?php echo $project_id; ?>" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-300 inline-block">View Gantt Chart</a>
-       </div>
+          <div class="mt-4">
+                <a href="view_project.php?id=<?php echo $project_id; ?>" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300 inline-block">View Project</a>
+           </div>
     </div>
  <?php endif; ?>
 
@@ -83,7 +83,7 @@ require 'header.php';
                 <th class="px-4 py-2">Due Date</th>
                  <th class="px-4 py-2">Assigned To</th>
                 <th class="px-4 py-2">Status</th>
-                   <th class="px-4 py-2">Priority</th>
+                <th class="px-4 py-2">Priority</th>
                 <th class="px-4 py-2">Actions</th>
             </tr>
         </thead>
@@ -91,13 +91,19 @@ require 'header.php';
             <?php if ($tasks): ?>
                 <?php foreach ($tasks as $task): ?>
                     <tr class="border-b">
-                        <td class="px-4 py-2"><?php echo htmlspecialchars($task['task_name']); ?></td>
+                         <td class="px-4 py-2"> <?php if($project_id) : ?> <a href="view_task.php?id=<?php echo $task['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
+                           <?php elseif($lead_id): ?>
+                                 <a href="view_task.php?id=<?php echo $task['id']; ?>&lead_id=<?php echo $lead_id; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
+                             <?php else :?>
+                               <a href="view_task.php?id=<?php echo $task['id']; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
+                            <?php endif; ?>
+                        </td>
                          <td class="px-4 py-2"><?php echo htmlspecialchars($task['task_type']); ?></td>
                         <td class="px-4 py-2"><?php echo htmlspecialchars($task['description']); ?></td>
                         <td class="px-4 py-2"><?php echo htmlspecialchars($task['due_date']); ?></td>
                        <td class="px-4 py-2"><?php echo htmlspecialchars($task['username']); ?></td>
-                        <td class="px-4 py-2">
-                             <span class="px-2 py-1 rounded-full <?php
+                          <td class="px-4 py-2">
+                            <span class="px-2 py-1 rounded-full <?php
                                 switch ($task['status']) {
                                     case 'To Do':
                                         echo 'bg-gray-200 text-gray-800';
@@ -123,30 +129,30 @@ require 'header.php';
                               </span>
                          </td>
                            <td class="px-4 py-2"><?php echo htmlspecialchars($task['priority']); ?></td>
-                         <td class="px-4 py-2">
+                        <td class="px-4 py-2">
                             <a href="edit_task.php?id=<?php echo $task['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
                             <a href="delete_task.php?id=<?php echo $task['id']; ?>" class="text-red-600 hover:underline ml-2">Delete</a>
                              <a href="toggle_task_status.php?id=<?php echo $task['id']; ?>&status=<?php echo $task['status'] === 'To Do' ? 'In Progress' : ($task['status'] === 'In Progress' ? 'Completed' : 'To Do'); ?>" class="text-gray-600 hover:underline ml-2">
                                  <?php
-                                     if ($task['status'] === 'To Do') {
-                                        echo 'Start Progress';
-                                     }else if ($task['status'] === 'In Progress') {
+                                      if ($task['status'] === 'To Do') {
+                                         echo 'Start Progress';
+                                    } else if ($task['status'] === 'In Progress') {
                                         echo 'Mark Complete';
-                                     }
+                                    }
                                      else {
                                         echo 'Mark To Do';
-                                     }
+                                      }
                                 ?>
-                             </a>
-                              <a href="add_reminder.php?id=<?php echo $task['id']; ?>&due_date=<?php echo urlencode($task['due_date']); ?>" class="text-gray-600 hover:underline ml-2">
+                            </a>
+                             <a href="add_reminder.php?id=<?php echo $task['id']; ?>&due_date=<?php echo urlencode($task['due_date']); ?>" class="text-gray-600 hover:underline ml-2">
                                    <i class="fas fa-bell"></i>
                              </a>
-                        </td>
+                         </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="8" class="px-4 py-2 text-center text-gray-600">No tasks found.</td>
+                    <td colspan="7" class="px-4 py-2 text-center text-gray-600">No tasks found.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
