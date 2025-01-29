@@ -25,11 +25,20 @@ if (!$invoice) {
     exit;
 }
 
+// Calculate remaining balance
+$remaining_balance = $invoice['total'] - $invoice['paid_amount'];
+
 // Fetch Invoice Items
 $stmt = $conn->prepare("SELECT * FROM invoice_items WHERE invoice_id = :invoice_id");
 $stmt->bindParam(':invoice_id', $invoice_id);
 $stmt->execute();
 $invoice_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch payment history
+$stmt = $conn->prepare("SELECT * FROM payments WHERE invoice_id = :invoice_id ORDER BY payment_date DESC");
+$stmt->bindParam(':invoice_id', $invoice_id);
+$stmt->execute();
+$payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Decode JSON tax array
 $itemized_tax = json_decode($invoice['tax'], true);
@@ -80,6 +89,15 @@ $due_date = new DateTime($invoice['due_date']);
 $interval = $today->diff($due_date);
 $due_days = $interval->format('%r%a');
 
+// Update invoice status
+if($invoice['status'] != 'Paid' && $due_days < 0){
+    $stmt = $conn->prepare("UPDATE invoices SET status = 'Overdue' WHERE id = :invoice_id");
+    $stmt->bindParam(':invoice_id', $invoice_id);
+    $stmt->execute();
+    header("Location: view_invoice.php?id=$invoice_id");
+    exit;
+}
+
 // Include header
 require 'header.php';
 ?>
@@ -111,7 +129,7 @@ require 'header.php';
              <p class="text-gray-700 text-xl mb-2"><strong>Invoice #:</strong> <?php echo htmlspecialchars($invoice['invoice_number']); ?></p>
              <p class="text-gray-700 text-sm"><strong>Issue Date:</strong> <?php echo htmlspecialchars($invoice['issue_date']); ?></p>
             <p class="text-gray-700 text-sm"><strong>Due Date:</strong> <?php echo htmlspecialchars($invoice['due_date']); ?></p>
-            <p class="text-gray-700 text-sm"><strong>Due In:</strong> <?php echo htmlspecialchars($due_days) . ' days'; ?></p>
+             <p class="text-gray-700 text-sm"><strong>Due In:</strong> <?php echo htmlspecialchars($due_days) . ' days'; ?></p>
                <p class="text-gray-700 text-sm"><strong>FOR:</strong> Store expansion</p>
         </div>
     </div>
@@ -120,8 +138,8 @@ require 'header.php';
         <p class="text-gray-700 mb-1"><strong>Name:</strong> <?php echo htmlspecialchars($invoice['bill_to_name']); ?></p>
          <p class="text-gray-700 mb-1"><strong>Company:</strong> Downtown Pets</p>
          <p class="text-gray-700 mb-1"><strong>Address:</strong> <?php echo htmlspecialchars($invoice['bill_to_address']); ?></p>
-        <p class="text-gray-700 mb-1"><strong>City State Zip:</strong> Manhattan, NY 15161</p>
-        <p class="text-gray-700"><strong>Phone:</strong> <?php echo htmlspecialchars($invoice['bill_to_phone']); ?></p>
+         <p class="text-gray-700 mb-1"><strong>City State Zip:</strong> Manhattan, NY 15161</p>
+       <p class="text-gray-700"><strong>Phone:</strong> <?php echo htmlspecialchars($invoice['bill_to_phone']); ?></p>
     </div>
        <div class="overflow-x-auto">
     <table class="w-full text-left bg-gray-700 text-white rounded-lg mb-6">
@@ -172,26 +190,91 @@ require 'header.php';
             <p class="text-lg font-bold">TOTAL</p>
            <p class="text-lg font-bold">$<?php echo htmlspecialchars($total); ?></p>
         </div>
+         <div class="flex justify-end gap-4">
+            <p class="text-gray-700 text-lg"><strong>Amount Paid:</strong> $<?php echo htmlspecialchars($invoice['paid_amount'] ? $invoice['paid_amount'] : 0); ?></p>
+              <p class="text-gray-700 text-lg">
+                  <strong>Remaining Balance:</strong> $<?php echo htmlspecialchars($remaining_balance); ?>
+             </p>
+       </div>
      </div>
-         <div class="mt-4 text-gray-600 text-sm">
+      <div class="flex justify-end">
+           <p class="mt-4 text-gray-600 text-sm flex items-center"> <strong>Status:</strong>  <span class="ml-2 rounded-full px-2.5 py-0.5 text-xs font-medium <?php
+                switch ($invoice['status']) {
+                    case 'Unpaid':
+                         echo 'bg-red-100 text-red-800';
+                          break;
+                   case 'Partially Paid':
+                        echo 'bg-yellow-100 text-yellow-800';
+                         break;
+                    case 'Paid':
+                          echo 'bg-green-100 text-green-800';
+                          break;
+                      case 'Overdue':
+                          echo 'bg-gray-100 text-gray-800';
+                         break;
+                     default:
+                        echo 'bg-gray-100 text-gray-800';
+                         break;
+                }
+                ?>"><?php echo htmlspecialchars($invoice['status']); ?></span>
+          </p>
+        </div>
+        
+        <!-- Added Payment Form to Contractor Template -->
+        <div class="mt-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Record Payment</h2>
+            <form method="POST" action="record_payment.php">
+                <input type="hidden" name="invoice_id" value="<?php echo $invoice['id']; ?>">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="payment_method" class="block text-gray-700 mb-2">Payment Method</label>
+                        <select name="payment_method" id="payment_method" class="w-full px-4 py-2 border rounded-lg" required>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="PayPal">PayPal</option>
+                            <option value="Cheque">Cheque</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="transaction_id" class="block text-gray-700 mb-2">Transaction ID</label>
+                        <input type="text" name="transaction_id" id="transaction_id" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div class="mb-4">
+                        <label for="amount" class="block text-gray-700 mb-2">Amount</label>
+                        <input type="number" name="amount" id="amount" 
+                               class="w-full px-4 py-2 border rounded-lg"
+                               min="0" 
+                               step="0.01" 
+                               value="<?php echo htmlspecialchars($remaining_balance); ?>" 
+                               required>
+                    </div>
+                </div>
+                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                    Record Payment
+                </button>
+            </form>
+        </div>
+
+        <div class="mt-4 text-gray-600 text-sm">
           <p>Make all checks payable to <?php echo htmlspecialchars($company_name); ?>.</p>
-           <?php if ($overdue_charge_type && $overdue_charge_amount && $overdue_charge_period): ?>
+            <?php if ($overdue_charge_type && $overdue_charge_amount && $overdue_charge_period): ?>
                   <p>Total due in <?php echo $due_days; ?> days. Overdue accounts subject to a service charge of <?php  if($overdue_charge_type == 'percentage') echo htmlspecialchars($overdue_charge_amount) . '%'; else echo htmlspecialchars($overdue_charge_amount) . '$'; ?> per <?php echo htmlspecialchars($overdue_charge_period); ?>.</p>
            <?php else: ?>
                     <p>Total due in 15 days. Overdue accounts subject to a service charge of 1% per month.</p>
-            <?php endif; ?>
-              <p class="mt-4"><?php echo htmlspecialchars($thank_you_message); ?></p>
+             <?php endif; ?>
+             <p class="mt-4"><?php echo htmlspecialchars($thank_you_message); ?></p>
         </div>
-            <div class="mt-4">
-            <a href="edit_invoice.php?id=<?php echo $invoice['id']; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Invoice</a>
-             <a href="manage_invoices.php" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300">Back To Invoices</a>
-          </div>
+            
+            <div class="mt-4 flex gap-2">
+                <a href="edit_invoice.php?id=<?php echo $invoice['id']; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Invoice</a>
+                 <a href="manage_invoices.php" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300">Back To Invoices</a>
+            </div>
    </div>
 </div>
 <?php
  } else {
   ?>
-  <div class="container mx-auto mt-10 p-4">
+    <div class="container mx-auto mt-10 p-4">
   <div class="bg-white p-6 rounded-lg shadow-md mb-8">
     <div class="mb-4">
         <h2 class="text-2xl font-bold text-gray-800 mb-4">Invoice Details</h2>
@@ -204,27 +287,26 @@ require 'header.php';
       <h2 class="text-xl font-bold text-gray-800 mb-4">Bill To</h2>
         <p><strong>Name:</strong> <?php echo htmlspecialchars($invoice['bill_to_name']); ?></p>
         <p><strong>Address:</strong> <?php echo htmlspecialchars($invoice['bill_to_address']); ?></p>
-         <p><strong>Email:</strong> <?php echo htmlspecialchars($invoice['bill_to_email']); ?></p>
-        <p><strong>Phone:</strong> <?php echo htmlspecialchars($invoice['bill_to_phone']); ?></p>
-
+        <p><strong>Email:</strong> <?php echo htmlspecialchars($invoice['bill_to_email']); ?></p>
+          <p><strong>Phone:</strong> <?php echo htmlspecialchars($invoice['bill_to_phone']); ?></p>
     </div>
-     <?php if($invoice['ship_to_address']): ?>
-    <div class="mb-4">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Ship To</h2>
-        <p><strong>Address:</strong> <?php echo htmlspecialchars($invoice['ship_to_address']); ?></p>
-    </div>
-     <?php endif; ?>
+      <?php if($invoice['ship_to_address']): ?>
      <div class="mb-4">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Items</h2>
-         <table class="w-full text-left">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Ship To</h2>
+         <p><strong>Address:</strong> <?php echo htmlspecialchars($invoice['ship_to_address']); ?></p>
+     </div>
+     <?php endif; ?>
+      <div class="mb-4">
+             <h2 class="text-xl font-bold text-gray-800 mb-4">Items</h2>
+        <table class="w-full text-left">
             <thead>
                 <tr>
                     <th class="px-4 py-2">Product/Service</th>
                      <th class="px-4 py-2">Quantity</th>
                     <th class="px-4 py-2">Unit Price</th>
-                      <th class="px-4 py-2">Tax</th>
-                        <th class="px-4 py-2">Discount</th>
-                     <th class="px-4 py-2">Subtotal</th>
+                     <th class="px-4 py-2">Tax</th>
+                     <th class="px-4 py-2">Discount</th>
+                      <th class="px-4 py-2">Subtotal</th>
                 </tr>
             </thead>
             <tbody>
@@ -232,45 +314,113 @@ require 'header.php';
                    <?php foreach ($invoice_items as $item): ?>
                       <tr class="border-b">
                        <td class="px-4 py-2"><?php echo htmlspecialchars($item['product_service']); ?></td>
-                        <td class="px-4 py-2"><?php echo htmlspecialchars($item['quantity']); ?></td>
-                       <td class="px-4 py-2"><?php echo htmlspecialchars($item['unit_price']); ?></td>
-                       <td class="px-4 py-2"><?php echo htmlspecialchars($item['tax']); ?></td>
-                          <td class="px-4 py-2"><?php echo htmlspecialchars($item['discount']); ?></td>
+                         <td class="px-4 py-2"><?php echo htmlspecialchars($item['quantity']); ?></td>
+                        <td class="px-4 py-2"><?php echo htmlspecialchars($item['unit_price']); ?></td>
+                        <td class="px-4 py-2"><?php echo htmlspecialchars($item['tax']); ?></td>
+                           <td class="px-4 py-2"><?php echo htmlspecialchars($item['discount']); ?></td>
                         <td class="px-4 py-2">$<?php echo htmlspecialchars($item['subtotal']); ?></td>
                       </tr>
-                   <?php endforeach; ?>
-                  <?php else: ?>
+                  <?php endforeach; ?>
+                <?php else: ?>
                         <tr>
-                            <td colspan="6" class="px-4 py-2 text-center text-gray-600">No items found.</td>
-                       </tr>
-               <?php endif; ?>
+                             <td colspan="6" class="px-4 py-2 text-center text-gray-600">No items found.</td>
+                        </tr>
+                 <?php endif; ?>
               </tbody>
-          </table>
-       </div>
+           </table>
+      </div>
          <div class="mb-4">
             <p><strong>Subtotal:</strong> $<?php echo htmlspecialchars($subtotal); ?></p>
-              <p><strong>Tax:</strong> $<?php echo htmlspecialchars($total_tax); ?></p>
-                <p><strong>Discount:</strong> $<?php echo htmlspecialchars($discount); ?></p>
-             <p><strong>Additional Charges:</strong> $<?php echo htmlspecialchars($invoice['additional_charges']); ?></p>
+             <p><strong>Tax:</strong> $<?php echo htmlspecialchars($total_tax); ?></p>
+              <p><strong>Discount:</strong> $<?php echo htmlspecialchars($discount); ?></p>
+            <p><strong>Additional Charges:</strong> $<?php echo htmlspecialchars($invoice['additional_charges']); ?></p>
              <p><strong>Total:</strong> $<?php echo htmlspecialchars($total); ?></p>
         </div>
-    <?php if($invoice['notes']): ?>
-        <div class="mb-4">
-              <h2 class="text-xl font-bold text-gray-800 mb-4">Notes</h2>
-            <p><?php echo nl2br(htmlspecialchars($invoice['notes'])); ?></p>
+         <div class="mb-4">
+             <p><strong>Amount Paid:</strong> $<?php echo htmlspecialchars($invoice['paid_amount'] ? $invoice['paid_amount'] : 0); ?></p>
+             <p>
+                <strong>Remaining Balance:</strong> $<?php echo htmlspecialchars($remaining_balance); ?>
+             </p>
+                <p class="mt-4 text-gray-600 text-sm flex items-center"> <strong>Status:</strong>  <span class="ml-2 rounded-full px-2.5 py-0.5 text-xs font-medium <?php
+                switch ($invoice['status']) {
+                    case 'Unpaid':
+                        echo 'bg-red-100 text-red-800';
+                        break;
+                   case 'Partially Paid':
+                        echo 'bg-yellow-100 text-yellow-800';
+                       break;
+                   case 'Paid':
+                       echo 'bg-green-100 text-green-800';
+                         break;
+                    case 'Overdue':
+                          echo 'bg-gray-100 text-gray-800';
+                          break;
+                    default:
+                      echo 'bg-gray-100 text-gray-800';
+                        break;
+                }
+                ?>"><?php echo htmlspecialchars($invoice['status']); ?></span>
+                </p>
         </div>
-    <?php endif; ?>
-    <?php if($invoice['footer']): ?>
-        <div class="mb-4">
-             <h2 class="text-xl font-bold text-gray-800 mb-4">Footer</h2>
-                <p><?php echo nl2br(htmlspecialchars($invoice['footer'])); ?></p>
-          </div>
-        <?php endif; ?>
+          <?php if($invoice['notes']): ?>
           <div class="mb-4">
-            <a href="edit_invoice.php?id=<?php echo $invoice['id']; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Invoice</a>
-             <a href="manage_invoices.php" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300">Back To Invoices</a>
+              <h2 class="text-xl font-bold text-gray-800 mb-4">Notes</h2>
+              <p><?php echo nl2br(htmlspecialchars($invoice['notes'])); ?></p>
           </div>
-</div>
+            <?php endif; ?>
+        <?php if($invoice['footer']): ?>
+          <div class="mb-4">
+              <h2 class="text-xl font-bold text-gray-800 mb-4">Footer</h2>
+             <p><?php echo nl2br(htmlspecialchars($invoice['footer'])); ?></p>
+          </div>
+         <?php endif; ?>
+           <div class="mb-4">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Payment History</h2>
+               <?php if($payments): ?>
+                  <ul class="mt-2">
+                        <?php foreach ($payments as $payment): ?>
+                            <li class="mb-2 border-b pb-2">
+                                 <p class="text-gray-600 text-sm">
+                                      <strong>Date:</strong> <?php echo htmlspecialchars(date('Y-m-d H:i', strtotime($payment['payment_date']))); ?>
+                                 </p>
+                                   <p><strong>Method:</strong> <?php echo htmlspecialchars($payment['payment_method']); ?> , <strong>Transaction ID:</strong> <?php echo htmlspecialchars($payment['transaction_id']); ?></p>
+                                <p class="text-gray-800 font-semibold">$<?php echo htmlspecialchars($payment['amount']); ?> </p>
+                             </li>
+                         <?php endforeach; ?>
+                     </ul>
+                <?php else: ?>
+                    <p class="text-gray-600">No payments recorded for this invoice.</p>
+                <?php endif; ?>
+         </div>
+           <div class="mb-4">
+              <h2 class="text-xl font-bold text-gray-800 mb-4">Record Payment</h2>
+                <form method="POST" action="record_payment.php">
+                    <input type="hidden" name="invoice_id" value="<?php echo $invoice['id']; ?>">
+                    <div class="mb-4">
+                        <label for="payment_method" class="block text-gray-700">Payment Method</label>
+                         <select name="payment_method" id="payment_method" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                              <option value="Credit Card">Credit Card</option>
+                               <option value="Bank Transfer">Bank Transfer</option>
+                              <option value="PayPal">PayPal</option>
+                             <option value="Cheque">Cheque</option>
+                           </select>
+                      </div>
+                     <div class="mb-4">
+                         <label for="transaction_id" class="block text-gray-700">Transaction ID</label>
+                         <input type="text" name="transaction_id" id="transaction_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                      </div>
+                     <div class="mb-4">
+                        <label for="amount" class="block text-gray-700">Amount</label>
+                           <input type="number" name="amount" id="amount" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" min="0"  step="0.01" value="<?php echo htmlspecialchars($remaining_balance); ?>" required>
+                     </div>
+                     <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Record Payment</button>
+                 </form>
+              </div>
+       <div class="mt-4 flex gap-2">
+         <a href="edit_invoice.php?id=<?php echo $invoice['id']; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Invoice</a>
+           <a href="manage_invoices.php" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300">Back To Invoices</a>
+      </div>
+  </div>
 </div>
 <?php
  }

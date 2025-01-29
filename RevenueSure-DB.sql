@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 29, 2025 at 12:01 PM
+-- Generation Time: Jan 29, 2025 at 08:21 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -92,7 +92,8 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `name`, `email`, `phone`, `created_at`, `company`, `last_interaction`, `address`, `social_media_profiles`, `age`, `gender`, `location`, `job_title`, `industry`, `profile_picture`) VALUES
-(1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01', 'Jabbar Corporations', '2025-01-28 09:13:46', 'NYC', 'https://instagram.com', 44, 'Male', 'NYC', 'Chairman', 'IT', 'uploads/profile/6798a5f924b68_pexels-photo-771742.jpeg');
+(1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01', 'Jabbar Corporations', '2025-01-28 09:13:46', 'NYC', 'https://instagram.com', 44, 'Male', 'NYC', 'Chairman', 'IT', 'uploads/profile/6798a5f924b68_pexels-photo-771742.jpeg'),
+(2, 'POP', 'pop@pop.com', '123123', '2025-01-29 11:57:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -150,7 +151,8 @@ CREATE TABLE `customer_preferences` (
 
 INSERT INTO `customer_preferences` (`id`, `customer_id`, `preference`, `created_at`) VALUES
 (1, 1, 'Likes to talk', '2025-01-28 09:18:17'),
-(2, 1, 'Wears great suit', '2025-01-28 09:29:29');
+(2, 1, 'Wears great suit', '2025-01-28 09:29:29'),
+(3, 1, 'blabbers', '2025-01-29 11:54:05');
 
 -- --------------------------------------------------------
 
@@ -227,16 +229,20 @@ CREATE TABLE `invoices` (
   `discount_type` varchar(20) DEFAULT 'fixed',
   `discount_amount` decimal(10,2) DEFAULT 0.00,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `template_name` varchar(255) DEFAULT 'default'
+  `template_name` varchar(255) DEFAULT 'default',
+  `paid_amount` decimal(10,2) DEFAULT 0.00,
+  `status` enum('Unpaid','Partially Paid','Paid','Overdue') DEFAULT 'Unpaid',
+  `payment_date` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `invoices`
 --
 
-INSERT INTO `invoices` (`id`, `invoice_number`, `lead_id`, `customer_id`, `issue_date`, `due_date`, `bill_to_name`, `bill_to_address`, `bill_to_email`, `bill_to_phone`, `ship_to_address`, `subtotal`, `tax_method`, `tax`, `discount`, `additional_charges`, `total`, `payment_terms`, `notes`, `footer`, `billing_country`, `discount_type`, `discount_amount`, `created_at`, `template_name`) VALUES
-(3, 'INV-20250129-001', 1, NULL, '2025-01-29', '2025-01-29', 'John Doe', 'NYC', 'john@demo.com', '+91 123456789', 'NYC', 0.00, 'GST', '[\"8.00\",\"5.00\"]', 0.00, 30.00, 43.00, 'Due on Receipt', '', '', 'in', 'fixed', 0.00, '2025-01-29 09:08:58', 'contractor'),
-(4, 'INV-20250129-004', NULL, 1, '2025-01-29', '2025-02-13', 'Jabbar2', 'NYC', 'jabbar@demo.com', '12312312', '', 0.00, 'GST', '[\"18.00\",\"18.00\"]', 0.00, 0.00, 36.00, 'Net 15', '', '', 'in', 'percentage', 10.00, '2025-01-29 09:43:24', 'contractor');
+INSERT INTO `invoices` (`id`, `invoice_number`, `lead_id`, `customer_id`, `issue_date`, `due_date`, `bill_to_name`, `bill_to_address`, `bill_to_email`, `bill_to_phone`, `ship_to_address`, `subtotal`, `tax_method`, `tax`, `discount`, `additional_charges`, `total`, `payment_terms`, `notes`, `footer`, `billing_country`, `discount_type`, `discount_amount`, `created_at`, `template_name`, `paid_amount`, `status`, `payment_date`) VALUES
+(3, 'INV-20250129-001', 1, NULL, '2025-01-29', '2025-01-29', 'John Doe', 'NYC', 'john@demo.com', '+91 123456789', 'NYC', 0.00, 'GST', '[\"8.00\",\"5.00\"]', 0.00, 30.00, 43.00, 'Due on Receipt', '', '', 'in', 'fixed', 0.00, '2025-01-29 09:08:58', 'contractor', 43.00, 'Paid', '2025-01-29 11:59:30'),
+(4, 'INV-20250129-004', NULL, 1, '2025-01-29', '2025-02-13', 'Jabbar2', 'NYC', 'jabbar@demo.com', '12312312', '', 0.00, 'GST', '[\"18.00\",\"18.00\"]', 0.00, 0.00, 36.00, 'Net 15', '', '', 'in', 'percentage', 10.00, '2025-01-29 09:43:24', 'default', 24.00, 'Partially Paid', '2025-01-29 11:52:19'),
+(5, 'INV-20250129-005', 9, 2, '2025-01-29', '2025-01-29', 'POP', 'Pop Address', 'pop@pop.com', '123123', '', 0.00, 'GST', '[\"0.00\",\"0.00\"]', 0.00, 0.00, 0.00, 'Due on Receipt', 'Noteddd', 'Pop', 'au', 'fixed', 0.00, '2025-01-29 11:58:14', 'contractor', 0.00, 'Unpaid', NULL);
 
 -- --------------------------------------------------------
 
@@ -260,10 +266,12 @@ CREATE TABLE `invoice_items` (
 --
 
 INSERT INTO `invoice_items` (`id`, `invoice_id`, `product_service`, `quantity`, `unit_price`, `tax`, `discount`, `subtotal`) VALUES
-(20, 4, 'Product 1', 10, 120.00, 18.00, 10.00, 0.00),
-(21, 4, 'Product 2', 10, 100.00, 18.00, 0.00, 0.00),
 (22, 3, 'Product 2', 2, 120.00, 8.00, 10.00, 0.00),
-(23, 3, 'Product 3', 3, 200.00, 5.00, 10.00, 0.00);
+(23, 3, 'Product 3', 3, 200.00, 5.00, 10.00, 0.00),
+(24, 4, 'Product 1', 10, 120.00, 18.00, 10.00, 0.00),
+(25, 4, 'Product 2', 10, 100.00, 18.00, 0.00, 0.00),
+(28, 5, 'POP', 1, 160.00, 0.00, 0.00, 0.00),
+(29, 5, 'POP2', 2, 150.00, 0.00, 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -327,7 +335,8 @@ INSERT INTO `leads` (`id`, `name`, `phone`, `email`, `category_id`, `created_at`
 (5, 'TEST LEAD', '123345', 'test@assigneddemo.com', 1, '2025-01-28 03:57:53', 'Converted', NULL, NULL, NULL, NULL, NULL, 'Website', 1),
 (6, 'jakegyk', '1231238123', 'jake@demo.com', 2, '2025-01-28 04:04:31', 'New', NULL, NULL, NULL, NULL, NULL, 'Website', 1),
 (7, 'PowerLead', '1231823918', 'power@demo.com', 1, '2025-01-28 04:05:31', 'Converted', NULL, 1, NULL, NULL, NULL, 'Website', 2),
-(8, 'Jabbar2', '12312312', 'jabbar@demo.com', 1, '2025-01-28 08:55:40', 'Converted', 1, 2, NULL, NULL, NULL, 'Website', 2);
+(8, 'Jabbar2', '12312312', 'jabbar@demo.com', 1, '2025-01-28 08:55:40', 'Converted', 1, 2, NULL, NULL, NULL, 'Website', 2),
+(9, 'POP', '123123', 'pop@pop.com', 1, '2025-01-29 11:56:29', 'Converted', 2, 2, NULL, NULL, NULL, 'Website', 1);
 
 -- --------------------------------------------------------
 
@@ -351,7 +360,8 @@ CREATE TABLE `lead_scores` (
 
 INSERT INTO `lead_scores` (`id`, `lead_id`, `website_visits`, `email_opens`, `form_submissions`, `total_score`, `last_updated`) VALUES
 (1, 2, 2, 1, 1, 7, '2025-01-27 11:08:55'),
-(3, 5, 0, 1, 1, 5, '2025-01-28 03:59:32');
+(3, 5, 0, 1, 1, 5, '2025-01-28 03:59:32'),
+(4, 8, 1, 1, 1, 6, '2025-01-29 12:01:11');
 
 -- --------------------------------------------------------
 
@@ -376,6 +386,29 @@ CREATE TABLE `notifications` (
 INSERT INTO `notifications` (`id`, `user_id`, `message`, `related_id`, `type`, `is_read`, `created_at`) VALUES
 (1, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
 (2, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 0, '2025-01-29 10:24:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payments`
+--
+
+CREATE TABLE `payments` (
+  `id` int(11) NOT NULL,
+  `invoice_id` int(11) NOT NULL,
+  `payment_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `payment_method` enum('Credit Card','Bank Transfer','PayPal','Cheque') NOT NULL,
+  `transaction_id` varchar(255) DEFAULT NULL,
+  `amount` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`id`, `invoice_id`, `payment_date`, `payment_method`, `transaction_id`, `amount`) VALUES
+(1, 4, '2025-01-29 11:52:19', 'Credit Card', '1234', 24.00),
+(2, 3, '2025-01-29 11:59:30', 'Cheque', 'ghgjghj', 43.00);
 
 -- --------------------------------------------------------
 
@@ -424,7 +457,7 @@ CREATE TABLE `todos` (
 --
 
 INSERT INTO `todos` (`id`, `user_id`, `title`, `description`, `due_date`, `is_completed`, `related_type`, `related_id`, `created_at`) VALUES
-(1, 2, 'Checkout Davos', 'It\'s the client meeting there today!', '2025-01-28 15:40:00', 0, 'lead', 8, '2025-01-28 10:09:21');
+(1, 2, 'Checkout Davos', 'It\'s the client meeting there today!', '2025-01-28 15:40:00', 1, 'lead', 8, '2025-01-28 10:09:21');
 
 -- --------------------------------------------------------
 
@@ -566,6 +599,13 @@ ALTER TABLE `notifications`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `payments`
+--
+ALTER TABLE `payments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `invoice_id` (`invoice_id`);
+
+--
 -- Indexes for table `tasks`
 --
 ALTER TABLE `tasks`
@@ -614,7 +654,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `customer_custom_fields`
@@ -632,7 +672,7 @@ ALTER TABLE `customer_interactions`
 -- AUTO_INCREMENT for table `customer_preferences`
 --
 ALTER TABLE `customer_preferences`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `customer_tags`
@@ -650,13 +690,13 @@ ALTER TABLE `employees`
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `invoice_items`
 --
 ALTER TABLE `invoice_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `invoice_settings`
@@ -668,18 +708,24 @@ ALTER TABLE `invoice_settings`
 -- AUTO_INCREMENT for table `leads`
 --
 ALTER TABLE `leads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `lead_scores`
 --
 ALTER TABLE `lead_scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `payments`
+--
+ALTER TABLE `payments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
@@ -777,6 +823,12 @@ ALTER TABLE `lead_scores`
 --
 ALTER TABLE `notifications`
   ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `payments`
+--
+ALTER TABLE `payments`
+  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `tasks`
