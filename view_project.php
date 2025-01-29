@@ -167,6 +167,10 @@ require 'header.php';
             <?php endif; ?>
         </tbody>
     </table>
+   </div>   <div class="mt-4">
+         <a href="kanban_board.php?project_id=<?php echo $project_id; ?>" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 inline-block">View Kanban Board</a>
+         <a href="gantt_chart.php?project_id=<?php echo $project_id; ?>" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-300 inline-block">View Gantt Chart</a>
+       <a href="manage_projects.php"  class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300 inline-block">Back To Projects</a>
    </div>
     <div class="mt-4 flex gap-2">
         <a href="edit_project.php?id=<?php echo $project['id']; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Project</a>

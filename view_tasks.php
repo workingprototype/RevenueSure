@@ -59,12 +59,19 @@ require 'header.php';
            </p>
             <p><strong>Status:</strong> <?php echo htmlspecialchars($project['status']); ?></p>
            <p><strong>Priority:</strong> <?php echo htmlspecialchars($project['priority']); ?></p>
+        <div class="mt-4">
+          <a href="gantt_chart.php?project_id=<?php echo $project_id; ?>" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-300 inline-block">View Gantt Chart</a>
+       </div>
     </div>
  <?php endif; ?>
 
 <!-- Add Task Button -->
-<a href="add_task.php<?php if($lead_id) echo "?lead_id=$lead_id"; ?><?php if($project_id) echo "?project_id=$project_id"; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mb-6 inline-block">Add Task</a>
-
+<div class="flex gap-2 mb-6">
+<a href="add_task.php<?php if($lead_id) echo "?lead_id=$lead_id"; ?><?php if($project_id) echo "?project_id=$project_id"; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 inline-block">Add Task</a>
+    <?php if($project_id): ?>
+     <a href="add_task.php?project_id=<?php echo $project_id; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 inline-block">Add Dependent Task</a>
+    <?php endif; ?>
+</div>
 <!-- Tasks Table -->
 <div class="bg-white p-6 rounded-lg shadow-md">
     <table class="w-full text-left">
@@ -116,22 +123,22 @@ require 'header.php';
                               </span>
                          </td>
                            <td class="px-4 py-2"><?php echo htmlspecialchars($task['priority']); ?></td>
-                        <td class="px-4 py-2">
+                         <td class="px-4 py-2">
                             <a href="edit_task.php?id=<?php echo $task['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
                             <a href="delete_task.php?id=<?php echo $task['id']; ?>" class="text-red-600 hover:underline ml-2">Delete</a>
                              <a href="toggle_task_status.php?id=<?php echo $task['id']; ?>&status=<?php echo $task['status'] === 'To Do' ? 'In Progress' : ($task['status'] === 'In Progress' ? 'Completed' : 'To Do'); ?>" class="text-gray-600 hover:underline ml-2">
                                  <?php
                                      if ($task['status'] === 'To Do') {
-                                            echo 'Start Progress';
+                                        echo 'Start Progress';
                                      }else if ($task['status'] === 'In Progress') {
-                                            echo 'Mark Complete';
-                                        }
-                                        else {
-                                             echo 'Mark To Do';
-                                        }
+                                        echo 'Mark Complete';
+                                     }
+                                     else {
+                                        echo 'Mark To Do';
+                                     }
                                 ?>
-                            </a>
-                               <a href="add_reminder.php?id=<?php echo $task['id']; ?>&due_date=<?php echo urlencode($task['due_date']); ?>" class="text-gray-600 hover:underline ml-2">
+                             </a>
+                              <a href="add_reminder.php?id=<?php echo $task['id']; ?>&due_date=<?php echo urlencode($task['due_date']); ?>" class="text-gray-600 hover:underline ml-2">
                                    <i class="fas fa-bell"></i>
                              </a>
                         </td>
@@ -139,7 +146,7 @@ require 'header.php';
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="7" class="px-4 py-2 text-center text-gray-600">No tasks found.</td>
+                    <td colspan="8" class="px-4 py-2 text-center text-gray-600">No tasks found.</td>
                 </tr>
             <?php endif; ?>
         </tbody>

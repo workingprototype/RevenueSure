@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $lead_id = isset($_GET['lead_id']) ? (int)$_GET['lead_id'] : null;
 $project_id = isset($_GET['project_id']) ? (int)$_GET['project_id'] : null;
-
 function generateTaskId($conn) {
     $stmt = $conn->prepare("SELECT MAX(id) AS max_id FROM tasks");
     $stmt->execute();
@@ -19,7 +18,7 @@ function generateTaskId($conn) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-     $task_name = $_POST['task_name'];
+    $task_name = $_POST['task_name'];
     $task_id = generateTaskId($conn);
      $task_type = $_POST['task_type'];
     $description = $_POST['description'];
@@ -30,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
        $priority = $_POST['priority'];
        $user_id = $_SESSION['user_id'];
        $selected_project_id = !empty($_POST['project_id']) ? $_POST['project_id'] : null;
+       $depends_on_task_ids = $_POST['depends_on_task'] ?? [];
 
 
     if($selected_project_id){
@@ -50,9 +50,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $stmt->bindParam(':estimated_hours', $estimated_hours);
     $stmt->bindParam(':billable', $billable, PDO::PARAM_BOOL);
      $stmt->bindParam(':status', $status);
-     $stmt->bindParam(':priority', $priority);
+       $stmt->bindParam(':priority', $priority);
 
     if ($stmt->execute()) {
+         $task_insert_id = $conn->lastInsertId();
+           // Handle task dependencies
+            foreach($depends_on_task_ids as $dependency_id){
+                $stmt = $conn->prepare("INSERT INTO task_dependencies (task_id, depends_on_task_id) VALUES (:task_id, :depends_on_task_id)");
+                 $stmt->bindParam(':task_id', $task_insert_id);
+                $stmt->bindParam(':depends_on_task_id', $dependency_id);
+                $stmt->execute();
+            }
       if($lead_id){
             header("Location: view_tasks.php?lead_id=$lead_id");
       } else if($selected_project_id){
@@ -64,8 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         echo "<script>alert('Error adding task.');</script>";
     }
-
-    // Handle reminder
+     // Handle reminder
     if (!empty($_POST['reminder'])) {
         $reminder_time = $_POST['reminder'];
         $stmt = $conn->prepare("INSERT INTO notifications (user_id, message, related_id, type, created_at) VALUES (:user_id, :message, :related_id, 'task_reminder', :created_at)");
@@ -78,24 +85,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-
 // Fetch projects for the dropdown
 $stmt = $conn->prepare("SELECT id, name FROM projects");
 $stmt->execute();
 $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$tasks = [];
+if($project_id){
+    $stmt = $conn->prepare("SELECT id, task_name as name FROM tasks WHERE project_id = :project_id");
+    $stmt->bindParam(':project_id', $project_id);
+    $stmt->execute();
+    $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 // Include header
 require 'header.php';
 ?>
 
 <h1 class="text-3xl font-bold text-gray-800 mb-6">Add Task</h1>
-
+  <?php if ($error): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+            <?php echo $error; ?>
+        </div>
+    <?php endif; ?>
 <!-- Add Task Form -->
 <form method="POST" action="" class="bg-white p-6 rounded-lg shadow-md">
     <?php if($lead_id): ?>
         <input type="hidden" name="lead_id" value="<?php echo $lead_id; ?>">
     <?php endif; ?>
-      <?php if($project_id): ?>
+       <?php if($project_id): ?>
       <input type="hidden" name="project_id" value="<?php echo $project_id; ?>">
   <?php endif; ?>
        <div class="mb-4">
@@ -140,7 +157,7 @@ require 'header.php';
                    <option value="Canceled">Canceled</option>
           </select>
     </div>
-     <div class="mb-4">
+      <div class="mb-4">
         <label for="priority" class="block text-gray-700">Priority</label>
             <select name="priority" id="priority" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
                    <option value="Low">Low</option>
@@ -148,7 +165,7 @@ require 'header.php';
                     <option value="High">High</option>
             </select>
     </div>
-    <?php if(!$lead_id && !$project_id) : ?>
+       <?php if(!$lead_id && !$project_id) : ?>
          <div class="mb-4">
            <label for="project_id" class="block text-gray-700">Related To Project</label>
                 <select name="project_id" id="project_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
@@ -156,6 +173,18 @@ require 'header.php';
                     <?php foreach ($projects as $project): ?>
                        <option value="<?php echo $project['id']; ?>"><?php echo htmlspecialchars($project['name']); ?></option>
                     <?php endforeach; ?>
+                </select>
+          </div>
+        <?php endif; ?>
+       <?php if($project_id): ?>
+           <div class="mb-4">
+                <label for="depends_on_task" class="block text-gray-700">Depends On Task(s)</label>
+                <select name="depends_on_task[]" id="depends_on_task" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" multiple>
+                    <?php if($tasks): ?>
+                        <?php foreach ($tasks as $task): ?>
+                           <option value="<?php echo $task['id']; ?>"><?php echo htmlspecialchars($task['name']); ?></option>
+                        <?php endforeach; ?>
+                   <?php endif; ?>
                 </select>
           </div>
     <?php endif; ?>
