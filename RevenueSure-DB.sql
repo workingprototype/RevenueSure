@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 28, 2025 at 11:37 AM
+-- Generation Time: Jan 29, 2025 at 09:17 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -195,6 +195,67 @@ CREATE TABLE `employees` (
 INSERT INTO `employees` (`id`, `name`, `email`, `phone`, `created_at`) VALUES
 (1, 'Jordan Belfort', 'sales@demo.com', '123456789', '2025-01-28 03:04:22'),
 (2, 'David', 'david@employee.com', '123456678', '2025-01-28 04:04:54');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoices`
+--
+
+CREATE TABLE `invoices` (
+  `id` int(11) NOT NULL,
+  `invoice_number` varchar(50) NOT NULL,
+  `lead_id` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `issue_date` date NOT NULL,
+  `due_date` date NOT NULL,
+  `bill_to_name` varchar(255) NOT NULL,
+  `bill_to_address` varchar(255) DEFAULT NULL,
+  `bill_to_email` varchar(100) DEFAULT NULL,
+  `bill_to_phone` varchar(20) DEFAULT NULL,
+  `ship_to_address` varchar(255) DEFAULT NULL,
+  `subtotal` decimal(10,2) DEFAULT 0.00,
+  `tax` decimal(10,2) DEFAULT 0.00,
+  `discount` decimal(10,2) DEFAULT 0.00,
+  `additional_charges` decimal(10,2) DEFAULT 0.00,
+  `total` decimal(10,2) DEFAULT 0.00,
+  `payment_terms` varchar(100) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `footer` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `invoices`
+--
+
+INSERT INTO `invoices` (`id`, `invoice_number`, `lead_id`, `customer_id`, `issue_date`, `due_date`, `bill_to_name`, `bill_to_address`, `bill_to_email`, `bill_to_phone`, `ship_to_address`, `subtotal`, `tax`, `discount`, `additional_charges`, `total`, `payment_terms`, `notes`, `footer`, `created_at`) VALUES
+(1, 'INV-20250129-012', 1, NULL, '2025-01-28', '2025-01-28', 'John Doe', '', 'john@demo.com', '+91 123456789', '', 0.00, 8.00, 0.00, 60.00, 68.00, 'Due on Receipt', 'Noted on invoice', 'footed in invoice', '2025-01-29 08:01:24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoice_items`
+--
+
+CREATE TABLE `invoice_items` (
+  `id` int(11) NOT NULL,
+  `invoice_id` int(11) NOT NULL,
+  `product_service` varchar(255) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `unit_price` decimal(10,2) NOT NULL,
+  `tax` decimal(10,2) DEFAULT 0.00,
+  `discount` decimal(10,2) DEFAULT 0.00,
+  `subtotal` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `invoice_items`
+--
+
+INSERT INTO `invoice_items` (`id`, `invoice_id`, `product_service`, `quantity`, `unit_price`, `tax`, `discount`, `subtotal`) VALUES
+(3, 1, 'test1 product', 8, 125.00, 8.00, 0.00, 0.00),
+(4, 1, 'test2product', 1, 5.00, 0.00, 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -424,6 +485,21 @@ ALTER TABLE `employees`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `invoices`
+--
+ALTER TABLE `invoices`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `lead_id` (`lead_id`),
+  ADD KEY `customer_id` (`customer_id`);
+
+--
+-- Indexes for table `invoice_items`
+--
+ALTER TABLE `invoice_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `invoice_id` (`invoice_id`);
+
+--
 -- Indexes for table `leads`
 --
 ALTER TABLE `leads`
@@ -527,6 +603,18 @@ ALTER TABLE `employees`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `invoices`
+--
+ALTER TABLE `invoices`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `invoice_items`
+--
+ALTER TABLE `invoice_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `leads`
 --
 ALTER TABLE `leads`
@@ -601,6 +689,19 @@ ALTER TABLE `customer_preferences`
 --
 ALTER TABLE `customer_tags`
   ADD CONSTRAINT `customer_tags_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `invoices`
+--
+ALTER TABLE `invoices`
+  ADD CONSTRAINT `invoices_ibfk_1` FOREIGN KEY (`lead_id`) REFERENCES `leads` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `invoices_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `invoice_items`
+--
+ALTER TABLE `invoice_items`
+  ADD CONSTRAINT `invoice_items_ibfk_1` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `leads`

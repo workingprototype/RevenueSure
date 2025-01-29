@@ -245,6 +245,13 @@
                                    <a href="add_category.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_category.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Category</a>
                                </div>
                         </div>
+                           <div class="menu-item <?php if (isParentActive('manage_invoices.php') || isParentActive('add_invoice.php')) echo 'active'; ?>">
+                            <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-file-invoice-dollar mr-2"></i>Manage Invoices</a>
+                            <div class="submenu">
+                                <a href="manage_invoices.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_invoices.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Invoices</a>
+                                <a href="add_invoice.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_invoice.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Invoice</a>
+                            </div>
+                        </div>
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                     <?php endif; ?>
                      <a href="logout.php" class="block py-2 px-4 hover:bg-gray-700 rounded mt-4"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
