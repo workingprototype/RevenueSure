@@ -262,15 +262,15 @@ require 'header.php';
                      </div>
                       <div class="flex-1">
                             <label for="item_tax_0" class="block text-gray-700">Tax</label>
-                            <input type="number" name="items[0][tax]" id="item_tax_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)" >
+                            <input type="number" name="items[0][tax]" id="item_tax_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)">
                       </div>
                          <div class="flex-1">
                            <label for="item_discount_0" class="block text-gray-700">Discount</label>
                                 <input type="number" name="items[0][discount]" id="item_discount_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)" >
-                         </div>
-                        <div class="flex-1">
-                            <label for="item_subtotal_0" class="block text-gray-700">Subtotal</label>
-                             <input type="number" name="items[0][subtotal]" id="item_subtotal_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0"  readonly>
+                        </div>
+                         <div class="flex-1">
+                             <label for="item_subtotal_0" class="block text-gray-700">Subtotal</label>
+                            <input type="number" name="items[0][subtotal]" id="item_subtotal_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0"  readonly>
                         </div>
                  </div>
             </div>
@@ -378,7 +378,7 @@ require 'header.php';
                         <label for="item_tax_${item_count}" class="block text-gray-700">Tax</label>
                         <input type="number" name="items[${item_count}][tax]" id="item_tax_${item_count}" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)">
                  </div>
-                 <div class="flex-1">
+                  <div class="flex-1">
                     <label for="item_discount_${item_count}" class="block text-gray-700">Discount</label>
                         <input type="number" name="items[${item_count}][discount]" id="item_discount_${item_count}" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)" >
                 </div>
@@ -481,3 +481,8 @@ require 'header.php';
              }
             toggleDiscountInput();
 </script>
+
+<?php
+// Include footer
+require 'footer.php';
+?>
