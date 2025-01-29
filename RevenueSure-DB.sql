@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 29, 2025 at 10:04 PM
+-- Generation Time: Jan 29, 2025 at 10:23 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -464,6 +464,21 @@ INSERT INTO `project_categories` (`id`, `name`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `subtasks`
+--
+
+CREATE TABLE `subtasks` (
+  `id` int(11) NOT NULL,
+  `task_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `assigned_to` int(11) DEFAULT NULL,
+  `is_completed` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tasks`
 --
 
@@ -471,11 +486,16 @@ CREATE TABLE `tasks` (
   `id` int(11) NOT NULL,
   `lead_id` int(11) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
+  `task_id` varchar(50) DEFAULT NULL,
+  `task_name` varchar(255) DEFAULT NULL,
   `project_id` int(11) DEFAULT NULL,
   `task_type` enum('Follow-Up','Meeting','Deadline') NOT NULL,
   `description` text DEFAULT NULL,
   `due_date` datetime NOT NULL,
-  `status` enum('Pending','Completed') DEFAULT 'Pending',
+  `status` enum('To Do','In Progress','Completed','Blocked','Canceled','Pending') DEFAULT 'To Do',
+  `estimated_hours` decimal(4,2) DEFAULT NULL,
+  `billable` tinyint(1) DEFAULT 0,
+  `priority` enum('Low','Medium','High') DEFAULT 'Medium',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -483,8 +503,54 @@ CREATE TABLE `tasks` (
 -- Dumping data for table `tasks`
 --
 
-INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `project_id`, `task_type`, `description`, `due_date`, `status`, `created_at`) VALUES
-(2, NULL, 2, NULL, 'Meeting', 'jkj', '2025-01-29 15:54:00', 'Pending', '2025-01-28 10:27:02');
+INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `task_id`, `task_name`, `project_id`, `task_type`, `description`, `due_date`, `status`, `estimated_hours`, `billable`, `priority`, `created_at`) VALUES
+(2, NULL, 2, NULL, 'Read Training Manual', NULL, 'Meeting', 'Manual Book Read', '2025-01-29 15:54:00', 'Blocked', 10.00, 0, 'Medium', '2025-01-28 10:27:02'),
+(3, NULL, 2, 'TASK-20250129-003', 'Credits Loadup', NULL, 'Deadline', 'Loadup credits on the vendor page', '2025-01-31 02:49:00', 'Completed', 10.00, 1, 'Medium', '2025-01-29 21:20:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_attachments`
+--
+
+CREATE TABLE `task_attachments` (
+  `id` int(11) NOT NULL,
+  `task_id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_comments`
+--
+
+CREATE TABLE `task_comments` (
+  `id` int(11) NOT NULL,
+  `task_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_time_logs`
+--
+
+CREATE TABLE `task_time_logs` (
+  `id` int(11) NOT NULL,
+  `task_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `log_date` date NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time DEFAULT NULL,
+  `hours_spent` decimal(4,2) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -673,13 +739,44 @@ ALTER TABLE `project_categories`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `subtasks`
+--
+ALTER TABLE `subtasks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `task_id` (`task_id`);
+
+--
 -- Indexes for table `tasks`
 --
 ALTER TABLE `tasks`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `task_id` (`task_id`),
   ADD KEY `lead_id` (`lead_id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `project_id` (`project_id`);
+
+--
+-- Indexes for table `task_attachments`
+--
+ALTER TABLE `task_attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `task_id` (`task_id`);
+
+--
+-- Indexes for table `task_comments`
+--
+ALTER TABLE `task_comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `task_id` (`task_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `task_time_logs`
+--
+ALTER TABLE `task_time_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `task_id` (`task_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `todos`
@@ -809,10 +906,34 @@ ALTER TABLE `project_categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `subtasks`
+--
+ALTER TABLE `subtasks`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `task_attachments`
+--
+ALTER TABLE `task_attachments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `task_comments`
+--
+ALTER TABLE `task_comments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `task_time_logs`
+--
+ALTER TABLE `task_time_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `todos`
@@ -918,12 +1039,38 @@ ALTER TABLE `projects`
   ADD CONSTRAINT `projects_ibfk_2` FOREIGN KEY (`project_category_id`) REFERENCES `project_categories` (`id`);
 
 --
+-- Constraints for table `subtasks`
+--
+ALTER TABLE `subtasks`
+  ADD CONSTRAINT `subtasks_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `tasks`
 --
 ALTER TABLE `tasks`
   ADD CONSTRAINT `tasks_ibfk_1` FOREIGN KEY (`lead_id`) REFERENCES `leads` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `tasks_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `tasks_ibfk_3` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `task_attachments`
+--
+ALTER TABLE `task_attachments`
+  ADD CONSTRAINT `task_attachments_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `task_comments`
+--
+ALTER TABLE `task_comments`
+  ADD CONSTRAINT `task_comments_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `task_comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `task_time_logs`
+--
+ALTER TABLE `task_time_logs`
+  ADD CONSTRAINT `task_time_logs_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `task_time_logs_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `todos`
