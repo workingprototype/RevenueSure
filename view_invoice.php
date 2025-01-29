@@ -31,6 +31,35 @@ $stmt->bindParam(':invoice_id', $invoice_id);
 $stmt->execute();
 $invoice_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Decode JSON tax array
+$itemized_tax = json_decode($invoice['tax'], true);
+
+// Calculate subtotal from individual items
+$subtotal = 0;
+if ($invoice_items){
+   foreach($invoice_items as $item){
+       $subtotal += $item['subtotal'];
+    }
+}
+
+
+// Calculate total tax
+$total_tax = array_sum($itemized_tax);
+
+
+// Calculate the total discount
+$discount = 0;
+if ($invoice['discount_type'] == 'percentage') {
+    $discount = $subtotal * ($invoice['discount_amount'] / 100);
+ } else {
+    $discount = $invoice['discount_amount'];
+}
+
+
+// Calculate total
+$total = ($subtotal + $total_tax + $invoice['additional_charges']) - $discount;
+
+
 // Include header
 require 'header.php';
 ?>
@@ -71,7 +100,7 @@ require 'header.php';
                      <th class="px-4 py-2">Quantity</th>
                     <th class="px-4 py-2">Unit Price</th>
                       <th class="px-4 py-2">Tax</th>
-                       <th class="px-4 py-2">Discount</th>
+                        <th class="px-4 py-2">Discount</th>
                      <th class="px-4 py-2">Subtotal</th>
                 </tr>
             </thead>
@@ -82,9 +111,9 @@ require 'header.php';
                        <td class="px-4 py-2"><?php echo htmlspecialchars($item['product_service']); ?></td>
                         <td class="px-4 py-2"><?php echo htmlspecialchars($item['quantity']); ?></td>
                        <td class="px-4 py-2"><?php echo htmlspecialchars($item['unit_price']); ?></td>
-                        <td class="px-4 py-2"><?php echo htmlspecialchars($item['tax']); ?></td>
-                         <td class="px-4 py-2"><?php echo htmlspecialchars($item['discount']); ?></td>
-                        <td class="px-4 py-2"><?php echo htmlspecialchars($item['subtotal']); ?></td>
+                       <td class="px-4 py-2"><?php echo htmlspecialchars($item['tax']); ?></td>
+                          <td class="px-4 py-2"><?php echo htmlspecialchars($item['discount']); ?></td>
+                        <td class="px-4 py-2">$<?php echo htmlspecialchars($item['subtotal']); ?></td>
                       </tr>
                    <?php endforeach; ?>
                   <?php else: ?>
@@ -96,11 +125,11 @@ require 'header.php';
           </table>
        </div>
          <div class="mb-4">
-            <p><strong>Subtotal:</strong> $<?php echo htmlspecialchars($invoice['subtotal']); ?></p>
-              <p><strong>Tax:</strong> $<?php echo htmlspecialchars($invoice['tax']); ?></p>
-                 <p><strong>Discount:</strong> $<?php echo htmlspecialchars($invoice['discount']); ?></p>
+            <p><strong>Subtotal:</strong> $<?php echo htmlspecialchars($subtotal); ?></p>
+              <p><strong>Tax:</strong> $<?php echo htmlspecialchars($total_tax); ?></p>
+                <p><strong>Discount:</strong> $<?php echo htmlspecialchars($discount); ?></p>
              <p><strong>Additional Charges:</strong> $<?php echo htmlspecialchars($invoice['additional_charges']); ?></p>
-             <p><strong>Total:</strong> $<?php echo htmlspecialchars($invoice['total']); ?></p>
+             <p><strong>Total:</strong> $<?php echo htmlspecialchars($total); ?></p>
         </div>
     <?php if($invoice['notes']): ?>
         <div class="mb-4">

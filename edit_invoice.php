@@ -50,25 +50,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $footer = $_POST['footer'];
     $items = $_POST['items'] ?? [];
       $additional_charges = $_POST['additional_charges'] ? $_POST['additional_charges'] : 0;
+        $billing_country = $_POST['billing_country'] ?? '';
+      $tax_method = $_POST['tax_method'] ?? '';
+       $discount_type = $_POST['discount_type'] ?? 'fixed'; // default is fixed
+    $discount_amount = $_POST['discount_amount'] ? $_POST['discount_amount'] : 0;
 
+      if (empty($bill_to_email)) {
+          $error = "Bill to email cannot be empty.";
+     } elseif ( !filter_var($bill_to_email, FILTER_VALIDATE_EMAIL)) {
+         $error = "Invalid email format.";
+      }else {
 
-    // Calculate total
-     $subtotal = 0;
-      foreach ($items as $item) {
-            $subtotal += $item['subtotal'];
-        }
-    $tax = 0;
-    foreach ($items as $item) {
-          $tax += $item['tax'];
-        }
-     $discount = 0;
-    foreach ($items as $item) {
-         $discount += $item['discount'];
-     }
-    $total = ($subtotal + $tax + $additional_charges) - $discount;
+      // Calculate total
+        $subtotal = 0;
+        foreach ($items as $item) {
+              $subtotal += $item['subtotal'];
+          }
+        $tax = 0;
+            $itemized_tax = [];
+          foreach ($items as $item) {
+               $tax += $item['tax'];
+                }
+           foreach($items as $index => $item){
+               if(!empty($item['tax'])){
+                    $itemized_tax[$index] =  $item['tax'];
+                   }
+           }
+        $tax_json = json_encode($itemized_tax);
+         $discount = 0;
+        if($discount_type === 'percentage'){
+            $discount = $subtotal * ($discount_amount/100);
+         } else {
+            $discount = $discount_amount;
+          }
+       $total = ($subtotal + $tax + $additional_charges) - $discount;
 
     // Update Invoice Data
-    $stmt = $conn->prepare("UPDATE invoices SET lead_id = :lead_id, customer_id = :customer_id, issue_date = :issue_date, due_date = :due_date, bill_to_name = :bill_to_name, bill_to_address = :bill_to_address, bill_to_email = :bill_to_email, bill_to_phone = :bill_to_phone, ship_to_address = :ship_to_address, subtotal = :subtotal, tax = :tax, discount = :discount, additional_charges = :additional_charges, total = :total, payment_terms = :payment_terms, notes = :notes, footer = :footer WHERE id = :invoice_id");
+    $stmt = $conn->prepare("UPDATE invoices SET lead_id = :lead_id, customer_id = :customer_id, issue_date = :issue_date, due_date = :due_date, bill_to_name = :bill_to_name, bill_to_address = :bill_to_address, bill_to_email = :bill_to_email, bill_to_phone = :bill_to_phone, ship_to_address = :ship_to_address, subtotal = :subtotal, tax_method = :tax_method, tax = :tax, discount = :discount, additional_charges = :additional_charges, total = :total, payment_terms = :payment_terms, notes = :notes, footer = :footer, billing_country = :billing_country, discount_type = :discount_type, discount_amount = :discount_amount WHERE id = :invoice_id");
 
       $stmt->bindParam(':lead_id', $lead_id);
         $stmt->bindParam(':customer_id', $customer_id);
@@ -80,13 +98,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':bill_to_phone', $bill_to_phone);
     $stmt->bindParam(':ship_to_address', $ship_to_address);
      $stmt->bindParam(':subtotal', $subtotal);
-     $stmt->bindParam(':tax', $tax);
+      $stmt->bindParam(':tax_method', $tax_method);
+        $stmt->bindParam(':tax', $tax_json);
      $stmt->bindParam(':discount', $discount);
           $stmt->bindParam(':additional_charges', $additional_charges);
     $stmt->bindParam(':total', $total);
      $stmt->bindParam(':payment_terms', $payment_terms);
       $stmt->bindParam(':notes', $notes);
          $stmt->bindParam(':footer', $footer);
+         $stmt->bindParam(':billing_country', $billing_country);
+          $stmt->bindParam(':discount_type', $discount_type);
+       $stmt->bindParam(':discount_amount', $discount_amount);
     $stmt->bindParam(':invoice_id', $invoice_id);
 
     if ($stmt->execute()) {
@@ -98,15 +120,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
          // Insert new invoice items
          foreach ($items as $item) {
-            $stmt = $conn->prepare("INSERT INTO invoice_items (invoice_id, product_service, quantity, unit_price, tax, discount, subtotal) VALUES (:invoice_id, :product_service, :quantity, :unit_price, :tax, :discount, :subtotal)");
-           $stmt->bindParam(':invoice_id', $invoice_id);
-            $stmt->bindParam(':product_service', $item['product_service']);
-             $stmt->bindParam(':quantity', $item['quantity']);
-            $stmt->bindParam(':unit_price', $item['unit_price']);
-              $stmt->bindParam(':tax', $item['tax']);
-               $stmt->bindParam(':discount', $item['discount']);
-            $stmt->bindParam(':subtotal', $item['subtotal']);
-              $stmt->execute();
+              if (!empty($item['product_service'])){
+                  $stmt = $conn->prepare("INSERT INTO invoice_items (invoice_id, product_service, quantity, unit_price, tax, discount, subtotal) VALUES (:invoice_id, :product_service, :quantity, :unit_price, :tax, :discount, :subtotal)");
+                    $stmt->bindParam(':invoice_id', $invoice_id);
+                     $stmt->bindParam(':product_service', $item['product_service']);
+                      $stmt->bindParam(':quantity', $item['quantity']);
+                     $stmt->bindParam(':unit_price', $item['unit_price']);
+                    $stmt->bindParam(':tax', $item['tax']);
+                       $stmt->bindParam(':discount', $item['discount']);
+                     $stmt->bindParam(':subtotal', $item['subtotal']);
+                       $stmt->execute();
+                 }
          }
            $success = "Invoice updated successfully!";
            header("Location: view_invoice.php?id=$invoice_id&success=true");
@@ -114,6 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
            $error = "Error updating invoice.";
         }
+      }
 }
 // Fetch leads for the dropdown
 $stmt = $conn->prepare("SELECT id, name, email, phone FROM leads");
@@ -203,6 +228,34 @@ require 'header.php';
                 <label for="due_date" class="block text-gray-700">Due Date</label>
                 <input type="date" name="due_date" id="due_date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo $invoice['due_date']; ?>" required>
             </div>
+              <div class="mb-4">
+                    <label for="billing_country" class="block text-gray-700">Billing Country</label>
+                       <select name="billing_country" id="billing_country" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                           <option value="">Select Country</option>
+                            <option value="us" <?php if($invoice['billing_country'] == 'us') echo 'selected'; ?>>United States</option>
+                             <option value="ca"  <?php if($invoice['billing_country'] == 'ca') echo 'selected'; ?>>Canada</option>
+                             <option value="uk" <?php if($invoice['billing_country'] == 'uk') echo 'selected'; ?>>United Kingdom</option>
+                              <option value="au"  <?php if($invoice['billing_country'] == 'au') echo 'selected'; ?>>Australia</option>
+                                <option value="de"  <?php if($invoice['billing_country'] == 'de') echo 'selected'; ?>>Germany</option>
+                                <option value="fr" <?php if($invoice['billing_country'] == 'fr') echo 'selected'; ?>>France</option>
+                              <option value="in"  <?php if($invoice['billing_country'] == 'in') echo 'selected'; ?>>India</option>
+                           </select>
+                </div>
+                  <div class="mb-4">
+                <label for="tax_method" class="block text-gray-700">Tax Method</label>
+                <input type="text" name="tax_method" id="tax_method" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"  value="<?php echo htmlspecialchars($invoice['tax_method']); ?>" readonly>
+            </div>
+                <div class="mb-4">
+                     <label for="discount_type" class="block text-gray-700">Discount Type</label>
+                      <select name="discount_type" id="discount_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="toggleDiscountInput()">
+                             <option value="fixed" <?php if($invoice['discount_type'] == 'fixed') echo 'selected'; ?>>Fixed</option>
+                             <option value="percentage" <?php if($invoice['discount_type'] == 'percentage') echo 'selected'; ?>>Percentage</option>
+                        </select>
+                 </div>
+                <div class="mb-4">
+                     <label for="discount_amount" class="block text-gray-700">Discount Amount</label>
+                      <input type="number" name="discount_amount" id="discount_amount" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($invoice['discount_amount']); ?>" min="0">
+                 </div>
                <!-- Items -->
             <div class="mb-4">
              <h3 class="text-xl font-bold text-gray-800 mb-4">Invoice Items</h3>
@@ -226,9 +279,9 @@ require 'header.php';
                           <label for="item_tax_<?php echo $index; ?>" class="block text-gray-700">Tax</label>
                              <input type="number" name="items[<?php echo $index; ?>][tax]" id="item_tax_<?php echo $index; ?>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($item['tax']); ?>" onchange="calculateItemSubtotal(this)" >
                        </div>
-                        <div class="flex-1">
+                          <div class="flex-1">
                               <label for="item_discount_<?php echo $index; ?>" class="block text-gray-700">Discount</label>
-                                <input type="number" name="items[<?php echo $index; ?>][discount]" id="item_discount_<?php echo $index; ?>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($item['discount']); ?>"  onchange="calculateItemSubtotal(this)" >
+                                  <input type="number" name="items[<?php echo $index; ?>][discount]" id="item_discount_<?php echo $index; ?>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($item['discount']); ?>"  onchange="calculateItemSubtotal(this)" >
                          </div>
                         <div class="flex-1">
                             <label for="item_subtotal_<?php echo $index; ?>" class="block text-gray-700">Subtotal</label>
@@ -340,7 +393,7 @@ require 'header.php';
                         <label for="item_tax_${item_count}" class="block text-gray-700">Tax</label>
                         <input type="number" name="items[${item_count}][tax]" id="item_tax_${item_count}" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)">
                  </div>
-                 <div class="flex-1">
+                  <div class="flex-1">
                     <label for="item_discount_${item_count}" class="block text-gray-700">Discount</label>
                         <input type="number" name="items[${item_count}][discount]" id="item_discount_${item_count}" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)" >
                 </div>
@@ -359,29 +412,29 @@ require 'header.php';
             const taxInput = document.getElementById(`item_tax_${itemId}`);
             const discountInput = document.getElementById(`item_discount_${itemId}`);
 
-             const tax = taxInput.value ? parseFloat(taxInput.value) : 0;
+            const tax = taxInput.value ? parseFloat(taxInput.value) : 0;
            const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
             const subtotalInput = document.getElementById(`item_subtotal_${itemId}`);
             const subtotal = (quantity * unitPrice) + tax - discount;
 
           subtotalInput.value =  subtotal.toFixed(2);
-           calculateTotal();
+          calculateTotal();
         }
        function calculateTotal() {
-           let subtotal = 0;
-         let total_tax = 0;
+          let subtotal = 0;
+           let total_tax = 0;
           let total_discount = 0;
              const items = document.querySelectorAll('[data-item-id]');
            items.forEach(item => {
               const itemId = item.dataset.item_id;
                const subtotalValue = document.getElementById(`item_subtotal_${itemId}`).value;
-               const taxInput = document.getElementById(`item_tax_${itemId}`);
+              const taxInput = document.getElementById(`item_tax_${itemId}`);
               const discountInput = document.getElementById(`item_discount_${itemId}`);
                const tax = taxInput.value ? parseFloat(taxInput.value) : 0;
-           const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
+            const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
                 subtotal += parseFloat(subtotalValue);
-               total_tax += tax;
-                 total_discount += discount
+                total_tax += tax;
+                total_discount += discount
              });
              const additionalChargesInput = document.getElementById('additional_charges');
               const additional_charges = additionalChargesInput.value ? parseFloat(additionalChargesInput.value) : 0;
@@ -389,12 +442,13 @@ require 'header.php';
           const total = (subtotal  + additional_charges ) - total_discount;
           document.getElementById('total').value = total.toFixed(2);
       }
+       // Auto Due Date
          document.getElementById('payment_terms').addEventListener('change', function() {
         const issueDateInput = document.getElementById('issue_date');
          const dueDateInput = document.getElementById('due_date');
           const paymentTerms = this.value;
-         if(paymentTerms != 'Custom'){
-                const issueDate = new Date(issueDateInput.value);
+        if (paymentTerms != 'Custom'){
+           const issueDate = new Date(issueDateInput.value);
                   let dueDate = null;
                 if (paymentTerms === 'Net 15') {
                     dueDate = new Date(issueDate.getTime() + (15 * 24 * 60 * 60 * 1000));
@@ -404,12 +458,43 @@ require 'header.php';
                       dueDate = issueDate;
                }
                if (dueDate) {
-                   const formattedDueDate = dueDate.toISOString().split('T')[0];
+                    const formattedDueDate = dueDate.toISOString().split('T')[0];
                       dueDateInput.value = formattedDueDate;
                 }
           }
     });
-  showCustomerLeadDetails(document.getElementById('lead_customer_type').value);
+    document.getElementById('billing_country').addEventListener('change', function() {
+       const billing_country = this.value;
+       const taxInput = document.getElementById('tax_method');
+          if(billing_country === 'us'){
+               taxInput.value = 'Sales Tax';
+          } else if (billing_country === 'ca'){
+                taxInput.value = 'GST/HST';
+           } else if (billing_country === 'uk'){
+                 taxInput.value = 'VAT';
+           } else if (billing_country === 'au'){
+                 taxInput.value = 'GST';
+            } else if (billing_country === 'de'){
+                  taxInput.value = 'VAT';
+           } else if (billing_country === 'fr'){
+                 taxInput.value = 'VAT';
+          }  else if (billing_country === 'in'){
+                  taxInput.value = 'GST';
+          }  else {
+              taxInput.value = '';
+         }
+    });
+        showCustomerLeadDetails(document.getElementById('lead_customer_type').value);
+      function toggleDiscountInput() {
+            const discountType = document.getElementById('discount_type').value;
+            const discountInput = document.getElementById('discount_amount');
+               if(discountType === 'percentage'){
+                discountInput.max = 100;
+               } else {
+                   discountInput.max = null;
+                }
+             }
+            toggleDiscountInput();
 </script>
 <?php
 // Include footer

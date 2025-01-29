@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors' , 1);
+error_reporting(E_ALL);
+
 session_start();
 require 'db.php';
 
@@ -9,7 +12,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 $error = '';
 $success = '';
-$invoice_number = 'INV-' . date('Ymd') . '-' . str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT);
+// Generate a unique invoice number
+$stmt = $conn->prepare("SELECT MAX(id) AS max_id FROM invoices");
+$stmt->execute();
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+$next_id = ($result['max_id'] ?? 0) + 1;
+$invoice_number = 'INV-' . date('Ymd') . '-' . str_pad($next_id, 3, '0', STR_PAD_LEFT);
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Invoice Details
@@ -26,26 +35,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $notes = $_POST['notes'];
     $footer = $_POST['footer'];
     $items = $_POST['items'] ?? [];
-      $additional_charges = $_POST['additional_charges'] ? $_POST['additional_charges'] : 0;
+    $additional_charges = $_POST['additional_charges'] ? $_POST['additional_charges'] : 0;
+    $billing_country = $_POST['billing_country'] ?? '';
+    $tax_method = $_POST['tax_method'] ?? '';
+     $discount_type = $_POST['discount_type'] ?? 'fixed'; // default is fixed
+      $discount_amount = $_POST['discount_amount'] ? $_POST['discount_amount'] : 0;
 
 
-    // Calculate total
-    $subtotal = 0;
+     if (empty($bill_to_email)) {
+          $error = "Bill to email cannot be empty.";
+     } elseif ( !filter_var($bill_to_email, FILTER_VALIDATE_EMAIL)) {
+         $error = "Invalid email format.";
+      }else {
+
+        // Calculate total
+         $subtotal = 0;
       foreach ($items as $item) {
             $subtotal += $item['subtotal'];
         }
-    $tax = 0;
-    foreach ($items as $item) {
-          $tax += $item['tax'];
-        }
-     $discount = 0;
-    foreach ($items as $item) {
-         $discount += $item['discount'];
-     }
-    $total = ($subtotal + $tax + $additional_charges) - $discount;
+        $tax = 0;
+            $itemized_tax = [];
+            foreach ($items as $item) {
+                $tax += $item['tax'];
+                }
+                foreach($items as $index => $item){
+                if(!empty($item['tax'])){
+                        $itemized_tax[$index] =  $item['tax'];
+                   }
+              }
+        $tax_json = json_encode($itemized_tax);
 
+        $discount = 0;
+        if($discount_type === 'percentage'){
+            $discount = $subtotal * ($discount_amount/100);
+        } else {
+            $discount = $discount_amount;
+       }
+
+
+       $total = ($subtotal + $tax + $additional_charges) - $discount;
     // Insert Invoice Data
-    $stmt = $conn->prepare("INSERT INTO invoices (invoice_number, lead_id, customer_id, issue_date, due_date, bill_to_name, bill_to_address, bill_to_email, bill_to_phone, ship_to_address, subtotal, tax, discount, additional_charges, total, payment_terms, notes, footer) VALUES (:invoice_number, :lead_id, :customer_id, :issue_date, :due_date, :bill_to_name, :bill_to_address, :bill_to_email, :bill_to_phone, :ship_to_address, :subtotal, :tax, :discount, :additional_charges, :total, :payment_terms, :notes, :footer)");
+    $stmt = $conn->prepare("INSERT INTO invoices (invoice_number, lead_id, customer_id, issue_date, due_date, bill_to_name, bill_to_address, bill_to_email, bill_to_phone, ship_to_address, subtotal, tax_method, tax, discount, additional_charges, total, payment_terms, notes, footer, billing_country, discount_type, discount_amount) VALUES (:invoice_number, :lead_id, :customer_id, :issue_date, :due_date, :bill_to_name, :bill_to_address, :bill_to_email, :bill_to_phone, :ship_to_address, :subtotal, :tax_method, :tax, :discount, :additional_charges, :total, :payment_terms, :notes, :footer, :billing_country, :discount_type, :discount_amount)");
     $stmt->bindParam(':invoice_number', $invoice_number);
     $stmt->bindParam(':lead_id', $lead_id);
     $stmt->bindParam(':customer_id', $customer_id);
@@ -57,28 +87,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindParam(':bill_to_phone', $bill_to_phone);
     $stmt->bindParam(':ship_to_address', $ship_to_address);
      $stmt->bindParam(':subtotal', $subtotal);
-     $stmt->bindParam(':tax', $tax);
+    $stmt->bindParam(':tax_method', $tax_method);
+      $stmt->bindParam(':tax', $tax_json);
         $stmt->bindParam(':discount', $discount);
          $stmt->bindParam(':additional_charges', $additional_charges);
     $stmt->bindParam(':total', $total);
      $stmt->bindParam(':payment_terms', $payment_terms);
      $stmt->bindParam(':notes', $notes);
      $stmt->bindParam(':footer', $footer);
+      $stmt->bindParam(':billing_country', $billing_country);
+    $stmt->bindParam(':discount_type', $discount_type);
+       $stmt->bindParam(':discount_amount', $discount_amount);
+
 
     if ($stmt->execute()) {
          $invoice_id = $conn->lastInsertId();
 
          // Insert invoice items
          foreach ($items as $item) {
-           $stmt = $conn->prepare("INSERT INTO invoice_items (invoice_id, product_service, quantity, unit_price, tax, discount, subtotal) VALUES (:invoice_id, :product_service, :quantity, :unit_price, :tax, :discount, :subtotal)");
-           $stmt->bindParam(':invoice_id', $invoice_id);
-            $stmt->bindParam(':product_service', $item['product_service']);
-             $stmt->bindParam(':quantity', $item['quantity']);
-            $stmt->bindParam(':unit_price', $item['unit_price']);
-            $stmt->bindParam(':tax', $item['tax']);
-               $stmt->bindParam(':discount', $item['discount']);
-            $stmt->bindParam(':subtotal', $item['subtotal']);
-              $stmt->execute();
+              if (!empty($item['product_service'])){
+                   $stmt = $conn->prepare("INSERT INTO invoice_items (invoice_id, product_service, quantity, unit_price, tax, discount, subtotal) VALUES (:invoice_id, :product_service, :quantity, :unit_price, :tax, :discount, :subtotal)");
+                    $stmt->bindParam(':invoice_id', $invoice_id);
+                     $stmt->bindParam(':product_service', $item['product_service']);
+                      $stmt->bindParam(':quantity', $item['quantity']);
+                     $stmt->bindParam(':unit_price', $item['unit_price']);
+                     $stmt->bindParam(':tax', $item['tax']);
+                         $stmt->bindParam(':discount', $item['discount']);
+                     $stmt->bindParam(':subtotal', $item['subtotal']);
+                         $stmt->execute();
+                   }
             }
            $success = "Invoice created successfully!";
             header("Location: view_invoice.php?id=$invoice_id&success=true");
@@ -86,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $error = "Error creating invoice.";
         }
+      }
 }
 // Fetch leads for the dropdown
 $stmt = $conn->prepare("SELECT id, name, email, phone FROM leads");
@@ -144,8 +182,7 @@ require 'header.php';
                     <?php endforeach; ?>
                 </select>
               </div>
-
-            <div class="mb-4">
+           <div class="mb-4">
                 <label for="invoice_number" class="block text-gray-700">Invoice Number</label>
                 <input type="text" name="invoice_number" id="invoice_number" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo $invoice_number; ?>" readonly>
             </div>
@@ -177,6 +214,35 @@ require 'header.php';
                 <label for="due_date" class="block text-gray-700">Due Date</label>
                 <input type="date" name="due_date" id="due_date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
             </div>
+                <div class="mb-4">
+                    <label for="billing_country" class="block text-gray-700">Billing Country</label>
+                       <select name="billing_country" id="billing_country" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                           <option value="">Select Country</option>
+                            <option value="us">United States</option>
+                             <option value="ca">Canada</option>
+                             <option value="uk">United Kingdom</option>
+                              <option value="au">Australia</option>
+                                <option value="de">Germany</option>
+                                <option value="fr">France</option>
+                              <option value="in">India</option>
+                           </select>
+                </div>
+                <div class="mb-4">
+                <label for="tax_method" class="block text-gray-700">Tax Method</label>
+                <input type="text" name="tax_method" id="tax_method" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" readonly>
+            </div>
+                <div class="mb-4">
+                     <label for="discount_type" class="block text-gray-700">Discount Type</label>
+                       <select name="discount_type" id="discount_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="toggleDiscountInput()">
+                             <option value="fixed">Fixed</option>
+                             <option value="percentage">Percentage</option>
+                        </select>
+                </div>
+               <div class="mb-4">
+                     <label for="discount_amount" class="block text-gray-700">Discount Amount</label>
+                     <input type="number" name="discount_amount" id="discount_amount" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" min="0">
+                </div>
+
                <!-- Items -->
             <div class="mb-4">
              <h3 class="text-xl font-bold text-gray-800 mb-4">Invoice Items</h3>
@@ -285,7 +351,7 @@ require 'header.php';
         } else {
              document.getElementById('bill_to_name').value = "";
               document.getElementById('bill_to_email').value = "";
-             document.getElementById('bill_to_phone').value = "";
+            document.getElementById('bill_to_phone').value = "";
              document.getElementById('bill_to_address').value = "";
         }
     }
@@ -328,7 +394,7 @@ require 'header.php';
           const itemId = input.closest('[data-item-id]').dataset.item_id;
             const quantity = document.getElementById(`item_quantity_${itemId}`).value;
             const unitPrice = document.getElementById(`item_unit_price_${itemId}`).value;
-            const taxInput = document.getElementById(`item_tax_${itemId}`);
+           const taxInput = document.getElementById(`item_tax_${itemId}`);
             const discountInput = document.getElementById(`item_discount_${itemId}`);
 
              const tax = taxInput.value ? parseFloat(taxInput.value) : 0;
@@ -341,7 +407,7 @@ require 'header.php';
         }
        function calculateTotal() {
           let subtotal = 0;
-         let total_tax = 0;
+           let total_tax = 0;
           let total_discount = 0;
              const items = document.querySelectorAll('[data-item-id]');
            items.forEach(item => {
@@ -350,7 +416,7 @@ require 'header.php';
               const taxInput = document.getElementById(`item_tax_${itemId}`);
               const discountInput = document.getElementById(`item_discount_${itemId}`);
                const tax = taxInput.value ? parseFloat(taxInput.value) : 0;
-           const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
+            const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
                 subtotal += parseFloat(subtotalValue);
                  total_tax += tax;
                  total_discount += discount
@@ -358,7 +424,7 @@ require 'header.php';
              const additionalChargesInput = document.getElementById('additional_charges');
               const additional_charges = additionalChargesInput.value ? parseFloat(additionalChargesInput.value) : 0;
 
-          const total = (subtotal  + additional_charges ) - total_discount ;
+          const total = (subtotal  + additional_charges ) - total_discount;
           document.getElementById('total').value = total.toFixed(2);
       }
       // Auto Due Date
@@ -366,7 +432,7 @@ require 'header.php';
         const issueDateInput = document.getElementById('issue_date');
          const dueDateInput = document.getElementById('due_date');
           const paymentTerms = this.value;
-          if(paymentTerms != 'Custom'){
+        if(paymentTerms != 'Custom'){
                 const issueDate = new Date(issueDateInput.value);
                   let dueDate = null;
                 if (paymentTerms === 'Net 15') {
@@ -381,11 +447,37 @@ require 'header.php';
                       dueDateInput.value = formattedDueDate;
                 }
           }
-        });
-
+    });
+      document.getElementById('billing_country').addEventListener('change', function() {
+       const billing_country = this.value;
+       const taxInput = document.getElementById('tax_method');
+          if(billing_country === 'us'){
+               taxInput.value = 'Sales Tax';
+          } else if (billing_country === 'ca'){
+                taxInput.value = 'GST/HST';
+           } else if (billing_country === 'uk'){
+                 taxInput.value = 'VAT';
+           } else if (billing_country === 'au'){
+                 taxInput.value = 'GST';
+            } else if (billing_country === 'de'){
+                  taxInput.value = 'VAT';
+           } else if (billing_country === 'fr'){
+                 taxInput.value = 'VAT';
+          }  else if (billing_country === 'in'){
+                  taxInput.value = 'GST';
+          }  else {
+              taxInput.value = '';
+         }
+    });
         showCustomerLeadDetails(document.getElementById('lead_customer_type').value);
+          function toggleDiscountInput() {
+            const discountType = document.getElementById('discount_type').value;
+            const discountInput = document.getElementById('discount_amount');
+               if(discountType === 'percentage'){
+                discountInput.max = 100;
+               } else {
+                   discountInput.max = null;
+                }
+             }
+            toggleDiscountInput();
 </script>
-<?php
-// Include footer
-require 'footer.php';
-?>
