@@ -252,6 +252,14 @@
                                 <a href="add_invoice.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_invoice.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Invoice</a>
                             </div>
                         </div>
+                        <div class="menu-item <?php if (isParentActive('manage_projects.php') || isParentActive('add_project.php') || isParentActive('view_project.php') || isParentActive('manage_project_categories.php')) echo 'active'; ?>">
+                            <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-tasks mr-2"></i>Manage Projects</a>
+                            <div class="submenu">
+                                <a href="manage_projects.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_projects.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Projects</a>
+                                 <a href="add_project.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_project.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Project</a>
+                                  <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Manage Project Categories</a>
+                            </div>
+                        </div>
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                          <a href="settings.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
 

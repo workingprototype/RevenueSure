@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 29, 2025 at 08:21 PM
+-- Generation Time: Jan 29, 2025 at 10:04 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -385,7 +385,8 @@ CREATE TABLE `notifications` (
 
 INSERT INTO `notifications` (`id`, `user_id`, `message`, `related_id`, `type`, `is_read`, `created_at`) VALUES
 (1, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
-(2, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 0, '2025-01-29 10:24:00');
+(2, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
+(3, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00');
 
 -- --------------------------------------------------------
 
@@ -413,6 +414,56 @@ INSERT INTO `payments` (`id`, `invoice_id`, `payment_date`, `payment_method`, `t
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `projects`
+--
+
+CREATE TABLE `projects` (
+  `id` int(11) NOT NULL,
+  `project_id` varchar(50) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `assigned_lead_customer_id` int(11) DEFAULT NULL,
+  `assigned_lead_customer_type` enum('lead','customer') DEFAULT NULL,
+  `project_manager_id` int(11) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date DEFAULT NULL,
+  `status` enum('Not Started','In Progress','Completed','On Hold','Canceled') DEFAULT 'Not Started',
+  `priority` enum('High','Medium','Low') DEFAULT 'Medium',
+  `project_category_id` int(11) DEFAULT NULL,
+  `billing_type` enum('Hourly','Fixed Price','Retainer') DEFAULT NULL,
+  `budget` decimal(10,2) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `projects`
+--
+
+INSERT INTO `projects` (`id`, `project_id`, `name`, `assigned_lead_customer_id`, `assigned_lead_customer_type`, `project_manager_id`, `start_date`, `end_date`, `status`, `priority`, `project_category_id`, `billing_type`, `budget`, `description`, `created_at`) VALUES
+(6, 'PROJ-20250129-001', 'Metro Infrastructure Project', 2, 'customer', 2, '2025-01-31', '2025-02-14', 'Not Started', 'Low', 1, 'Retainer', 10000.00, 'Metro Infrastructure ', '2025-01-29 20:52:11');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_categories`
+--
+
+CREATE TABLE `project_categories` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `project_categories`
+--
+
+INSERT INTO `project_categories` (`id`, `name`, `created_at`) VALUES
+(1, 'Industrialization', '2025-01-29 20:51:22');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tasks`
 --
 
@@ -420,6 +471,7 @@ CREATE TABLE `tasks` (
   `id` int(11) NOT NULL,
   `lead_id` int(11) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
+  `project_id` int(11) DEFAULT NULL,
   `task_type` enum('Follow-Up','Meeting','Deadline') NOT NULL,
   `description` text DEFAULT NULL,
   `due_date` datetime NOT NULL,
@@ -431,8 +483,8 @@ CREATE TABLE `tasks` (
 -- Dumping data for table `tasks`
 --
 
-INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `task_type`, `description`, `due_date`, `status`, `created_at`) VALUES
-(2, NULL, 2, 'Meeting', 'jkj', '2025-01-29 15:54:00', 'Pending', '2025-01-28 10:27:02');
+INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `project_id`, `task_type`, `description`, `due_date`, `status`, `created_at`) VALUES
+(2, NULL, 2, NULL, 'Meeting', 'jkj', '2025-01-29 15:54:00', 'Pending', '2025-01-28 10:27:02');
 
 -- --------------------------------------------------------
 
@@ -606,12 +658,28 @@ ALTER TABLE `payments`
   ADD KEY `invoice_id` (`invoice_id`);
 
 --
+-- Indexes for table `projects`
+--
+ALTER TABLE `projects`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `project_id` (`project_id`),
+  ADD KEY `project_manager_id` (`project_manager_id`),
+  ADD KEY `project_category_id` (`project_category_id`);
+
+--
+-- Indexes for table `project_categories`
+--
+ALTER TABLE `project_categories`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `tasks`
 --
 ALTER TABLE `tasks`
   ADD PRIMARY KEY (`id`),
   ADD KEY `lead_id` (`lead_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `project_id` (`project_id`);
 
 --
 -- Indexes for table `todos`
@@ -720,13 +788,25 @@ ALTER TABLE `lead_scores`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `projects`
+--
+ALTER TABLE `projects`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `project_categories`
+--
+ALTER TABLE `project_categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `tasks`
@@ -831,11 +911,19 @@ ALTER TABLE `payments`
   ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `projects`
+--
+ALTER TABLE `projects`
+  ADD CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`project_manager_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `projects_ibfk_2` FOREIGN KEY (`project_category_id`) REFERENCES `project_categories` (`id`);
+
+--
 -- Constraints for table `tasks`
 --
 ALTER TABLE `tasks`
   ADD CONSTRAINT `tasks_ibfk_1` FOREIGN KEY (`lead_id`) REFERENCES `leads` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `tasks_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `tasks_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `tasks_ibfk_3` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `todos`

@@ -15,13 +15,14 @@ if (!isset($_GET['id']) || !isset($_GET['status'])) {
 $task_id = $_GET['id'];
 $status = $_GET['status'];
 
-// Fetch task details to get lead_id
-$stmt = $conn->prepare("SELECT lead_id FROM tasks WHERE id = :id");
+// Fetch task details to get lead_id or project_id
+$stmt = $conn->prepare("SELECT lead_id, project_id FROM tasks WHERE id = :id");
 $stmt->bindParam(':id', $task_id);
 $stmt->execute();
 $task = $stmt->fetch(PDO::FETCH_ASSOC);
 
 $lead_id = $task ? $task['lead_id'] : null;
+ $project_id = $task ? $task['project_id'] : null;
 
 
 $stmt = $conn->prepare("UPDATE tasks SET status = :status WHERE id = :id");
@@ -30,19 +31,23 @@ $stmt->bindParam(':id', $task_id);
 
 
 if ($stmt->execute()) {
-   if($lead_id){
-         header("Location: view_tasks.php?lead_id=$lead_id");
-   }else {
-      header("Location: view_tasks.php");
-   }
+    if($lead_id){
+           header("Location: view_tasks.php?lead_id=$lead_id");
+    }else if($project_id){
+          header("Location: view_tasks.php?project_id=$project_id");
+      }else {
+          header("Location: view_tasks.php");
+      }
    exit();
 } else {
     echo "<script>alert('Error updating task status.');</script>";
     if($lead_id){
          header("Location: view_tasks.php?lead_id=$lead_id");
-    }else {
-       header("Location: view_tasks.php");
-   }
+    }else if ($project_id){
+         header("Location: view_tasks.php?project_id=$project_id");
+    } else {
+        header("Location: view_tasks.php");
+    }
     exit();
 }
 ?>

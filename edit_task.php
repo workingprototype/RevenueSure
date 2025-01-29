@@ -25,7 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $description = $_POST['description'];
     $due_date = $_POST['due_date'];
     $status = $_POST['status'];
-
+     $project_id = $task['project_id'];
+     $lead_id = $task['lead_id'];
+    
     $stmt = $conn->prepare("UPDATE tasks SET task_type = :task_type, description = :description, due_date = :due_date, status = :status WHERE id = :id");
     $stmt->bindParam(':task_type', $task_type);
     $stmt->bindParam(':description', $description);
@@ -34,7 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindParam(':id', $task_id);
 
     if ($stmt->execute()) {
+      if($lead_id){
         header("Location: view_tasks.php?lead_id={$task['lead_id']}");
+        exit();
+      }else if($project_id){
+        header("Location: view_tasks.php?project_id={$task['project_id']}");
+        exit();
+      }
+        header("Location: view_tasks.php");
         exit();
     } else {
         echo "<script>alert('Error updating task.');</script>";
@@ -86,10 +95,10 @@ require 'header.php';
             <option value="Completed" <?php echo $task['status'] === 'Completed' ? 'selected' : ''; ?>>Completed</option>
         </select>
     </div>
-    <div class="mb-4">
-    <label for="reminder" class="block text-gray-700">Set Reminder</label>
-    <input type="datetime-local" name="reminder" id="reminder" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-</div>
+     <div class="mb-4">
+        <label for="reminder" class="block text-gray-700">Set Reminder</label>
+           <input type="datetime-local" name="reminder" id="reminder" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+        </div>
 
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Update Task</button>
 </form>

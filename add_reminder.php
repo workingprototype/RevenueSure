@@ -29,14 +29,32 @@ if ($task && $due_date) {
     $stmt->bindParam(':related_id', $task_id);
       $stmt->bindParam(':created_at', $due_date);
     if ($stmt->execute()) {
-        header("Location: view_tasks.php?lead_id={$task['lead_id']}");
+         if($task['lead_id']){
+            header("Location: view_tasks.php?lead_id={$task['lead_id']}");
+          }else if ($task['project_id']){
+                header("Location: view_tasks.php?project_id={$task['project_id']}");
+          }else {
+                header("Location: view_tasks.php");
+          }
         exit();
     }else {
          echo "<script>alert('Error setting reminder.');</script>";
-          header("Location: view_tasks.php?lead_id={$task['lead_id']}");
-        exit();
+           if($task['lead_id']){
+            header("Location: view_tasks.php?lead_id={$task['lead_id']}");
+          }else if ($task['project_id']){
+                header("Location: view_tasks.php?project_id={$task['project_id']}");
+          }else {
+               header("Location: view_tasks.php");
+          }
+            exit();
     }
 } else {
-      header("Location: view_tasks.php");
-        exit();
+    if($task['lead_id']){
+        header("Location: view_tasks.php?lead_id={$task['lead_id']}");
+      } else if($task['project_id']){
+        header("Location: view_tasks.php?project_id={$task['project_id']}");
+        }else {
+            header("Location: view_tasks.php");
+       }
+      exit();
 }

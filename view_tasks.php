@@ -8,12 +8,18 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $lead_id = isset($_GET['lead_id']) ? (int)$_GET['lead_id'] : null;
+$project_id = isset($_GET['project_id']) ? (int)$_GET['project_id'] : null;
 $user_id = $_SESSION['user_id'];
 
 // Fetch tasks for the lead
 if($lead_id){
     $stmt = $conn->prepare("SELECT tasks.*, users.username FROM tasks JOIN users ON tasks.user_id = users.id WHERE lead_id = :lead_id ORDER BY due_date ASC");
     $stmt->bindParam(':lead_id', $lead_id);
+     $stmt->execute();
+    $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else if ($project_id) {
+       $stmt = $conn->prepare("SELECT tasks.*, users.username FROM tasks JOIN users ON tasks.user_id = users.id WHERE project_id = :project_id ORDER BY due_date ASC");
+    $stmt->bindParam(':project_id', $project_id);
      $stmt->execute();
     $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }else {
@@ -27,10 +33,10 @@ if($lead_id){
 require 'header.php';
 ?>
 
-<h1 class="text-3xl font-bold text-gray-800 mb-6">Tasks for Lead #<?php echo $lead_id ? $lead_id : "All"; ?></h1>
+<h1 class="text-3xl font-bold text-gray-800 mb-6">Tasks <?php if($lead_id) echo 'for Lead #' . $lead_id; else if ($project_id) echo 'for Project #' . $project_id; else echo "All" ?></h1>
 
 <!-- Add Task Button -->
-<a href="add_task.php<?php if($lead_id) echo "?lead_id=$lead_id"; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mb-6 inline-block">Add Task</a>
+<a href="add_task.php<?php if($lead_id) echo "?lead_id=$lead_id"; ?><?php if($project_id) echo "?project_id=$project_id"; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mb-6 inline-block">Add Task</a>
 
 <!-- Tasks Table -->
 <div class="bg-white p-6 rounded-lg shadow-md">
@@ -78,7 +84,6 @@ require 'header.php';
         </tbody>
     </table>
 </div>
-
 <?php
 // Include footer
 require 'footer.php';
