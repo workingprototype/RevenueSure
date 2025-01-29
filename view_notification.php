@@ -29,9 +29,29 @@ if ($notification) {
     // Redirect based on the notification type
     switch ($notification['type']) {
         case 'task_reminder':
-            header("Location: view_tasks.php?lead_id={$notification['related_id']}");
-            break;
-        default:
+            // Check if related id is a project or a lead
+            $related_id = $notification['related_id'];
+            $stmt = $conn->prepare("SELECT lead_id, project_id FROM tasks WHERE id = :id");
+            $stmt->bindParam(':id', $related_id);
+            $stmt->execute();
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($task) {
+                if ($task['lead_id']) {
+                    header("Location: view_tasks.php?lead_id={$task['lead_id']}");
+                } else if ($task['project_id']) {
+                     header("Location: view_tasks.php?project_id={$task['project_id']}");
+                }
+                else {
+                   header("Location: view_tasks.php");
+                  }
+                exit();
+            } else {
+                // If related id is not a project or lead, redirect to dashboard
+                header("Location: dashboard.php");
+                exit();
+            }
+              break;
+         default:
             header("Location: dashboard.php");
             break;
     }
