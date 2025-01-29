@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tax_method = $_POST['tax_method'] ?? '';
      $discount_type = $_POST['discount_type'] ?? 'fixed'; // default is fixed
       $discount_amount = $_POST['discount_amount'] ? $_POST['discount_amount'] : 0;
+    $template_name = $_POST['template_name'] ?? 'default';
 
 
      if (empty($bill_to_email)) {
@@ -75,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
        $total = ($subtotal + $tax + $additional_charges) - $discount;
     // Insert Invoice Data
-    $stmt = $conn->prepare("INSERT INTO invoices (invoice_number, lead_id, customer_id, issue_date, due_date, bill_to_name, bill_to_address, bill_to_email, bill_to_phone, ship_to_address, subtotal, tax_method, tax, discount, additional_charges, total, payment_terms, notes, footer, billing_country, discount_type, discount_amount) VALUES (:invoice_number, :lead_id, :customer_id, :issue_date, :due_date, :bill_to_name, :bill_to_address, :bill_to_email, :bill_to_phone, :ship_to_address, :subtotal, :tax_method, :tax, :discount, :additional_charges, :total, :payment_terms, :notes, :footer, :billing_country, :discount_type, :discount_amount)");
+    $stmt = $conn->prepare("INSERT INTO invoices (invoice_number, lead_id, customer_id, issue_date, due_date, bill_to_name, bill_to_address, bill_to_email, bill_to_phone, ship_to_address, subtotal, tax_method, tax, discount, additional_charges, total, payment_terms, notes, footer, billing_country, discount_type, discount_amount, template_name) VALUES (:invoice_number, :lead_id, :customer_id, :issue_date, :due_date, :bill_to_name, :bill_to_address, :bill_to_email, :bill_to_phone, :ship_to_address, :subtotal, :tax_method, :tax, :discount, :additional_charges, :total, :payment_terms, :notes, :footer, :billing_country, :discount_type, :discount_amount, :template_name)");
     $stmt->bindParam(':invoice_number', $invoice_number);
     $stmt->bindParam(':lead_id', $lead_id);
     $stmt->bindParam(':customer_id', $customer_id);
@@ -98,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $stmt->bindParam(':billing_country', $billing_country);
     $stmt->bindParam(':discount_type', $discount_type);
        $stmt->bindParam(':discount_amount', $discount_amount);
+       $stmt->bindParam(':template_name', $template_name);
 
 
     if ($stmt->execute()) {
@@ -152,6 +154,13 @@ require 'header.php';
     <?php endif; ?>
     <div class="bg-white p-6 rounded-lg shadow-md">
         <form method="POST" action="">
+            <div class="mb-4">
+                <label for="template_name" class="block text-gray-700">Select Template</label>
+                <select name="template_name" id="template_name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    <option value="default">Default</option>
+                    <option value="contractor">Contractor</option>
+                </select>
+            </div>
             <div class="mb-4">
                 <label for="lead_customer_type" class="block text-gray-700">Invoice For</label>
                  <select name="lead_customer_type" id="lead_customer_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="showCustomerLeadDetails(this.value)">

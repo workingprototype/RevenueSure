@@ -54,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $tax_method = $_POST['tax_method'] ?? '';
        $discount_type = $_POST['discount_type'] ?? 'fixed'; // default is fixed
     $discount_amount = $_POST['discount_amount'] ? $_POST['discount_amount'] : 0;
+     $template_name = $_POST['template_name'] ?? 'default';
 
       if (empty($bill_to_email)) {
           $error = "Bill to email cannot be empty.";
@@ -86,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
        $total = ($subtotal + $tax + $additional_charges) - $discount;
 
     // Update Invoice Data
-    $stmt = $conn->prepare("UPDATE invoices SET lead_id = :lead_id, customer_id = :customer_id, issue_date = :issue_date, due_date = :due_date, bill_to_name = :bill_to_name, bill_to_address = :bill_to_address, bill_to_email = :bill_to_email, bill_to_phone = :bill_to_phone, ship_to_address = :ship_to_address, subtotal = :subtotal, tax_method = :tax_method, tax = :tax, discount = :discount, additional_charges = :additional_charges, total = :total, payment_terms = :payment_terms, notes = :notes, footer = :footer, billing_country = :billing_country, discount_type = :discount_type, discount_amount = :discount_amount WHERE id = :invoice_id");
+    $stmt = $conn->prepare("UPDATE invoices SET lead_id = :lead_id, customer_id = :customer_id, issue_date = :issue_date, due_date = :due_date, bill_to_name = :bill_to_name, bill_to_address = :bill_to_address, bill_to_email = :bill_to_email, bill_to_phone = :bill_to_phone, ship_to_address = :ship_to_address, subtotal = :subtotal, tax_method = :tax_method, tax = :tax, discount = :discount, additional_charges = :additional_charges, total = :total, payment_terms = :payment_terms, notes = :notes, footer = :footer, billing_country = :billing_country, discount_type = :discount_type, discount_amount = :discount_amount, template_name = :template_name WHERE id = :invoice_id");
 
       $stmt->bindParam(':lead_id', $lead_id);
         $stmt->bindParam(':customer_id', $customer_id);
@@ -109,6 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          $stmt->bindParam(':billing_country', $billing_country);
           $stmt->bindParam(':discount_type', $discount_type);
        $stmt->bindParam(':discount_amount', $discount_amount);
+       $stmt->bindParam(':template_name', $template_name);
     $stmt->bindParam(':invoice_id', $invoice_id);
 
     if ($stmt->execute()) {
@@ -166,6 +168,13 @@ require 'header.php';
     <?php endif; ?>
     <div class="bg-white p-6 rounded-lg shadow-md">
         <form method="POST" action="">
+                 <div class="mb-4">
+                <label for="template_name" class="block text-gray-700">Select Template</label>
+                <select name="template_name" id="template_name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    <option value="default" <?php if($invoice['template_name'] == 'default') echo 'selected'; ?>>Default</option>
+                    <option value="contractor" <?php if($invoice['template_name'] == 'contractor') echo 'selected'; ?>>Contractor</option>
+                </select>
+             </div>
                <div class="mb-4">
                 <label for="lead_customer_type" class="block text-gray-700">Invoice For</label>
                   <select name="lead_customer_type" id="lead_customer_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="showCustomerLeadDetails(this.value)">
@@ -411,9 +420,7 @@ require 'header.php';
             const unitPrice = document.getElementById(`item_unit_price_${itemId}`).value;
             const taxInput = document.getElementById(`item_tax_${itemId}`);
             const discountInput = document.getElementById(`item_discount_${itemId}`);
-
-            const tax = taxInput.value ? parseFloat(taxInput.value) : 0;
-           const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
+            const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
             const subtotalInput = document.getElementById(`item_subtotal_${itemId}`);
             const subtotal = (quantity * unitPrice) + tax - discount;
 
