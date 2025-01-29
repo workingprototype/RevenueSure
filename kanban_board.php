@@ -34,7 +34,7 @@ require 'header.php';
   <h1 class="text-3xl font-bold text-gray-800 mb-6">Kanban Board: <?php echo htmlspecialchars($project['name']); ?></h1>
     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
         <h2 class="text-xl font-bold text-gray-800 mb-4">Project Details</h2>
-           <p><strong>Project Name:</strong> <?php echo htmlspecialchars($project['name']); ?></p>
+         <p><strong>Project Name:</strong> <?php echo htmlspecialchars($project['name']); ?></p>
            <p><strong>Start Date:</strong> <?php echo htmlspecialchars($project['start_date']); ?></p>
               <?php if($project['end_date']): ?>
                  <p><strong>End Date:</strong> <?php echo htmlspecialchars($project['end_date']); ?></p>
@@ -53,11 +53,11 @@ require 'header.php';
             ?>
             <div class="kanban-column w-72 min-w-72 bg-gray-100 rounded-lg p-4 shadow-md" data-status="<?php echo $status; ?>">
                 <h2 class="text-xl font-bold text-gray-800 mb-4"><?php echo $status; ?></h2>
-                  <div class="kanban-items space-y-4">
+                  <ul class="kanban-items space-y-4">
                     <?php if($filtered_tasks) :
                       foreach ($filtered_tasks as $task):
                         ?>
-                        <div
+                        <li
                             class="kanban-item bg-white p-4 rounded-lg shadow-sm flex flex-col justify-between"
                             data-task-id="<?php echo $task['id']; ?>" draggable="true"
                              style="border-left: 4px solid <?php
@@ -87,11 +87,11 @@ require 'header.php';
                                 <a href="edit_task.php?id=<?php echo $task['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
                                     <a href="view_tasks.php?project_id=<?php echo $project_id ?>&task_id=<?php echo $task['id'] ?>" class="text-purple-600 hover:underline">View</a>
                                 </div>
-                        </div>
+                        </li>
                     <?php  endforeach; else: ?>
                          <p class="text-gray-600 text-center">No task in this category</p>
                     <?php endif; ?>
-                  </div>
+                  </ul>
             </div>
         <?php endforeach; ?>
     </div>
