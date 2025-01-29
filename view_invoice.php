@@ -56,6 +56,30 @@ if ($invoice['discount_type'] == 'percentage') {
 // Calculate total
 $total = ($subtotal + $total_tax + $invoice['additional_charges']) - $discount;
 
+// Fetch invoice settings for the user
+$stmt = $conn->prepare("SELECT * FROM invoice_settings WHERE user_id = :user_id");
+$stmt->bindParam(':user_id', $_SESSION['user_id']);
+$stmt->execute();
+$invoice_settings = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Set default values if not found
+$company_name = $invoice_settings['company_name'] ?? "Company Name or Logo";
+$company_logo = $invoice_settings['company_logo'] ?? null;
+$company_tagline = $invoice_settings['company_tagline'] ??  "Company Tag Line";
+$company_address_line1 = $invoice_settings['company_address_line1'] ??  "Company Address Line 1";
+$company_address_line2 = $invoice_settings['company_address_line2'] ??  "Company Address Line 2";
+$company_phone_number = $invoice_settings['company_phone_number'] ??  "Company Phone Number";
+$overdue_charge_type = $invoice_settings['overdue_charge_type'] ??  null;
+$overdue_charge_amount = $invoice_settings['overdue_charge_amount'] ??  null;
+$overdue_charge_period = $invoice_settings['overdue_charge_period'] ?? null;
+$thank_you_message = $invoice_settings['thank_you_message'] ??  "THANK YOU FOR YOUR BUSINESS!";
+
+// Calculate due days dynamically
+$today = new DateTime();
+$due_date = new DateTime($invoice['due_date']);
+$interval = $today->diff($due_date);
+$due_days = $interval->format('%r%a');
+
 // Include header
 require 'header.php';
 ?>
@@ -68,20 +92,26 @@ require 'header.php';
 
     <div class="flex justify-between items-start mb-8">
         <div>
-          <div class="bg-gray-800 text-white p-4 mb-4 rounded-md">
-              <h1 class="text-2xl font-bold"><?php echo "Company Name or Logo"; ?></h1>
-             <p class="text-sm"><?php echo "Company Tag Line "; ?></p>
-          </div>
+            <?php if($company_logo): ?>
+               <img src="<?php echo $company_logo ?>" alt="Company Logo" class="mb-2 w-32 h-auto object-cover">
+                <?php else: ?>
+                    <div class="bg-gray-800 text-white p-4 mb-4 rounded-md">
+                        <h1 class="text-2xl font-bold"><?php echo htmlspecialchars($company_name); ?></h1>
+                            <p class="text-sm"><?php echo htmlspecialchars($company_tagline); ?></p>
+                    </div>
+                <?php endif; ?>
            <div class="mb-4">
-               <p class="text-gray-700 text-sm"><?php echo "Company Address Line 1"; ?></p>
-              <p class="text-gray-700 text-sm"><?php echo "Company Address Line 2"; ?></p>
-              <p class="text-gray-700 text-sm"><?php echo "Company Phone Number "; ?></p>
+                <p class="text-gray-700 text-sm"><?php echo htmlspecialchars($company_address_line1); ?></p>
+              <p class="text-gray-700 text-sm"><?php echo htmlspecialchars($company_address_line2); ?></p>
+              <p class="text-gray-700 text-sm"><?php echo htmlspecialchars($company_phone_number); ?></p>
             </div>
         </div>
          <div class="text-right">
-            <h2 class="text-4xl font-bold text-gray-800 mb-4">INVOICE</h2>
-             <p class="text-gray-700 text-sm"><strong>Date:</strong> <?php echo htmlspecialchars($invoice['issue_date']); ?></p>
-            <p class="text-gray-700 text-sm"><strong>Invoice #:</strong> <?php echo htmlspecialchars($invoice['invoice_number']); ?></p>
+            <h2 class="text-4xl font-bold text-gray-800 mb-1">INVOICE</h2>
+             <p class="text-gray-700 text-xl mb-2"><strong>Invoice #:</strong> <?php echo htmlspecialchars($invoice['invoice_number']); ?></p>
+             <p class="text-gray-700 text-sm"><strong>Issue Date:</strong> <?php echo htmlspecialchars($invoice['issue_date']); ?></p>
+            <p class="text-gray-700 text-sm"><strong>Due Date:</strong> <?php echo htmlspecialchars($invoice['due_date']); ?></p>
+            <p class="text-gray-700 text-sm"><strong>Due In:</strong> <?php echo htmlspecialchars($due_days) . ' days'; ?></p>
                <p class="text-gray-700 text-sm"><strong>FOR:</strong> Store expansion</p>
         </div>
     </div>
@@ -98,7 +128,7 @@ require 'header.php';
         <thead class="bg-gray-700 text-white">
             <tr>
                 <th class="px-4 py-2">DESCRIPTION</th>
-                <th class="px-4 py-2">HOURS</th>
+                <th class="px-4 py-2">QUANTITY</th>
                 <th class="px-4 py-2">RATE</th>
                   <th class="px-4 py-2">AMOUNT</th>
             </tr>
@@ -135,7 +165,7 @@ require 'header.php';
              <p class="text-gray-700 text-lg">$<?php echo htmlspecialchars($total_tax); ?></p>
         </div>
            <div class="flex justify-end gap-4">
-              <p class="text-gray-700 text-lg font-semibold">OTHER</p>
+              <p class="text-gray-700 text-lg font-semibold">ADDITIONAL CHARGES</p>
                 <p class="text-gray-700 text-lg">$<?php echo htmlspecialchars($invoice['additional_charges']); ?></p>
            </div>
          <div class="flex justify-end gap-4 p-2 bg-gray-800 text-white rounded-lg">
@@ -144,9 +174,13 @@ require 'header.php';
         </div>
      </div>
          <div class="mt-4 text-gray-600 text-sm">
-          <p>Make all checks payable to <?php echo "Company Name"; ?>.</p>
-             <p>Total due in <?php echo "Due"; ?> days. Overdue accounts subject to a service charge of <?php echo "Due Percentage "; ?>% per <?php echo "Month"; ?>.</p>
-              <p class="mt-4"><?php echo "THANK YOU FOR YOUR BUSINESS! - Custom Thank you message" ?></p>
+          <p>Make all checks payable to <?php echo htmlspecialchars($company_name); ?>.</p>
+           <?php if ($overdue_charge_type && $overdue_charge_amount && $overdue_charge_period): ?>
+                  <p>Total due in <?php echo $due_days; ?> days. Overdue accounts subject to a service charge of <?php  if($overdue_charge_type == 'percentage') echo htmlspecialchars($overdue_charge_amount) . '%'; else echo htmlspecialchars($overdue_charge_amount) . '$'; ?> per <?php echo htmlspecialchars($overdue_charge_period); ?>.</p>
+           <?php else: ?>
+                    <p>Total due in 15 days. Overdue accounts subject to a service charge of 1% per month.</p>
+            <?php endif; ?>
+              <p class="mt-4"><?php echo htmlspecialchars($thank_you_message); ?></p>
         </div>
             <div class="mt-4">
             <a href="edit_invoice.php?id=<?php echo $invoice['id']; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Invoice</a>

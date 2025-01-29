@@ -253,6 +253,8 @@
                             </div>
                         </div>
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
+                         <a href="settings.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
+
                     <?php endif; ?>
                      <a href="logout.php" class="block py-2 px-4 hover:bg-gray-700 rounded mt-4"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
                 <?php else: ?>

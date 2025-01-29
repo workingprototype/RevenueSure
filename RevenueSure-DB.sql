@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 29, 2025 at 11:27 AM
+-- Generation Time: Jan 29, 2025 at 12:01 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -235,7 +235,7 @@ CREATE TABLE `invoices` (
 --
 
 INSERT INTO `invoices` (`id`, `invoice_number`, `lead_id`, `customer_id`, `issue_date`, `due_date`, `bill_to_name`, `bill_to_address`, `bill_to_email`, `bill_to_phone`, `ship_to_address`, `subtotal`, `tax_method`, `tax`, `discount`, `additional_charges`, `total`, `payment_terms`, `notes`, `footer`, `billing_country`, `discount_type`, `discount_amount`, `created_at`, `template_name`) VALUES
-(3, 'INV-20250129-001', 1, NULL, '2025-01-29', '2025-01-29', 'John Doe', 'NYC', 'john@demo.com', '+91 123456789', 'NYC', 0.00, 'GST', '[\"8.00\",\"5.00\"]', 20.00, 30.00, 23.00, 'Due on Receipt', '', '', 'in', 'fixed', 0.00, '2025-01-29 09:08:58', 'default'),
+(3, 'INV-20250129-001', 1, NULL, '2025-01-29', '2025-01-29', 'John Doe', 'NYC', 'john@demo.com', '+91 123456789', 'NYC', 0.00, 'GST', '[\"8.00\",\"5.00\"]', 0.00, 30.00, 43.00, 'Due on Receipt', '', '', 'in', 'fixed', 0.00, '2025-01-29 09:08:58', 'contractor'),
 (4, 'INV-20250129-004', NULL, 1, '2025-01-29', '2025-02-13', 'Jabbar2', 'NYC', 'jabbar@demo.com', '12312312', '', 0.00, 'GST', '[\"18.00\",\"18.00\"]', 0.00, 0.00, 36.00, 'Net 15', '', '', 'in', 'percentage', 10.00, '2025-01-29 09:43:24', 'contractor');
 
 -- --------------------------------------------------------
@@ -260,10 +260,39 @@ CREATE TABLE `invoice_items` (
 --
 
 INSERT INTO `invoice_items` (`id`, `invoice_id`, `product_service`, `quantity`, `unit_price`, `tax`, `discount`, `subtotal`) VALUES
-(10, 3, 'Product 2', 2, 120.00, 8.00, 10.00, 0.00),
-(11, 3, 'Product 3', 3, 200.00, 5.00, 10.00, 0.00),
 (20, 4, 'Product 1', 10, 120.00, 18.00, 10.00, 0.00),
-(21, 4, 'Product 2', 10, 100.00, 18.00, 0.00, 0.00);
+(21, 4, 'Product 2', 10, 100.00, 18.00, 0.00, 0.00),
+(22, 3, 'Product 2', 2, 120.00, 8.00, 10.00, 0.00),
+(23, 3, 'Product 3', 3, 200.00, 5.00, 10.00, 0.00);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoice_settings`
+--
+
+CREATE TABLE `invoice_settings` (
+  `id` int(11) NOT NULL,
+  `company_name` varchar(255) DEFAULT NULL,
+  `company_logo` varchar(255) DEFAULT NULL,
+  `company_tagline` varchar(255) DEFAULT NULL,
+  `company_address_line1` varchar(255) DEFAULT NULL,
+  `company_address_line2` varchar(255) DEFAULT NULL,
+  `company_phone_number` varchar(20) DEFAULT NULL,
+  `overdue_charge_type` enum('percentage','fixed') DEFAULT NULL,
+  `overdue_charge_amount` decimal(10,2) DEFAULT NULL,
+  `overdue_charge_period` enum('monthly','daily','days') DEFAULT NULL,
+  `thank_you_message` text DEFAULT NULL,
+  `user_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `invoice_settings`
+--
+
+INSERT INTO `invoice_settings` (`id`, `company_name`, `company_logo`, `company_tagline`, `company_address_line1`, `company_address_line2`, `company_phone_number`, `overdue_charge_type`, `overdue_charge_amount`, `overdue_charge_period`, `thank_you_message`, `user_id`, `created_at`) VALUES
+(1, 'RevenueSure', 'uploads/logo/679a05e10e149_DEMO-fin-change.png', 'Fo Sho', 'Building #5, Park Avenue Road', 'NY City', '+1 234-546-4554', 'percentage', 10.00, 'days', 'Thanks bro!', 2, '2025-01-29 10:41:37');
 
 -- --------------------------------------------------------
 
@@ -508,6 +537,13 @@ ALTER TABLE `invoice_items`
   ADD KEY `invoice_id` (`invoice_id`);
 
 --
+-- Indexes for table `invoice_settings`
+--
+ALTER TABLE `invoice_settings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `leads`
 --
 ALTER TABLE `leads`
@@ -620,7 +656,13 @@ ALTER TABLE `invoices`
 -- AUTO_INCREMENT for table `invoice_items`
 --
 ALTER TABLE `invoice_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT for table `invoice_settings`
+--
+ALTER TABLE `invoice_settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `leads`
@@ -710,6 +752,12 @@ ALTER TABLE `invoices`
 --
 ALTER TABLE `invoice_items`
   ADD CONSTRAINT `invoice_items_ibfk_1` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `invoice_settings`
+--
+ALTER TABLE `invoice_settings`
+  ADD CONSTRAINT `invoice_settings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `leads`
