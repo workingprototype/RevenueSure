@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 29, 2025 at 10:23 PM
+-- Generation Time: Jan 29, 2025 at 10:57 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -386,7 +386,8 @@ CREATE TABLE `notifications` (
 INSERT INTO `notifications` (`id`, `user_id`, `message`, `related_id`, `type`, `is_read`, `created_at`) VALUES
 (1, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
 (2, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
-(3, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00');
+(3, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
+(4, 2, 'Reminder: Task \'Manual Book Read\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00');
 
 -- --------------------------------------------------------
 
@@ -493,7 +494,7 @@ CREATE TABLE `tasks` (
   `description` text DEFAULT NULL,
   `due_date` datetime NOT NULL,
   `status` enum('To Do','In Progress','Completed','Blocked','Canceled','Pending') DEFAULT 'To Do',
-  `estimated_hours` decimal(4,2) DEFAULT NULL,
+  `estimated_hours` decimal(6,2) DEFAULT NULL,
   `billable` tinyint(1) DEFAULT 0,
   `priority` enum('Low','Medium','High') DEFAULT 'Medium',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -505,7 +506,10 @@ CREATE TABLE `tasks` (
 
 INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `task_id`, `task_name`, `project_id`, `task_type`, `description`, `due_date`, `status`, `estimated_hours`, `billable`, `priority`, `created_at`) VALUES
 (2, NULL, 2, NULL, 'Read Training Manual', NULL, 'Meeting', 'Manual Book Read', '2025-01-29 15:54:00', 'Blocked', 10.00, 0, 'Medium', '2025-01-28 10:27:02'),
-(3, NULL, 2, 'TASK-20250129-003', 'Credits Loadup', NULL, 'Deadline', 'Loadup credits on the vendor page', '2025-01-31 02:49:00', 'Completed', 10.00, 1, 'Medium', '2025-01-29 21:20:37');
+(3, NULL, 2, 'TASK-20250129-003', 'Credits Loadup', NULL, 'Deadline', 'Loadup credits on the vendor page', '2025-01-31 02:49:00', 'Completed', 10.00, 1, 'Medium', '2025-01-29 21:20:37'),
+(4, NULL, 2, 'TASK-20250129-004', 'Metro Bridge', NULL, 'Meeting', 'Build a metro bridge', '2025-02-14 02:59:00', 'Completed', 1000.00, 1, 'High', '2025-01-29 21:29:44'),
+(5, NULL, 2, 'TASK-20250129-005', 'test task', NULL, 'Meeting', 'Test Task', '2025-02-02 03:12:00', 'In Progress', 1001.00, 1, 'Medium', '2025-01-29 21:42:31'),
+(6, NULL, 2, 'TASK-20250129-006', 'Buy Steel', 6, 'Deadline', 'Buy steel for the bridge', '2025-02-03 03:23:00', 'In Progress', 10.00, 1, 'High', '2025-01-29 21:53:41');
 
 -- --------------------------------------------------------
 
@@ -885,7 +889,7 @@ ALTER TABLE `lead_scores`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `payments`
@@ -915,7 +919,7 @@ ALTER TABLE `subtasks`
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `task_attachments`

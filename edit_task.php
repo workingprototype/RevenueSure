@@ -32,41 +32,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
      $project_id = $task['project_id'];
      $lead_id = $task['lead_id'];
     
-    $stmt = $conn->prepare("UPDATE tasks SET task_name = :task_name, task_type = :task_type, description = :description, due_date = :due_date, estimated_hours = :estimated_hours, billable = :billable, status = :status, priority = :priority WHERE id = :id");
-    $stmt->bindParam(':task_name', $task_name);
-    $stmt->bindParam(':task_type', $task_type);
-    $stmt->bindParam(':description', $description);
-    $stmt->bindParam(':due_date', $due_date);
-     $stmt->bindParam(':estimated_hours', $estimated_hours);
-    $stmt->bindParam(':billable', $billable, PDO::PARAM_BOOL);
-     $stmt->bindParam(':status', $status);
-         $stmt->bindParam(':priority', $priority);
-    $stmt->bindParam(':id', $task_id);
-
-    if ($stmt->execute()) {
-      if($lead_id){
-        header("Location: view_tasks.php?lead_id={$task['lead_id']}");
-        exit();
-      }else if($project_id){
-        header("Location: view_tasks.php?project_id={$task['project_id']}");
-        exit();
+    if($estimated_hours > 9999.99){
+            $error = "Estimated hours must be less than 9999.99";
+      }else{
+        $stmt = $conn->prepare("UPDATE tasks SET task_name = :task_name, task_type = :task_type, description = :description, due_date = :due_date, estimated_hours = :estimated_hours, billable = :billable, status = :status, priority = :priority WHERE id = :id");
+        $stmt->bindParam(':task_name', $task_name);
+        $stmt->bindParam(':task_type', $task_type);
+        $stmt->bindParam(':description', $description);
+        $stmt->bindParam(':due_date', $due_date);
+         $stmt->bindParam(':estimated_hours', $estimated_hours);
+        $stmt->bindParam(':billable', $billable, PDO::PARAM_BOOL);
+         $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':priority', $priority);
+        $stmt->bindParam(':id', $task_id);
+        if ($stmt->execute()) {
+          if($lead_id){
+              header("Location: view_tasks.php?lead_id={$task['lead_id']}");
+            exit();
+          }else if($project_id){
+            header("Location: view_tasks.php?project_id={$task['project_id']}");
+             exit();
+          }
+          header("Location: view_tasks.php");
+           exit();
+        } else {
+            $error = "Error updating task.";
+          }
+          // Handle reminder
+        if (!empty($_POST['reminder'])) {
+        $reminder_time = $_POST['reminder'];
+        $stmt = $conn->prepare("INSERT INTO notifications (user_id, message, related_id, type, created_at) VALUES (:user_id, :message, :related_id, 'task_reminder', :created_at)");
+        $message = "Reminder: Task '{$task['description']}' is due on {$task['due_date']}.";
+        $stmt->bindParam(':user_id', $_SESSION['user_id']);
+        $stmt->bindParam(':message', $message);
+        $stmt->bindParam(':related_id', $task_id);
+        $stmt->bindParam(':created_at', $reminder_time);
+        $stmt->execute();
+          }
       }
-        header("Location: view_tasks.php");
-        exit();
-    } else {
-        echo "<script>alert('Error updating task.');</script>";
-    }
-// Handle reminder
-if (!empty($_POST['reminder'])) {
-    $reminder_time = $_POST['reminder'];
-    $stmt = $conn->prepare("INSERT INTO notifications (user_id, message, related_id, type, created_at) VALUES (:user_id, :message, :related_id, 'task_reminder', :created_at)");
-    $message = "Reminder: Task '{$task['description']}' is due on {$task['due_date']}.";
-    $stmt->bindParam(':user_id', $_SESSION['user_id']);
-    $stmt->bindParam(':message', $message);
-    $stmt->bindParam(':related_id', $task_id);
-    $stmt->bindParam(':created_at', $reminder_time);
-    $stmt->execute();
-    }
 }
 
 // Include header
@@ -74,7 +77,11 @@ require 'header.php';
 ?>
 
 <h1 class="text-3xl font-bold text-gray-800 mb-6">Edit Task</h1>
-
+ <?php if ($error): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+            <?php echo $error; ?>
+        </div>
+    <?php endif; ?>
 <!-- Edit Task Form -->
 <form method="POST" action="" class="bg-white p-6 rounded-lg shadow-md">
     <div class="mb-4">
@@ -99,9 +106,9 @@ require 'header.php';
         <label for="due_date" class="block text-gray-700">Due Date</label>
         <input type="datetime-local" name="due_date" id="due_date" value="<?php echo date('Y-m-d\TH:i', strtotime($task['due_date'])); ?>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
     </div>
-       <div class="mb-4">
+        <div class="mb-4">
          <label for="estimated_hours" class="block text-gray-700">Estimated Hours</label>
-           <input type="number" name="estimated_hours" id="estimated_hours" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($task['estimated_hours']); ?>" min="0"  step="0.01">
+           <input type="number" name="estimated_hours" id="estimated_hours" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($task['estimated_hours']); ?>" min="0"  step="0.01" max="9999.99">
      </div>
      <div class="mb-4">
          <label class="inline-flex items-center">
@@ -109,23 +116,23 @@ require 'header.php';
                <span class="text-gray-700">Billable</span>
             </label>
      </div>
-    <div class="mb-4">
+       <div class="mb-4">
         <label for="status" class="block text-gray-700">Status</label>
         <select name="status" id="status" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
-            <option value="To Do" <?php echo $task['status'] === 'To Do' ? 'selected' : ''; ?>>To Do</option>
-            <option value="In Progress" <?php echo $task['status'] === 'In Progress' ? 'selected' : ''; ?>>In Progress</option>
-            <option value="Completed" <?php echo $task['status'] === 'Completed' ? 'selected' : ''; ?>>Completed</option>
-              <option value="Blocked" <?php echo $task['status'] === 'Blocked' ? 'selected' : ''; ?>>Blocked</option>
-              <option value="Canceled" <?php echo $task['status'] === 'Canceled' ? 'selected' : ''; ?>>Canceled</option>
+            <option value="To Do" <?php if ($task['status'] === 'To Do') echo 'selected'; ?>>To Do</option>
+            <option value="In Progress" <?php if ($task['status'] === 'In Progress') echo 'selected'; ?>>In Progress</option>
+            <option value="Completed" <?php if ($task['status'] === 'Completed') echo 'selected'; ?>>Completed</option>
+              <option value="Blocked" <?php if ($task['status'] === 'Blocked') echo 'selected'; ?>>Blocked</option>
+              <option value="Canceled" <?php if ($task['status'] === 'Canceled') echo 'selected'; ?>>Canceled</option>
         </select>
     </div>
-     <div class="mb-4">
+      <div class="mb-4">
         <label for="priority" class="block text-gray-700">Priority</label>
         <select name="priority" id="priority" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
              <option value="Low" <?php if ($task['priority'] === 'Low') echo 'selected'; ?>>Low</option>
-            <option value="Medium" <?php if ($task['priority'] === 'Medium') echo 'selected'; ?>>Medium</option>
-             <option value="High" <?php if ($task['priority'] === 'High') echo 'selected'; ?>>High</option>
-           </select>
+             <option value="Medium" <?php if ($task['priority'] === 'Medium') echo 'selected'; ?>>Medium</option>
+              <option value="High" <?php if ($task['priority'] === 'High') echo 'selected'; ?>>High</option>
+        </select>
     </div>
       <div class="mb-4">
            <label for="reminder" class="block text-gray-700">Set Reminder</label>
@@ -134,7 +141,14 @@ require 'header.php';
 
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Update Task</button>
 </form>
-
+ <script>
+    const estimatedHoursInput = document.getElementById('estimated_hours');
+       estimatedHoursInput.addEventListener('input', function() {
+           if (parseFloat(this.value) > 9999.99){
+                this.value = '9999.99';
+             }
+        });
+ </script>
 <?php
 // Include footer
 require 'footer.php';

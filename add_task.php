@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors' , 1);
-error_reporting(E_ALL);
-
 session_start();
 require 'db.php';
 
@@ -12,6 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $lead_id = isset($_GET['lead_id']) ? (int)$_GET['lead_id'] : null;
 $project_id = isset($_GET['project_id']) ? (int)$_GET['project_id'] : null;
+
 function generateTaskId($conn) {
     $stmt = $conn->prepare("SELECT MAX(id) AS max_id FROM tasks");
     $stmt->execute();
@@ -19,7 +17,6 @@ function generateTaskId($conn) {
     $next_id = ($result['max_id'] ?? 0) + 1;
     return 'TASK-' . date('Ymd') . '-' . str_pad($next_id, 3, '0', STR_PAD_LEFT);
 }
-
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
      $task_name = $_POST['task_name'];
@@ -32,13 +29,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $status = $_POST['status'];
        $priority = $_POST['priority'];
        $user_id = $_SESSION['user_id'];
+       $selected_project_id = !empty($_POST['project_id']) ? $_POST['project_id'] : null;
 
-     if($lead_id){
+
+    if($selected_project_id){
+          $stmt = $conn->prepare("INSERT INTO tasks (task_id, project_id, user_id, task_name, task_type, description, due_date, estimated_hours, billable, status, priority) VALUES (:task_id, :project_id, :user_id, :task_name, :task_type, :description, :due_date, :estimated_hours, :billable, :status, :priority)");
+           $stmt->bindParam(':project_id', $selected_project_id);
+    }else if($lead_id) {
           $stmt = $conn->prepare("INSERT INTO tasks (task_id, lead_id, user_id, task_name, task_type, description, due_date, estimated_hours, billable, status, priority) VALUES (:task_id, :lead_id, :user_id, :task_name, :task_type, :description, :due_date, :estimated_hours, :billable, :status, :priority)");
           $stmt->bindParam(':lead_id', $lead_id);
-    }else if ($project_id){
-          $stmt = $conn->prepare("INSERT INTO tasks (task_id, project_id, user_id, task_name, task_type, description, due_date, estimated_hours, billable, status, priority) VALUES (:task_id, :project_id, :user_id, :task_name, :task_type, :description, :due_date, :estimated_hours, :billable, :status, :priority)");
-           $stmt->bindParam(':project_id', $project_id);
     }else {
          $stmt = $conn->prepare("INSERT INTO tasks (task_id, user_id, task_name, task_type, description, due_date, estimated_hours, billable, status, priority) VALUES (:task_id, :user_id, :task_name, :task_type, :description, :due_date, :estimated_hours, :billable, :status, :priority)");
     }
@@ -56,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->execute()) {
       if($lead_id){
             header("Location: view_tasks.php?lead_id=$lead_id");
-      } else if($project_id){
-            header("Location: view_tasks.php?project_id=$project_id");
+      } else if($selected_project_id){
+            header("Location: view_tasks.php?project_id=$selected_project_id");
       } else {
            header("Location: view_tasks.php");
        }
@@ -70,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!empty($_POST['reminder'])) {
         $reminder_time = $_POST['reminder'];
         $stmt = $conn->prepare("INSERT INTO notifications (user_id, message, related_id, type, created_at) VALUES (:user_id, :message, :related_id, 'task_reminder', :created_at)");
-        $message = "Reminder: Task '{$task['description']}' is due on {$task['due_date']}.";
+        $message = "Reminder: Task '{$task_name}' is due on {$due_date}.";
         $stmt->bindParam(':user_id', $_SESSION['user_id']);
         $stmt->bindParam(':message', $message);
         $stmt->bindParam(':related_id', $task_id);
@@ -79,6 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+
+// Fetch projects for the dropdown
+$stmt = $conn->prepare("SELECT id, name FROM projects");
+$stmt->execute();
+$projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Include header
 require 'header.php';
@@ -144,13 +148,31 @@ require 'header.php';
                     <option value="High">High</option>
             </select>
     </div>
+    <?php if(!$lead_id && !$project_id) : ?>
+         <div class="mb-4">
+           <label for="project_id" class="block text-gray-700">Related To Project</label>
+                <select name="project_id" id="project_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    <option value="">No Project</option>
+                    <?php foreach ($projects as $project): ?>
+                       <option value="<?php echo $project['id']; ?>"><?php echo htmlspecialchars($project['name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+          </div>
+    <?php endif; ?>
     <div class="mb-4">
     <label for="reminder" class="block text-gray-700">Set Reminder</label>
     <input type="datetime-local" name="reminder" id="reminder" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
 </div>
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Task</button>
 </form>
-
+ <script>
+    const estimatedHoursInput = document.getElementById('estimated_hours');
+       estimatedHoursInput.addEventListener('input', function() {
+          if (parseFloat(this.value) > 9999.99){
+                this.value = '9999.99';
+             }
+        });
+ </script>
 <?php
 // Include footer
 require 'footer.php';
