@@ -223,12 +223,7 @@
                                     <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
                             </div>
                         </div>
-                       <div class="menu-item <?php if (isParentActive('manage_task_templates.php') || isParentActive('add_task_template.php')) echo 'active'; ?>">
-                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Task Settings</a>
-                            <div class="submenu">
-                                 <a href="manage_task_templates.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_task_templates.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Task Templates</a>
-                             </div>
-                      </div>
+
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                          <a href="settings.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
 
