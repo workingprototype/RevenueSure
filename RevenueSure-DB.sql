@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 30, 2025 at 12:08 AM
+-- Generation Time: Jan 30, 2025 at 02:37 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -241,8 +241,7 @@ CREATE TABLE `invoices` (
 
 INSERT INTO `invoices` (`id`, `invoice_number`, `lead_id`, `customer_id`, `issue_date`, `due_date`, `bill_to_name`, `bill_to_address`, `bill_to_email`, `bill_to_phone`, `ship_to_address`, `subtotal`, `tax_method`, `tax`, `discount`, `additional_charges`, `total`, `payment_terms`, `notes`, `footer`, `billing_country`, `discount_type`, `discount_amount`, `created_at`, `template_name`, `paid_amount`, `status`, `payment_date`) VALUES
 (3, 'INV-20250129-001', 1, NULL, '2025-01-29', '2025-01-29', 'John Doe', 'NYC', 'john@demo.com', '+91 123456789', 'NYC', 0.00, 'GST', '[\"8.00\",\"5.00\"]', 0.00, 30.00, 43.00, 'Due on Receipt', '', '', 'in', 'fixed', 0.00, '2025-01-29 09:08:58', 'contractor', 43.00, 'Paid', '2025-01-29 11:59:30'),
-(4, 'INV-20250129-004', NULL, 1, '2025-01-29', '2025-02-13', 'Jabbar2', 'NYC', 'jabbar@demo.com', '12312312', '', 0.00, 'GST', '[\"18.00\",\"18.00\"]', 0.00, 0.00, 36.00, 'Net 15', '', '', 'in', 'percentage', 10.00, '2025-01-29 09:43:24', 'default', 24.00, 'Partially Paid', '2025-01-29 11:52:19'),
-(5, 'INV-20250129-005', 9, 2, '2025-01-29', '2025-01-29', 'POP', 'Pop Address', 'pop@pop.com', '123123', '', 0.00, 'GST', '[\"0.00\",\"0.00\"]', 0.00, 0.00, 0.00, 'Due on Receipt', 'Noteddd', 'Pop', 'au', 'fixed', 0.00, '2025-01-29 11:58:14', 'contractor', 0.00, 'Unpaid', NULL);
+(4, 'INV-20250129-004', NULL, 1, '2025-01-29', '2025-02-13', 'Jabbar2', 'NYC', 'jabbar@demo.com', '12312312', '', 0.00, 'GST', '[\"18.00\",\"18.00\"]', 0.00, 0.00, 36.00, 'Net 15', '', '', 'in', 'percentage', 10.00, '2025-01-29 09:43:24', 'default', 24.00, 'Partially Paid', '2025-01-29 11:52:19');
 
 -- --------------------------------------------------------
 
@@ -269,9 +268,7 @@ INSERT INTO `invoice_items` (`id`, `invoice_id`, `product_service`, `quantity`, 
 (22, 3, 'Product 2', 2, 120.00, 8.00, 10.00, 0.00),
 (23, 3, 'Product 3', 3, 200.00, 5.00, 10.00, 0.00),
 (24, 4, 'Product 1', 10, 120.00, 18.00, 10.00, 0.00),
-(25, 4, 'Product 2', 10, 100.00, 18.00, 0.00, 0.00),
-(28, 5, 'POP', 1, 160.00, 0.00, 0.00, 0.00),
-(29, 5, 'POP2', 2, 150.00, 0.00, 0.00, 0.00);
+(25, 4, 'Product 2', 10, 100.00, 18.00, 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -387,7 +384,15 @@ INSERT INTO `notifications` (`id`, `user_id`, `message`, `related_id`, `type`, `
 (1, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
 (2, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
 (3, 2, 'Reminder: Task \'jkj\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
-(4, 2, 'Reminder: Task \'Manual Book Read\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00');
+(4, 2, 'Reminder: Task \'Manual Book Read\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 1, '2025-01-29 10:24:00'),
+(5, 2, 'Reminder: Task \'Buy steel for the bridge\' is due on 2025-02-03 03:23:00.', 6, 'task_reminder', 1, '2025-02-02 21:53:00'),
+(6, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00'),
+(7, 2, 'Reminder: Task \'test\' is due on 2025-01-31 04:23:00.', 11, 'task_reminder', 1, '2025-01-30 22:53:00'),
+(8, 2, 'Reminder: Task \'Buy water for the plant\' is due on 2025-01-31 03:42:00.', 9, 'task_reminder', 0, '2025-01-30 22:12:00'),
+(9, 2, 'Reminder: Task \'Buy steel for the bridge\' is due on 2025-02-03 03:23:00.', 6, 'task_reminder', 1, '2025-02-02 21:53:00'),
+(10, 2, 'Reminder: Task \'Manual Book Read\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 0, '2025-01-29 10:24:00'),
+(11, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00'),
+(12, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00');
 
 -- --------------------------------------------------------
 
@@ -511,8 +516,8 @@ INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `task_id`, `task_name`, `projec
 (5, NULL, 2, 'TASK-20250129-005', 'test task', NULL, 'Meeting', 'Test Task', '2025-02-02 03:12:00', 'In Progress', 1001.00, 1, 'Medium', '2025-01-29 21:42:31'),
 (6, NULL, 2, 'TASK-20250129-006', 'Buy Steel', 6, 'Deadline', 'Buy steel for the bridge', '2025-02-03 03:23:00', 'To Do', 10.00, 1, 'High', '2025-01-29 21:53:41'),
 (7, NULL, 2, 'TASK-20250129-007', 'testing Related stuff', 6, 'Follow-Up', 'Test related', '2025-02-01 03:34:00', 'In Progress', 10.00, 1, 'Low', '2025-01-29 22:05:22'),
-(8, NULL, 2, 'TASK-20250129-008', 'procuring cement', 6, 'Follow-Up', 'procure cement after buying steel', '2025-01-31 03:36:00', 'Completed', 100.00, 1, 'Low', '2025-01-29 22:07:12'),
-(9, NULL, 2, 'TASK-20250129-009', 'Buy water', 6, 'Follow-Up', 'Buy water for the plant', '2025-01-31 03:42:00', 'In Progress', 10.00, 0, 'High', '2025-01-29 22:13:15'),
+(8, NULL, 2, 'TASK-20250129-008', 'procuring cement', 6, 'Follow-Up', 'procure cement after buying steel', '2025-01-31 03:36:00', 'To Do', 100.00, 1, 'Low', '2025-01-29 22:07:12'),
+(9, NULL, 2, 'TASK-20250129-009', 'Buy water', 6, 'Follow-Up', 'Buy water for the plant', '2025-01-31 03:42:00', 'Blocked', 10.00, 0, 'High', '2025-01-29 22:13:15'),
 (10, NULL, 2, 'TASK-20250129-010', 'fgf', 6, 'Follow-Up', 'jhj', '2025-01-31 03:50:00', 'In Progress', 6.00, 0, 'Low', '2025-01-29 22:20:23'),
 (11, NULL, 2, 'TASK-20250129-011', 'test', 6, 'Follow-Up', 'test', '2025-01-31 04:23:00', 'In Progress', 100.00, 0, 'Low', '2025-01-29 22:54:26');
 
@@ -914,7 +919,7 @@ ALTER TABLE `lead_scores`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `payments`
