@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 30, 2025 at 02:37 AM
+-- Generation Time: Jan 30, 2025 at 11:20 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -130,7 +130,8 @@ CREATE TABLE `customer_interactions` (
 INSERT INTO `customer_interactions` (`id`, `customer_id`, `interaction_type`, `details`, `interaction_at`) VALUES
 (1, 1, 'Email', 'Customer wants to discuss more over call.', '2025-01-28 09:18:57'),
 (2, 1, 'Call', 'Customer wants to meet IRL', '2025-01-28 09:19:30'),
-(3, 1, 'Meeting', 'Meeting went great! Wants to discuss more!', '2025-01-28 09:29:58');
+(3, 1, 'Meeting', 'Meeting went great! Wants to discuss more!', '2025-01-28 09:29:58'),
+(4, 1, 'Email', 'He wants a landing page', '2025-01-30 01:47:38');
 
 -- --------------------------------------------------------
 
@@ -392,7 +393,9 @@ INSERT INTO `notifications` (`id`, `user_id`, `message`, `related_id`, `type`, `
 (9, 2, 'Reminder: Task \'Buy steel for the bridge\' is due on 2025-02-03 03:23:00.', 6, 'task_reminder', 1, '2025-02-02 21:53:00'),
 (10, 2, 'Reminder: Task \'Manual Book Read\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 0, '2025-01-29 10:24:00'),
 (11, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00'),
-(12, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00');
+(12, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00'),
+(13, 2, 'Reminder: Task \'Manual Book Read\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 0, '2025-01-29 10:24:00'),
+(14, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00');
 
 -- --------------------------------------------------------
 
@@ -497,9 +500,10 @@ CREATE TABLE `tasks` (
   `project_id` int(11) DEFAULT NULL,
   `task_type` enum('Follow-Up','Meeting','Deadline') NOT NULL,
   `description` text DEFAULT NULL,
-  `due_date` datetime NOT NULL,
+  `due_date` datetime DEFAULT NULL,
   `status` enum('To Do','In Progress','Completed','Blocked','Canceled','Pending') DEFAULT 'To Do',
   `estimated_hours` decimal(6,2) DEFAULT NULL,
+  `effort_estimation` varchar(100) DEFAULT NULL,
   `billable` tinyint(1) DEFAULT 0,
   `priority` enum('Low','Medium','High') DEFAULT 'Medium',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -509,17 +513,17 @@ CREATE TABLE `tasks` (
 -- Dumping data for table `tasks`
 --
 
-INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `task_id`, `task_name`, `project_id`, `task_type`, `description`, `due_date`, `status`, `estimated_hours`, `billable`, `priority`, `created_at`) VALUES
-(2, NULL, 2, NULL, 'Read Training Manual', NULL, 'Meeting', 'Manual Book Read', '2025-01-29 15:54:00', 'Blocked', 10.00, 0, 'Medium', '2025-01-28 10:27:02'),
-(3, NULL, 2, 'TASK-20250129-003', 'Credits Loadup', NULL, 'Deadline', 'Loadup credits on the vendor page', '2025-01-31 02:49:00', 'Completed', 10.00, 1, 'Medium', '2025-01-29 21:20:37'),
-(4, NULL, 2, 'TASK-20250129-004', 'Metro Bridge', NULL, 'Meeting', 'Build a metro bridge', '2025-02-14 02:59:00', 'Completed', 1000.00, 1, 'High', '2025-01-29 21:29:44'),
-(5, NULL, 2, 'TASK-20250129-005', 'test task', NULL, 'Meeting', 'Test Task', '2025-02-02 03:12:00', 'In Progress', 1001.00, 1, 'Medium', '2025-01-29 21:42:31'),
-(6, NULL, 2, 'TASK-20250129-006', 'Buy Steel', 6, 'Deadline', 'Buy steel for the bridge', '2025-02-03 03:23:00', 'To Do', 10.00, 1, 'High', '2025-01-29 21:53:41'),
-(7, NULL, 2, 'TASK-20250129-007', 'testing Related stuff', 6, 'Follow-Up', 'Test related', '2025-02-01 03:34:00', 'In Progress', 10.00, 1, 'Low', '2025-01-29 22:05:22'),
-(8, NULL, 2, 'TASK-20250129-008', 'procuring cement', 6, 'Follow-Up', 'procure cement after buying steel', '2025-01-31 03:36:00', 'To Do', 100.00, 1, 'Low', '2025-01-29 22:07:12'),
-(9, NULL, 2, 'TASK-20250129-009', 'Buy water', 6, 'Follow-Up', 'Buy water for the plant', '2025-01-31 03:42:00', 'Blocked', 10.00, 0, 'High', '2025-01-29 22:13:15'),
-(10, NULL, 2, 'TASK-20250129-010', 'fgf', 6, 'Follow-Up', 'jhj', '2025-01-31 03:50:00', 'In Progress', 6.00, 0, 'Low', '2025-01-29 22:20:23'),
-(11, NULL, 2, 'TASK-20250129-011', 'test', 6, 'Follow-Up', 'test', '2025-01-31 04:23:00', 'In Progress', 100.00, 0, 'Low', '2025-01-29 22:54:26');
+INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `task_id`, `task_name`, `project_id`, `task_type`, `description`, `due_date`, `status`, `estimated_hours`, `effort_estimation`, `billable`, `priority`, `created_at`) VALUES
+(2, NULL, 2, NULL, 'Read Training Manual', NULL, 'Meeting', 'Manual Book Read', '2025-01-29 15:54:00', 'To Do', 10.00, NULL, 0, 'Medium', '2025-01-28 10:27:02'),
+(3, NULL, 2, 'TASK-20250129-003', 'Credits Loadup', NULL, 'Deadline', 'Loadup credits on the vendor page', '2025-01-31 02:49:00', 'Completed', 10.00, NULL, 1, 'Medium', '2025-01-29 21:20:37'),
+(4, NULL, 2, 'TASK-20250129-004', 'Metro Bridge', NULL, 'Meeting', 'Build a metro bridge', '2025-02-14 02:59:00', 'Completed', 1000.00, NULL, 1, 'High', '2025-01-29 21:29:44'),
+(5, NULL, 2, 'TASK-20250129-005', 'test task', NULL, 'Meeting', 'Test Task', '2025-02-02 03:12:00', 'In Progress', 1001.00, NULL, 1, 'Medium', '2025-01-29 21:42:31'),
+(6, NULL, 2, 'TASK-20250129-006', 'Buy Steel', 6, 'Deadline', 'Buy steel for the bridge', '2025-02-03 03:23:00', 'To Do', 10.00, NULL, 1, 'High', '2025-01-29 21:53:41'),
+(7, NULL, 2, 'TASK-20250129-007', 'testing Related stuff', 6, 'Follow-Up', 'Test related', '2025-02-01 03:34:00', 'In Progress', 10.00, NULL, 1, 'Low', '2025-01-29 22:05:22'),
+(8, NULL, 2, 'TASK-20250129-008', 'procuring cement', 6, 'Follow-Up', 'procure cement after buying steel', '2025-01-31 03:36:00', 'To Do', 100.00, NULL, 1, 'Low', '2025-01-29 22:07:12'),
+(9, NULL, 2, 'TASK-20250129-009', 'Buy water', 6, 'Follow-Up', 'Buy water for the plant', '2025-01-31 03:42:00', 'Blocked', 10.00, NULL, 0, 'High', '2025-01-29 22:13:15'),
+(10, NULL, 2, 'TASK-20250129-010', 'fgf', 6, 'Follow-Up', 'jhj', '2025-01-31 03:50:00', 'Completed', 6.00, NULL, 0, 'Low', '2025-01-29 22:20:23'),
+(11, NULL, 2, 'TASK-20250129-011', 'test', 6, 'Follow-Up', 'test', '2025-01-31 04:23:00', 'In Progress', 100.00, NULL, 0, 'Low', '2025-01-29 22:54:26');
 
 -- --------------------------------------------------------
 
@@ -552,6 +556,20 @@ CREATE TABLE `task_comments` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `task_custom_fields`
+--
+
+CREATE TABLE `task_custom_fields` (
+  `id` int(11) NOT NULL,
+  `task_id` int(11) NOT NULL,
+  `field_name` varchar(255) NOT NULL,
+  `field_value` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `task_dependencies`
 --
 
@@ -560,6 +578,78 @@ CREATE TABLE `task_dependencies` (
   `task_id` int(11) NOT NULL,
   `depends_on_task_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_priorities`
+--
+
+CREATE TABLE `task_priorities` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `color` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_tags`
+--
+
+CREATE TABLE `task_tags` (
+  `id` int(11) NOT NULL,
+  `task_id` int(11) NOT NULL,
+  `tag` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_templates`
+--
+
+CREATE TABLE `task_templates` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `task_templates`
+--
+
+INSERT INTO `task_templates` (`id`, `name`, `description`, `created_at`) VALUES
+(5, 'Feature Request Template', 'Template for requesting a feature', '2025-01-30 08:46:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_template_fields`
+--
+
+CREATE TABLE `task_template_fields` (
+  `id` int(11) NOT NULL,
+  `template_id` int(11) NOT NULL,
+  `field_name` varchar(255) NOT NULL,
+  `field_type` enum('text','select','checkbox','date') NOT NULL,
+  `options` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `task_template_fields`
+--
+
+INSERT INTO `task_template_fields` (`id`, `template_id`, `field_name`, `field_type`, `options`, `created_at`) VALUES
+(10, 5, 'Request Title', 'text', '', '2025-01-30 08:46:29'),
+(11, 5, 'Feature Description', 'text', '', '2025-01-30 08:46:29'),
+(12, 5, 'Use Case', 'text', '', '2025-01-30 08:46:29'),
+(13, 5, 'Feature Due Date', 'date', '', '2025-01-30 08:46:29'),
+(14, 5, 'Feature Category', 'select', '', '2025-01-30 08:46:29');
 
 -- --------------------------------------------------------
 
@@ -797,12 +887,45 @@ ALTER TABLE `task_comments`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `task_custom_fields`
+--
+ALTER TABLE `task_custom_fields`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `task_id` (`task_id`);
+
+--
 -- Indexes for table `task_dependencies`
 --
 ALTER TABLE `task_dependencies`
   ADD PRIMARY KEY (`id`),
   ADD KEY `task_id` (`task_id`),
   ADD KEY `depends_on_task_id` (`depends_on_task_id`);
+
+--
+-- Indexes for table `task_priorities`
+--
+ALTER TABLE `task_priorities`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `task_tags`
+--
+ALTER TABLE `task_tags`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `task_id` (`task_id`);
+
+--
+-- Indexes for table `task_templates`
+--
+ALTER TABLE `task_templates`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `task_template_fields`
+--
+ALTER TABLE `task_template_fields`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `template_id` (`template_id`);
 
 --
 -- Indexes for table `task_time_logs`
@@ -865,7 +988,7 @@ ALTER TABLE `customer_custom_fields`
 -- AUTO_INCREMENT for table `customer_interactions`
 --
 ALTER TABLE `customer_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `customer_preferences`
@@ -919,7 +1042,7 @@ ALTER TABLE `lead_scores`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `payments`
@@ -964,10 +1087,40 @@ ALTER TABLE `task_comments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `task_custom_fields`
+--
+ALTER TABLE `task_custom_fields`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `task_dependencies`
 --
 ALTER TABLE `task_dependencies`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `task_priorities`
+--
+ALTER TABLE `task_priorities`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `task_tags`
+--
+ALTER TABLE `task_tags`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `task_templates`
+--
+ALTER TABLE `task_templates`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `task_template_fields`
+--
+ALTER TABLE `task_template_fields`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `task_time_logs`
@@ -1106,11 +1259,29 @@ ALTER TABLE `task_comments`
   ADD CONSTRAINT `task_comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `task_custom_fields`
+--
+ALTER TABLE `task_custom_fields`
+  ADD CONSTRAINT `task_custom_fields_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `task_dependencies`
 --
 ALTER TABLE `task_dependencies`
   ADD CONSTRAINT `task_dependencies_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `task_dependencies_ibfk_2` FOREIGN KEY (`depends_on_task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `task_tags`
+--
+ALTER TABLE `task_tags`
+  ADD CONSTRAINT `task_tags_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `task_template_fields`
+--
+ALTER TABLE `task_template_fields`
+  ADD CONSTRAINT `task_template_fields_ibfk_1` FOREIGN KEY (`template_id`) REFERENCES `task_templates` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `task_time_logs`

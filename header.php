@@ -142,7 +142,7 @@
               .top-nav-dropdown a{
                 padding: 10px;
                 display: block;
-               transition: all 0.2s ease;
+                transition: all 0.2s ease;
               }
                .top-nav-dropdown a:hover{
                  background: #f2f2f2;
@@ -215,14 +215,20 @@
                                 <a href="add_invoice.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_invoice.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Invoice</a>
                             </div>
                         </div>
-                        <div class="menu-item <?php if (isParentActive('manage_projects.php') || isParentActive('add_project.php') || isParentActive('view_project.php') || isParentActive('manage_project_categories.php')) echo 'active'; ?>">
+                       <div class="menu-item <?php if (isParentActive('manage_projects.php') || isParentActive('add_project.php') || isParentActive('view_project.php') || isParentActive('manage_project_categories.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Manage Projects</a>
                             <div class="submenu">
                                 <a href="manage_projects.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_projects.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Projects</a>
                                  <a href="add_project.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_project.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Project</a>
-                                     <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
+                                    <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
                             </div>
                         </div>
+                       <div class="menu-item <?php if (isParentActive('manage_task_templates.php') || isParentActive('add_task_template.php')) echo 'active'; ?>">
+                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Task Settings</a>
+                            <div class="submenu">
+                                 <a href="manage_task_templates.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_task_templates.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Task Templates</a>
+                             </div>
+                      </div>
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                          <a href="settings.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
 
@@ -241,7 +247,7 @@
             <nav class="bg-blue-600 p-4 text-white mb-6 rounded-md">
                 <div class="container mx-auto flex justify-end items-center">
                     <?php if (isset($_SESSION['user_id'])): ?>
-                         <div class="relative top-nav-button mr-4 hover:bg-white/10 p-1.5 rounded-full transition-colors" >
+                       <div class="relative top-nav-button mr-4 hover:bg-white/10 p-1.5 rounded-full transition-colors" >
                             <button id="profileButton" class="relative flex items-center">
                                 <?php
                                 $stmt = $conn->prepare("SELECT profile_picture FROM users WHERE id = :user_id");
