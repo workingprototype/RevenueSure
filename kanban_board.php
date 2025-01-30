@@ -31,16 +31,28 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Include header
 require 'header.php';
 ?>
-  <h1 class="text-3xl font-bold text-gray-800 mb-6">Kanban Board: <?php echo htmlspecialchars($project['name']); ?></h1>
-    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Project Details</h2>
-         <p><strong>Project Name:</strong> <?php echo htmlspecialchars($project['name']); ?></p>
-           <p><strong>Start Date:</strong> <?php echo htmlspecialchars($project['start_date']); ?></p>
+<div class="container mx-auto p-6 fade-in">
+  <h1 class="text-4xl font-bold text-gray-900 mb-6">Kanban Board: <?php echo htmlspecialchars($project['name']); ?></h1>
+    <div class="bg-white p-6 rounded-2xl shadow-xl mb-8 overflow-hidden border-l-4 border-blue-500 transition hover:shadow-2xl">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 relative">
+           <i class="fas fa-project-diagram absolute left-[-20px] top-[-5px] text-blue-500 text-sm"></i> Project Details
+          </h2>
+            <p class="text-gray-700 mb-2"><span class="font-semibold text-gray-800">Project Name:</span> <?php echo htmlspecialchars($project['name']); ?></p>
+             <p class="text-gray-700 mb-2"><span class="font-semibold text-gray-800">Start Date:</span> <?php echo htmlspecialchars($project['start_date']); ?></p>
               <?php if($project['end_date']): ?>
-                 <p><strong>End Date:</strong> <?php echo htmlspecialchars($project['end_date']); ?></p>
+                 <p class="text-gray-700 mb-2"><span class="font-semibold text-gray-800">End Date:</span> <?php echo htmlspecialchars($project['end_date']); ?></p>
                 <?php endif; ?>
-                <p><strong>Status:</strong> <?php echo htmlspecialchars($project['status']); ?></p>
-           <p><strong>Priority:</strong> <?php echo htmlspecialchars($project['priority']); ?></p>
+             <p class="text-gray-700 mb-2"><span class="font-semibold text-gray-800">Project Manager:</span>
+                <?php
+                    $stmt = $conn->prepare("SELECT username FROM users WHERE id = :id");
+                    $stmt->bindParam(':id', $project['project_manager_id']);
+                     $stmt->execute();
+                     $manager = $stmt->fetch(PDO::FETCH_ASSOC);
+                      echo $manager ? htmlspecialchars($manager['username']) : 'N/A';
+                ?>
+           </p>
+            <p class="text-gray-700 mb-2"><span class="font-semibold text-gray-800">Status:</span> <?php echo htmlspecialchars($project['status']); ?></p>
+           <p class="text-gray-700 mb-2"><span class="font-semibold text-gray-800">Priority:</span> <?php echo htmlspecialchars($project['priority']); ?></p>
     </div>
 
     <div class="flex overflow-x-auto gap-4 p-4">
@@ -51,14 +63,63 @@ require 'header.php';
                  return $task['status'] === $status;
               });
             ?>
-            <div class="kanban-column w-72 min-w-72 bg-gray-100 rounded-lg p-4 shadow-md" data-status="<?php echo $status; ?>">
-                <h2 class="text-xl font-bold text-gray-800 mb-4"><?php echo $status; ?></h2>
+            <div class="kanban-column w-72 min-w-72 bg-gray-100 rounded-2xl p-4 shadow-xl border-l-4" data-status="<?php echo $status; ?>"
+             style="border-left-color:
+               <?php
+                switch ($status) {
+                    case 'To Do':
+                        echo '#94a3b8';
+                         break;
+                   case 'In Progress':
+                     echo '#007aff';
+                        break;
+                   case 'Completed':
+                     echo '#22c55e';
+                       break;
+                     case 'Blocked':
+                            echo '#facc15';
+                            break;
+                       case 'Canceled':
+                              echo '#ef4444';
+                            break;
+                    default:
+                       echo '#94a3b8';
+                          break;
+                    }
+                 ?>;">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 relative">
+                  <?php echo $status; ?>
+                   <span class="absolute top-[3px] left-[-22px] text-sm">
+                  <?php
+                    switch ($status) {
+                         case 'To Do':
+                              echo '<i class="fas fa-list-check text-gray-500"></i>';
+                             break;
+                           case 'In Progress':
+                              echo '<i class="fas fa-spinner text-blue-500"></i>';
+                              break;
+                          case 'Completed':
+                            echo '<i class="fas fa-check-circle text-green-500"></i>';
+                              break;
+                           case 'Blocked':
+                                 echo '<i class="fas fa-ban text-yellow-500"></i>';
+                             break;
+                        case 'Canceled':
+                           echo '<i class="fas fa-times-circle text-red-500"></i>';
+                              break;
+                           default:
+                              echo '<i class="fas fa-tasks text-gray-500"></i>';
+                                 break;
+                        }
+                    ?>
+                </span>
+                </h2>
                   <ul class="kanban-items space-y-4">
                     <?php if($filtered_tasks) :
                       foreach ($filtered_tasks as $task):
                         ?>
                         <li
-                            class="kanban-item bg-white p-4 rounded-lg shadow-sm flex flex-col justify-between"
+                            class="kanban-item bg-white p-4 rounded-xl shadow-sm flex flex-col justify-between  transition hover:shadow-2xl"
                             data-task-id="<?php echo $task['id']; ?>" draggable="true"
                              style="border-left: 4px solid <?php
                                   switch ($task['priority']) {
@@ -84,8 +145,8 @@ require 'header.php';
                                  </p>
                            </div>
                             <div class="flex justify-end gap-2">
-                                <a href="edit_task.php?id=<?php echo $task['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
-                                    <a href="view_tasks.php?project_id=<?php echo $project_id ?>&task_id=<?php echo $task['id'] ?>" class="text-purple-600 hover:underline">View</a>
+                                <a href="edit_task.php?id=<?php echo $task['id']; ?>" class="text-blue-600 hover:underline"> <i class="fas fa-edit"></i></a>
+                                    <a href="view_tasks.php?project_id=<?php echo $project_id ?>&task_id=<?php echo $task['id'] ?>" class="text-purple-600 hover:underline"><i class="fas fa-eye"></i></a>
                                 </div>
                         </li>
                     <?php  endforeach; else: ?>
@@ -95,7 +156,7 @@ require 'header.php';
             </div>
         <?php endforeach; ?>
     </div>
-   <div class="mt-4">
+    <div class="mt-4">
         <a href="view_project.php?id=<?php echo $project_id; ?>" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300 inline-block">Back to Project</a>
   </div>
 <script>
