@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 30, 2025 at 03:24 PM
+-- Generation Time: Jan 30, 2025 at 03:52 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -692,6 +692,32 @@ CREATE TABLE `task_time_logs` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `team_roles`
+--
+
+CREATE TABLE `team_roles` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `team_roles`
+--
+
+INSERT INTO `team_roles` (`id`, `name`, `created_at`) VALUES
+(1, 'Support Role', '2025-01-30 14:46:00'),
+(2, 'Development Team A', '2025-01-30 14:47:27'),
+(3, 'Dev Team B', '2025-01-30 14:47:43'),
+(4, 'Dev Team C', '2025-01-30 14:47:50'),
+(5, 'QA Team', '2025-01-30 14:48:01'),
+(6, 'Marketing Team', '2025-01-30 14:48:22'),
+(7, 'Design and UI Team', '2025-01-30 14:48:36'),
+(8, 'Team Lead', '2025-01-30 14:48:56');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `todos`
 --
 
@@ -728,16 +754,19 @@ CREATE TABLE `users` (
   `credits` int(11) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `role` enum('admin','user') DEFAULT 'user',
-  `profile_picture` varchar(255) DEFAULT NULL
+  `profile_picture` varchar(255) DEFAULT NULL,
+  `department` varchar(100) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `credits`, `created_at`, `role`, `profile_picture`) VALUES
-(1, 'user', 'user@demo.com', '$2y$10$8z2JpAs7QU3aMkHL59SC.O4rjZevbePDApd7947XYt.LfdOVlvA7.', 100, '2025-01-26 05:53:17', 'user', NULL),
-(2, 'GGBoiA', 'admin@demo.com', '$2y$10$qtyaY8G3jceTluy42gCT.ey.SYmGAUcj5Oi3bnDxOxnCL.7w4nbJq', 0, '2025-01-26 06:17:01', 'admin', 'uploads/profile/67987cff6f90a_kisspng-avatar-youtube-person-kahoot-a-roommate-who-plays-with-a-cell-phone-5b4d74010dd214.7783760115318026250566.jpg');
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `credits`, `created_at`, `role`, `profile_picture`, `department`, `role_id`) VALUES
+(1, 'Peel Hullin', 'user@demo.com', '$2y$10$8z2JpAs7QU3aMkHL59SC.O4rjZevbePDApd7947XYt.LfdOVlvA7.', 100, '2025-01-26 05:53:17', 'user', NULL, 'Support Department', 5),
+(2, 'GGBoiA', 'admin@demo.com', '$2y$10$qtyaY8G3jceTluy42gCT.ey.SYmGAUcj5Oi3bnDxOxnCL.7w4nbJq', 0, '2025-01-26 06:17:01', 'admin', 'uploads/profile/67987cff6f90a_kisspng-avatar-youtube-person-kahoot-a-roommate-who-plays-with-a-cell-phone-5b4d74010dd214.7783760115318026250566.jpg', NULL, NULL),
+(4, 'John The Support Man', 'john@support.com', '$2y$10$6mZ3cSv8FM7fxg3Ui6JwquHyYnTtHsx1H9ZxtaFYqHG/anoV0C1o.', 0, '2025-01-30 14:46:28', 'user', NULL, 'Support Team', 1);
 
 -- --------------------------------------------------------
 
@@ -968,6 +997,12 @@ ALTER TABLE `task_time_logs`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `team_roles`
+--
+ALTER TABLE `team_roles`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `todos`
 --
 ALTER TABLE `todos`
@@ -979,7 +1014,8 @@ ALTER TABLE `todos`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `role_id` (`role_id`);
 
 --
 -- Indexes for table `user_credits`
@@ -1167,6 +1203,12 @@ ALTER TABLE `task_time_logs`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `team_roles`
+--
+ALTER TABLE `team_roles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT for table `todos`
 --
 ALTER TABLE `todos`
@@ -1176,7 +1218,7 @@ ALTER TABLE `todos`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `user_credits`
@@ -1348,6 +1390,12 @@ ALTER TABLE `task_time_logs`
 --
 ALTER TABLE `todos`
   ADD CONSTRAINT `todos_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `team_roles` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `user_credits`
