@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 30, 2025 at 01:36 PM
+-- Generation Time: Jan 30, 2025 at 03:24 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -396,7 +396,8 @@ INSERT INTO `notifications` (`id`, `user_id`, `message`, `related_id`, `type`, `
 (12, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00'),
 (13, 2, 'Reminder: Task \'Manual Book Read\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 0, '2025-01-29 10:24:00'),
 (14, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00'),
-(15, 2, 'Reminder: Task \'Make transparent dashboard\' is due on 2025-01-31 16:25:00.', 12, 'task_reminder', 1, '2025-01-31 10:55:00');
+(15, 2, 'Reminder: Task \'Make transparent dashboard\' is due on 2025-01-31 16:25:00.', 12, 'task_reminder', 1, '2025-01-31 10:55:00'),
+(16, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00');
 
 -- --------------------------------------------------------
 
@@ -502,15 +503,17 @@ CREATE TABLE `support_tickets` (
   `category` varchar(100) DEFAULT NULL,
   `status` enum('New','In Progress','Resolved','Closed') DEFAULT 'New',
   `expected_resolution_date` date DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `project_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `support_tickets`
 --
 
-INSERT INTO `support_tickets` (`id`, `user_id`, `title`, `description`, `priority`, `assigned_to`, `category`, `status`, `expected_resolution_date`, `created_at`) VALUES
-(1, 2, 'Write Documentation', 'Write a detailed documentation', 'Low', 2, 'Documentation Request', 'New', '2025-01-31', '2025-01-30 12:30:38');
+INSERT INTO `support_tickets` (`id`, `user_id`, `title`, `description`, `priority`, `assigned_to`, `category`, `status`, `expected_resolution_date`, `created_at`, `project_id`) VALUES
+(1, 2, 'Write Documentation', 'Write a detailed documentation', 'Low', 2, 'Documentation Request', 'New', '2025-01-31', '2025-01-30 12:30:38', NULL),
+(2, 2, 'Vendor Credits Purchase', 'Need to purchase credits', 'Medium', 2, 'Infrastructure', 'In Progress', '2025-02-01', '2025-01-30 14:21:52', 6);
 
 -- --------------------------------------------------------
 
@@ -545,7 +548,8 @@ CREATE TABLE `support_ticket_comments` (
 --
 
 INSERT INTO `support_ticket_comments` (`id`, `ticket_id`, `user_id`, `comment`, `created_at`) VALUES
-(1, 1, 2, 'Hi guys, any update on this ticket?', '2025-01-30 12:30:50');
+(1, 1, 2, 'Hi guys, any update on this ticket?', '2025-01-30 12:30:50'),
+(2, 1, 2, 'Its under development', '2025-01-30 14:10:52');
 
 -- --------------------------------------------------------
 
@@ -582,10 +586,10 @@ INSERT INTO `tasks` (`id`, `lead_id`, `user_id`, `task_id`, `task_name`, `projec
 (5, NULL, 2, 'TASK-20250129-005', 'test task', NULL, 'Meeting', 'Test Task', '2025-02-02 03:12:00', 'In Progress', 1001.00, NULL, 1, 'Medium', '2025-01-29 21:42:31'),
 (6, NULL, 2, 'TASK-20250129-006', 'Buy Steel', 6, 'Deadline', 'Buy steel for the bridge', '2025-02-03 03:23:00', 'To Do', 10.00, NULL, 1, 'High', '2025-01-29 21:53:41'),
 (7, NULL, 2, 'TASK-20250129-007', 'testing Related stuff', 6, 'Follow-Up', 'Test related', '2025-02-01 03:34:00', 'In Progress', 10.00, NULL, 1, 'Low', '2025-01-29 22:05:22'),
-(8, NULL, 2, 'TASK-20250129-008', 'procuring cement', 6, 'Follow-Up', 'procure cement after buying steel', '2025-01-31 03:36:00', 'To Do', 100.00, NULL, 1, 'Low', '2025-01-29 22:07:12'),
+(8, NULL, 2, 'TASK-20250129-008', 'procuring cement', 6, 'Follow-Up', 'procure cement after buying steel', '2025-01-31 03:36:00', 'Completed', 100.00, NULL, 1, 'Low', '2025-01-29 22:07:12'),
 (9, NULL, 2, 'TASK-20250129-009', 'Buy water', 6, 'Follow-Up', 'Buy water for the plant', '2025-01-31 03:42:00', 'Blocked', 10.00, NULL, 0, 'High', '2025-01-29 22:13:15'),
 (10, NULL, 2, 'TASK-20250129-010', 'fgf', 6, 'Follow-Up', 'jhj', '2025-01-31 03:50:00', 'Completed', 6.00, NULL, 0, 'Low', '2025-01-29 22:20:23'),
-(11, NULL, 2, 'TASK-20250129-011', 'test', 6, 'Follow-Up', 'test', '2025-01-31 04:23:00', 'In Progress', 100.00, NULL, 0, 'Low', '2025-01-29 22:54:26'),
+(11, NULL, 2, 'TASK-20250129-011', 'test', 6, 'Follow-Up', 'test', '2025-01-31 04:23:00', 'Canceled', 100.00, NULL, 0, 'Low', '2025-01-29 22:54:26'),
 (12, NULL, 2, 'TASK-20250130-012', 'Transparent dashboard', 6, 'Follow-Up', 'Make transparent dashboard', '2025-01-31 16:25:00', 'To Do', 10.00, NULL, 0, 'Low', '2025-01-30 10:55:30');
 
 -- --------------------------------------------------------
@@ -884,7 +888,8 @@ ALTER TABLE `subtasks`
 ALTER TABLE `support_tickets`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
-  ADD KEY `assigned_to` (`assigned_to`);
+  ADD KEY `assigned_to` (`assigned_to`),
+  ADD KEY `project_id` (`project_id`);
 
 --
 -- Indexes for table `support_ticket_attachments`
@@ -1069,7 +1074,7 @@ ALTER TABLE `lead_scores`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `payments`
@@ -1099,7 +1104,7 @@ ALTER TABLE `subtasks`
 -- AUTO_INCREMENT for table `support_tickets`
 --
 ALTER TABLE `support_tickets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `support_ticket_attachments`
@@ -1111,7 +1116,7 @@ ALTER TABLE `support_ticket_attachments`
 -- AUTO_INCREMENT for table `support_ticket_comments`
 --
 ALTER TABLE `support_ticket_comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tasks`
@@ -1275,7 +1280,8 @@ ALTER TABLE `subtasks`
 --
 ALTER TABLE `support_tickets`
   ADD CONSTRAINT `support_tickets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `support_tickets_ibfk_2` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `support_tickets_ibfk_2` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `support_tickets_ibfk_3` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `support_ticket_attachments`

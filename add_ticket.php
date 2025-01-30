@@ -19,11 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $status = $_POST['status'];
     $expected_resolution_date = $_POST['expected_resolution_date'];
     $user_id = $_SESSION['user_id'];
+    $project_id = $_POST['project_id'] ?? null;
+
 
     if (empty($title) || empty($description) || empty($priority) || empty($status)) {
         $error = "All fields are required.";
     } else {
-        $stmt = $conn->prepare("INSERT INTO support_tickets (user_id, title, description, priority, assigned_to, category, status, expected_resolution_date) VALUES (:user_id, :title, :description, :priority, :assigned_to, :category, :status, :expected_resolution_date)");
+        $stmt = $conn->prepare("INSERT INTO support_tickets (user_id, title, description, priority, assigned_to, category, status, expected_resolution_date, project_id) VALUES (:user_id, :title, :description, :priority, :assigned_to, :category, :status, :expected_resolution_date, :project_id)");
         $stmt->bindParam(':user_id', $user_id);
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':description', $description);
@@ -32,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          $stmt->bindParam(':category', $category);
         $stmt->bindParam(':status', $status);
         $stmt->bindParam(':expected_resolution_date', $expected_resolution_date);
+        $stmt->bindParam(':project_id', $project_id);
+
 
         if ($stmt->execute()) {
             $ticket_id = $conn->lastInsertId();
@@ -48,13 +52,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $stmt = $conn->prepare("SELECT id, username FROM users WHERE role='user' OR role = 'admin'");
 $stmt->execute();
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Fetch projects for the dropdown
+$stmt = $conn->prepare("SELECT id, name FROM projects");
+$stmt->execute();
+$projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 // Include header
 require 'header.php';
 ?>
 
 <div class="container mx-auto p-6 fade-in">
-    <h1 class="text-4xl font-bold text-gray-900 mb-6">Create Support Ticket</h1>
+    <h1 class="text-3xl font-bold text-gray-800 mb-6 uppercase tracking-wide border-b-2 border-gray-400 pb-2">Create Support Ticket</h1>
 
     <!-- Display error or success message -->
     <?php if ($error): ?>
@@ -69,7 +78,7 @@ require 'header.php';
         </div>
     <?php endif; ?>
     <!-- Create Ticket Form -->
-    <div class="bg-white p-6 rounded-2xl shadow-xl">
+    <div class="bg-gray-100 border border-gray-400 p-6 rounded-lg">
         <form method="POST" action="">
              <div class="mb-4">
                   <label for="title" class="block text-gray-700">Ticket Title</label>
@@ -112,8 +121,17 @@ require 'header.php';
               <div class="mb-4">
                     <label for="expected_resolution_date" class="block text-gray-700">Expected Resolution Date</label>
                     <input type="date" name="expected_resolution_date" id="expected_resolution_date" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
-               </div>
-            <button type="submit" class="bg-blue-700 text-white px-6 py-3 rounded-xl hover:bg-blue-900 transition duration-300 shadow-md">Create Ticket</button>
+              </div>
+            <div class="mb-4">
+                <label for="project_id" class="block text-gray-700">Related Project (Optional)</label>
+                    <select name="project_id" id="project_id" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none">
+                        <option value="">Select Project</option>
+                       <?php foreach ($projects as $project): ?>
+                            <option value="<?php echo $project['id']; ?>"><?php echo htmlspecialchars($project['name']); ?></option>
+                       <?php endforeach; ?>
+                  </select>
+            </div>
+            <button type="submit" class="bg-blue-700 text-white px-6 py-3 rounded-xl hover:bg-blue-900 transition duration-300 shadow-md uppercase tracking-wide">Create Ticket</button>
         </form>
     </div>
 </div>

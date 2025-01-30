@@ -10,10 +10,11 @@ if (!isset($_SESSION['user_id'])) {
 $ticket_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // Fetch ticket details
-$stmt = $conn->prepare("SELECT support_tickets.*, users.username as assigned_username, users2.username as created_username
+$stmt = $conn->prepare("SELECT support_tickets.*, users.username as assigned_username, users2.username as created_username, projects.name as project_name
                         FROM support_tickets
                         LEFT JOIN users ON support_tickets.assigned_to = users.id
-                          LEFT JOIN users as users2 ON support_tickets.user_id = users2.id 
+                         LEFT JOIN users as users2 ON support_tickets.user_id = users2.id
+                        LEFT JOIN projects ON support_tickets.project_id = projects.id
                         WHERE support_tickets.id = :id");
 $stmt->bindParam(':id', $ticket_id);
 $stmt->execute();
@@ -66,22 +67,24 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Include header
 require 'header.php';
 ?>
-    <div class="container mx-auto p-6 fade-in">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Ticket Details</h1>
 
-        <?php if ($error): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-                <?php echo $error; ?>
-            </div>
-        <?php endif; ?>
+<div class="container mx-auto p-6 fade-in">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6 uppercase tracking-wide border-b-2 border-gray-400 pb-2">Ticket Details</h1>
 
-        <?php if ($success): ?>
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
-                <?php echo $success; ?>
-            </div>
-        <?php endif; ?>
-            <div class="bg-gray-100 border border-gray-400 p-6 rounded-lg mb-8">
-                 <div class="mb-8">
+    <?php if ($error): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+            <?php echo $error; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($success): ?>
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
+            <?php echo $success; ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="bg-gray-100 border border-gray-400 p-6 rounded-lg mb-8">
+         <div class="mb-8">
                     <div class="flex justify-between items-start mb-4">
                          <div>
                             <h2 class="text-2xl font-bold text-gray-900 mb-2 uppercase tracking-wide border-b-2 border-gray-400 pb-2">
@@ -112,7 +115,7 @@ require 'header.php';
                                                 break;
                                             case 'In Progress':
                                                 echo 'bg-yellow-100 text-yellow-800';
-                                                break;
+                                               break;
                                             case 'Resolved':
                                                   echo 'bg-green-100 text-green-800';
                                                      break;
@@ -133,10 +136,12 @@ require 'header.php';
                        <div>
                            <p class="text-gray-600 text-sm uppercase tracking-wide"><strong>Created by:</strong> <span class="font-semibold"><?php echo htmlspecialchars($ticket['created_username']); ?></span></p>
                             <p class="text-gray-600 text-sm uppercase tracking-wide"><strong>Assigned To:</strong> <span class="font-semibold"><?php echo htmlspecialchars($ticket['assigned_username'] ? $ticket['assigned_username'] : 'Unassigned'); ?></span></p>
-                            
+                             <?php if ($ticket['project_name']): ?>
+                                 <p class="text-gray-600 text-sm uppercase tracking-wide"><strong>Project:</strong> <span class="font-semibold"><a href="view_project.php?id=<?php echo htmlspecialchars($ticket['project_id']); ?>" class="text-blue-600 hover:underline"><?php echo htmlspecialchars($ticket['project_name']); ?></a></span></p>
+                              <?php endif; ?>
                        </div>
                         <div class="text-right">
-                          
+                           
                             <p class="text-gray-600 text-sm uppercase tracking-wide">
                                     <strong>Category:</strong> <span class="font-semibold"><?php echo htmlspecialchars($ticket['category']); ?></span>
                                 </p>
@@ -147,7 +152,7 @@ require 'header.php';
                      </div>
                </div>
                <!--  Comments Section -->
-            <div class="mt-8">
+               <div class="mt-8">
               <h2 class="text-xl font-bold text-gray-800 mb-4 relative border-b border-gray-400 pb-2">
                       <i class="fas fa-comments text-gray-600 absolute left-[-10px] top-[4px] mr-2"></i> Comments
                     </h2>
@@ -159,7 +164,7 @@ require 'header.php';
                          <ul>
                             <?php foreach ($comments as $comment): ?>
                                  <li class="bg-gray-50 p-4 my-2 rounded-lg border border-gray-200">
-                                     <div class="flex justify-between items-center mb-2">
+                                     <div class="flex justify-between">
                                        <p class="text-gray-800"><?php echo htmlspecialchars($comment['comment']); ?></p>
                                       </div>
                                        <div class="text-right">
@@ -187,7 +192,7 @@ require 'header.php';
                     </form>
                        <div class="mt-4">
                          <?php if ($attachments): ?>
-                            <ul>
+                            <ul class="list-disc ml-6">
                                 <?php foreach ($attachments as $attachment): ?>
                                     <li class="my-2 flex justify-between items-center">
                                        <a href="<?php echo $attachment['file_path']; ?>" class="text-blue-600 hover:underline" download><?php echo htmlspecialchars($attachment['file_name']); ?></a>
@@ -195,14 +200,14 @@ require 'header.php';
                                     </li>
                              <?php endforeach; ?>
                          </ul>
-                     <?php else: ?>
+                       <?php else: ?>
                            <p>No attachments found!</p>
                          <?php endif; ?>
                       </div>
                     </div>
              <div class="mt-8">
                 <a href="manage_tickets.php" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300 inline-block">Back to Tickets</a>
-                  <a href="edit_ticket.php?id=<?php echo $ticket['id']; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Ticket</a>
+                 <a href="edit_ticket.php?id=<?php echo $ticket['id']; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Ticket</a>
             </div>
         </div>
     </div>
