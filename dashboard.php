@@ -43,35 +43,36 @@ $outstanding_data = $stmt->fetch(PDO::FETCH_ASSOC);
 // Include header
 require 'header.php';
 ?>
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Welcome, <?php echo htmlspecialchars($username); ?>!</h1>
+<div class="container mx-auto p-6 fade-in">
+        <h1 class="text-4xl font-bold text-gray-900 mb-8">Welcome, <?php echo htmlspecialchars($username); ?>!</h1>
 
 <!-- Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <!-- Credits Card -->
-    <div class="bg-white p-6 rounded-lg shadow-md">
-        <h3 class="text-xl font-semibold text-gray-800 mb-2">Your Credits</h3>
-        <p class="text-2xl font-bold text-blue-600"><?php echo $user['credits']; ?></p>
-        <p class="text-gray-600 mt-2">Credits available for accessing leads.</p>
-        <a href="manage_credits.php" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Manage Credits</a>
-    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+        <!-- Credits Card -->
+        <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-blue-500 transition hover:shadow-2xl">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Your Credits</h3>
+            <p class="text-3xl font-bold text-blue-600"><?php echo $user['credits']; ?></p>
+            <p class="text-gray-600 mt-2">Credits available for accessing leads.</p>
+            <a href="manage_credits.php" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Manage Credits</a>
+        </div>
 
-    <!-- Leads Card -->
-    <div class="bg-white p-6 rounded-lg shadow-md">
-        <h3 class="text-xl font-semibold text-gray-800 mb-2">Total Leads</h3>
-        <p class="text-2xl font-bold text-blue-600"><?php echo $leads_count; ?></p>
-        <p class="text-gray-600 mt-2">Leads available in the platform.</p>
-        <a href="search_leads.php" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Search Leads</a>
-    </div>
+        <!-- Leads Card -->
+        <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-blue-500 transition hover:shadow-2xl">
+             <h3 class="text-xl font-semibold text-gray-900 mb-2">Total Leads</h3>
+            <p class="text-3xl font-bold text-blue-600"><?php echo $leads_count; ?></p>
+            <p class="text-gray-600 mt-2">Leads available in the platform.</p>
+            <a href="search_leads.php" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Search Leads</a>
+        </div>
 
     <!-- Admin-Specific Card -->
     <?php if ($role === 'admin'): ?>
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold text-gray-800 mb-2">Admin Actions</h3>
-            <p class="text-gray-600">Manage users and leads.</p>
-             <a href="reporting_dashboard.php" class="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Go to Reporting Dashboard</a>
+           <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-green-500 transition hover:shadow-2xl">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Admin Actions</h3>
+                 <p class="text-gray-600">Manage users and leads.</p>
+                <a href="reporting_dashboard.php" class="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Go to Reporting Dashboard</a>
            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-gray-800 mb-2">Outstanding Payments</h3>
+            <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-purple-500 transition hover:shadow-2xl">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Outstanding Payments</h3>
                    <p class="text-gray-600 mb-2">
                     <strong>Total Unpaid Invoices:</strong>
                          <span class="bg-red-100 text-red-800 rounded-full px-2 py-1">
@@ -98,24 +99,32 @@ require 'header.php';
             </div>
     <?php endif; ?>
 </div>
- <div class="bg-white p-6 rounded-lg shadow-md mt-8">
-<h2 class="text-xl font-bold text-gray-800 mb-4">To-Do List</h2>
- <form method="POST" action="add_todo.php">
-    <div class="mb-4">
-       <label for="title" class="block text-gray-700">Title</label>
-       <input type="text" name="title" id="title" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+    
+<div class="bg-white p-6 rounded-2xl shadow-xl mt-8 border-l-4 border-blue-500 transition hover:shadow-2xl">
+<h2 class="text-2xl font-bold text-gray-900 mb-4 relative">
+  <i class="fas fa-list-check absolute left-[-20px] top-[-5px] text-blue-500 text-sm"></i> To-Do List
+    </h2>
+ <form method="POST" action="add_todo.php" class="mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+           <div class="mb-4">
+              <label for="title" class="block text-gray-700">Title</label>
+             <input type="text" name="title" id="title" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+          </div>
+           <div class="mb-4">
+              <label for="due_date" class="block text-gray-700">Due Date</label>
+               <input type="datetime-local" name="due_date" id="due_date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+           </div>
+          <div class="mb-4">
+           <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition duration-300">Add To Do</button>
+        </div>
     </div>
     <div class="mb-4">
-       <label for="description" class="block text-gray-700">Description</label>
+         <label for="description" class="block text-gray-700">Description</label>
        <textarea name="description" id="description" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
-    </div>
-    <div class="mb-4">
-        <label for="due_date" class="block text-gray-700">Due Date</label>
-         <input type="datetime-local" name="due_date" id="due_date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-    </div>
-   <div class="mb-4">
+     </div>
+     <div class="mb-4">
          <label for="related_type" class="block text-gray-700">Related to</label>
-        <select name="related_type" id="related_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="showRelatedInput(this.value)">
+         <select name="related_type" id="related_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="showRelatedInput(this.value)">
               <option value="">None</option>
              <option value="task">Task</option>
            <option value="lead">Lead</option>
@@ -127,9 +136,8 @@ require 'header.php';
            <input type="text" name="related_id" id="related_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"  data-autocomplete-id="related-autocomplete">
             <div id="related-autocomplete-suggestions" class="absolute z-10 mt-2 w-full bg-white border rounded shadow-md hidden"></div>
       </div>
-       <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add To Do</button>
 </form>
- <?php if ($todos): ?>
+  <?php if ($todos): ?>
       <div class="mt-6">
        <label class="inline-flex items-center">
              <input type="checkbox" id="show_completed" class="mr-2" >

@@ -11,186 +11,130 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
     <!-- Include FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-     <style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
         :root {
-            --primary-color: #6366f1; /* Indigo */
-            --secondary-color: #34d399; /* Teal */
+            --primary-color: #007aff; /* Apple Blue */
+            --secondary-color: #4cd964; /* Apple Green */
             --background-light: #f9fafb;
             --background-dark: #1f2937;
-            --error-color: #ef4444;
+            --error-color: #ff3b30;
+             --nav-item-height: 48px;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             background-color: var(--background-light);
             color: #1f2937;
         }
-
-        .submenu {
-            display: none;
-            padding-left: 20px;
-            transition: all 0.3s ease;
-        }
-       .menu-item:hover .submenu {
-            display: block;
-            animation: fadeIn 0.3s ease-in-out; /* Apply the fade-in animation on hover */
-        }
-        .menu-item a {
-            transition: color 0.3s ease, background-color 0.3s ease;
-        }
-
-        .menu-item a:hover {
-           background-color: #434f5c;
-           color: white;
-        }
-         .active {
-           background-color: #434f5c;
-        }
-          aside {
-            min-width: 256px;
+         aside {
+            min-width: 280px;
              transition: all 0.3s ease-in-out;
-        }
-         button {
-              transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
-              }
-              button:active {
-              transform: scale(0.98);
-              }
-         input:focus, select:focus, textarea:focus {
-               border-color: var(--primary-color);
-               box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+             border-right: 1px solid rgba(0,0,0,0.1);
+             background: #e2e8f0
+         }
+         aside nav {
+             display: flex;
+             flex-direction: column;
+             justify-content: flex-start;
+          }
+           .menu-item a {
+                display: flex;
+                align-items: center;
+                 padding: 12px 20px;
+              margin: 0 10px;
+                transition: color 0.2s ease, background-color 0.2s ease, border-left-color 0.2s ease;
+                border-left: 4px solid transparent;
+             color: #4a5568;
+             font-size: 0.9rem;
             }
-           .bg-white {
-             transition: all 0.3s ease-in-out;
-             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-             }
-         input,select, textarea {
-          transition: all 0.3s ease-in-out;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border-radius: 8px;
+         .menu-item a:hover {
+               background-color: rgba(0,0,0,0.03);
+                border-left-color: var(--primary-color);
+                color: #000;
 
-           }
-             .fade-in-up {
+        }
+       .menu-item .submenu a:hover {
+            background-color: rgba(0,0,0,0.03);
+            color: #000;
+        }
+         .menu-item .submenu a {
+              padding: 12px 30px;
+              font-size: 0.85rem;
+              transition: color 0.2s ease, background-color 0.2s ease;
+
+            }
+
+         .menu-item.active a {
+          color: #000;
+            background-color: rgba(0,0,0,0.04);
+            border-left-color: var(--primary-color);
+        }
+        .submenu {
+          padding-left: 10px;
+            transition: all 0.2s ease;
+             margin-top: 5px;
+             border-left: 2px solid #94a3b8;
+            overflow:hidden;
+            max-height: 0;
+            }
+        .menu-item:hover .submenu {
+           max-height: 1000px;
+             animation: fadeIn 0.3s ease-in-out; /* Apply the fade-in animation on hover */
+        }
+
+            .fade-in-up {
             animation: fadeInUp 0.3s ease-in-out; /* Apply the fade-in-up animation on load */
             }
-            .fade-in {
-                animation: fadeIn 0.3s ease-in-out; /* Apply the fade-in animation on load */
-            }
-           @keyframes fadeIn {
-            from {
+             .fade-in {
+                 animation: fadeIn 0.3s ease-in-out; /* Apply the fade-in animation on load */
+           }
+          @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+           }
+          @keyframes fadeInUp {
+              from {
                 opacity: 0;
+                  transform: translateY(20px);
+                }
+              to {
+                 opacity: 1;
+                 transform: translateY(0);
              }
-             to {
-                opacity: 1;
-            }
           }
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-             transform: translateY(20px);
-           }
-          to {
-             opacity: 1;
-             transform: translateY(0);
+          button {
+              transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
+             }
+            button:active {
+            transform: scale(0.98);
             }
-        }
-
-        /* Typography */
-        h1 {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        h2 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        p {
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: darken(var(--primary-color), 10%);
-        }
-
-        .btn-secondary {
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            background-color: darken(var(--secondary-color), 10%);
-        }
-
-        /* Shadows and Elevation */
-        .shadow-sm {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .shadow-md {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .shadow-lg {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Spacing */
-        .spacing-xs {
-            margin: 8px;
-        }
-
-        .spacing-sm {
-            margin: 16px;
-        }
-
-        .spacing-md {
-            margin: 24px;
-        }
-
-        .spacing-lg {
-            margin: 32px;
-        }
-
-        /* Accessibility */
-        a:focus, button:focus {
-            outline: 2px solid var(--primary-color);
-            outline-offset: 2px;
-        }
-         #profileDropdown {
-            transition: all 0.3s ease-in-out;
+          input:focus, select:focus, textarea:focus {
+                border-color: var(--primary-color);
+                 box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            }
+           .bg-white {
+              transition: all 0.3s ease-in-out;
+               box-shadow: 0 2px 5px rgba(0,0,0,0.1);
            }
-    </style>
+           input,select, textarea {
+             transition: all 0.3s ease-in-out;
+             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+               border-radius: 8px;
+
+            }
+     </style>
 </head>
 <body class="bg-gray-100">
     <!-- Navigation Bar -->
     <div class="flex h-screen fade-in-up">
         <!-- Left Sidebar -->
-        <aside class="bg-gray-800 text-white w-64 p-4">
-            <a href="index.php" class="text-2xl font-bold block mb-6">RevenueSure</a>
+        <aside class="bg-gray-100 text-gray-700 w-64 p-4">
+            <a href="index.php" class="text-2xl font-bold block mb-6 pl-4 text-gray-800">RevenueSure</a>
             <nav>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <!-- User Menu -->
@@ -206,68 +150,68 @@
                        return strpos($current_page, $path) !== false;
                       }
                     ?>
-                    <a href="dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
-                    <a href="your_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('your_leads.php') ? 'active' : ''; ?>"><i class="fas fa-user-circle mr-2"></i>Your Leads</a>
-                    <a href="search_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('search_leads.php') ? 'active' : ''; ?>"><i class="fas fa-search mr-2"></i>Search Leads</a>
-                   <a href="view_tasks.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('view_tasks.php') ? 'active' : ''; ?>"><i class="fas fa-tasks mr-2"></i>View Tasks</a>
-                    <a href="manage_credits.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_credits.php') ? 'active' : ''; ?>"><i class="fas fa-credit-card mr-2"></i>Manage Credits</a>
+                    <a href="dashboard.php" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
+                    <a href="your_leads.php" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('your_leads.php') ? 'active' : ''; ?>"><i class="fas fa-user-circle mr-2"></i>Your Leads</a>
+                    <a href="search_leads.php" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('search_leads.php') ? 'active' : ''; ?>"><i class="fas fa-search mr-2"></i>Search Leads</a>
+                   <a href="view_tasks.php" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('view_tasks.php') ? 'active' : ''; ?>"><i class="fas fa-tasks mr-2"></i>View Tasks</a>
+                    <a href="manage_credits.php" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('manage_credits.php') ? 'active' : ''; ?>"><i class="fas fa-credit-card mr-2"></i>Manage Credits</a>
 
                     <!-- Admin Menu -->
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <h6 class="text-gray-500 uppercase mt-4 mb-2 px-4">Admin</h6>
                          <div class="menu-item <?php if (isParentActive('add_lead.php') || isParentActive('leads_list.php') || isParentActive('import_leads.php')) echo 'active'; ?>">
-                            <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-user-tie mr-2"></i>Manage Leads</a>
+                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-user-tie mr-2"></i>Manage Leads</a>
                             <div class="submenu">
-                                  <a href="add_lead.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_lead.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Lead</a>
-                                  <a href="leads_list.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('leads_list.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Leads</a>
-                                   <a href="import_leads.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('import_leads.php') ? 'active' : ''; ?>"><i class="fas fa-file-import mr-2"></i>Import Leads</a>
+                                  <a href="add_lead.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_lead.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Lead</a>
+                                  <a href="leads_list.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('leads_list.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Leads</a>
+                                   <a href="import_leads.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('import_leads.php') ? 'active' : ''; ?>"><i class="fas fa-file-import mr-2"></i>Import Leads</a>
                             </div>
                         </div>
                           <div class="menu-item <?php if (isParentActive('add_customer.php') || isParentActive('manage_customers.php') || isParentActive('view_customer.php')) echo 'active'; ?>">
-                            <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-user-check mr-2"></i>Manage Customers</a>
+                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-user-check mr-2"></i>Manage Customers</a>
                                <div class="submenu">
-                                  <a href="add_customer.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_customer.php') ? 'active' : ''; ?>"> <i class="fas fa-plus mr-2"></i> Add Customer</a>
-                                     <a href="manage_customers.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_customers.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Customers</a>
-                                       <a href="view_customer.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isParentActive('view_customer.php') ? 'active' : ''; ?>"><i class="fas fa-eye mr-2"></i>Customer Profile</a>
+                                  <a href="add_customer.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_customer.php') ? 'active' : ''; ?>"> <i class="fas fa-plus mr-2"></i> Add Customer</a>
+                                     <a href="manage_customers.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_customers.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Customers</a>
+                                       <a href="view_customer.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isParentActive('view_customer.php') ? 'active' : ''; ?>"><i class="fas fa-eye mr-2"></i>Customer Profile</a>
                                 </div>
                         </div>
                          <div class="menu-item <?php if (isParentActive('add_employee.php') || isParentActive('manage_employees.php')) echo 'active'; ?>">
-                            <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-users mr-2"></i>Manage Employees</a>
+                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-users mr-2"></i>Manage Employees</a>
                              <div class="submenu">
-                                <a href="add_employee.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_employee.php') ? 'active' : ''; ?>"><i class="fas fa-user-plus mr-2"></i>Add Employee</a>
-                                <a href="manage_employees.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_employees.php') ? 'active' : ''; ?>"><i class="fas fa-users-cog mr-2"></i>View Employees</a>
+                                <a href="add_employee.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_employee.php') ? 'active' : ''; ?>"><i class="fas fa-user-plus mr-2"></i>Add Employee</a>
+                                <a href="manage_employees.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_employees.php') ? 'active' : ''; ?>"><i class="fas fa-users-cog mr-2"></i>View Employees</a>
                                    </div>
                         </div>
                           <div class="menu-item <?php if (isParentActive('manage_categories.php') || isParentActive('add_category.php')) echo 'active'; ?>">
-                            <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-list mr-2"></i>Manage Categories</a>
+                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-list mr-2"></i>Manage Categories</a>
                              <div class="submenu">
-                                 <a href="manage_categories.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>View Categories</a>
-                                   <a href="add_category.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_category.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Category</a>
+                                 <a href="manage_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>View Categories</a>
+                                   <a href="add_category.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_category.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Category</a>
                                </div>
                         </div>
                            <div class="menu-item <?php if (isParentActive('manage_invoices.php') || isParentActive('add_invoice.php')) echo 'active'; ?>">
-                            <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-file-invoice-dollar mr-2"></i>Manage Invoices</a>
+                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-file-invoice-dollar mr-2"></i>Manage Invoices</a>
                             <div class="submenu">
-                                <a href="manage_invoices.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_invoices.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Invoices</a>
-                                <a href="add_invoice.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_invoice.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Invoice</a>
+                                <a href="manage_invoices.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_invoices.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Invoices</a>
+                                <a href="add_invoice.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_invoice.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Invoice</a>
                             </div>
                         </div>
                         <div class="menu-item <?php if (isParentActive('manage_projects.php') || isParentActive('add_project.php') || isParentActive('view_project.php') || isParentActive('manage_project_categories.php')) echo 'active'; ?>">
-                            <a class="block py-2 px-4 hover:bg-gray-700 rounded flex items-center"><i class="fas fa-tasks mr-2"></i>Manage Projects</a>
+                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Manage Projects</a>
                             <div class="submenu">
-                                <a href="manage_projects.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_projects.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Projects</a>
-                                 <a href="add_project.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('add_project.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Project</a>
-                                  <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Manage Project Categories</a>
+                                <a href="manage_projects.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_projects.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Projects</a>
+                                 <a href="add_project.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_project.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Project</a>
+                                    <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
                             </div>
                         </div>
-                         <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
-                         <a href="settings.php" class="block py-2 px-4 hover:bg-gray-700 rounded <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
+                         <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
+                         <a href="settings.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
 
                     <?php endif; ?>
-                     <a href="logout.php" class="block py-2 px-4 hover:bg-gray-700 rounded mt-4"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                     <a href="logout.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg mt-4"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
                 <?php else: ?>
-                    <a href="login.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-sign-in-alt mr-2"></i>Login</a>
-                    <a href="register.php" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-user-plus mr-2"></i>Register</a>
+                    <a href="login.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg"><i class="fas fa-sign-in-alt mr-2"></i>Login</a>
+                    <a href="register.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg"><i class="fas fa-user-plus mr-2"></i>Register</a>
                  <?php endif; ?>
              </nav>
         </aside>
@@ -312,7 +256,7 @@
                                     <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full absolute -top-2 -right-2"><?php echo $unread; ?></span>
                                 <?php endif; ?>
                             </button>
-                            <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg">
+                            <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border rounded shadow-md">
                                 <?php
                                 $stmt = $conn->prepare("SELECT * FROM notifications WHERE user_id = :user_id ORDER BY created_at DESC LIMIT 5");
                                 $stmt->bindParam(':user_id', $_SESSION['user_id']);

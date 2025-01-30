@@ -10,55 +10,54 @@ if (!isset($_SESSION['user_id'])) {
 // Include header
 require 'header.php';
 ?>
+<div class="container mx-auto p-6 fade-in">
+    <h1 class="text-4xl font-bold text-gray-900 mb-6">Search Leads</h1>
 
-<h1 class="text-3xl font-bold text-gray-800 mb-6">Search Leads</h1>
-
-<!-- Search Form -->
-<div class="mb-8">
-    <!-- Search by Name, Email, or Phone -->
-     <div class="mb-4">
-        <input type="text" id="search_input" placeholder="Search by name, email, or phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+    <!-- Search Form -->
+    <div class="bg-white p-6 rounded-2xl shadow-xl mb-8">
+            <!-- Search by Name, Email, or Phone -->
+         <div class="mb-4">
+              <input type="text" id="search_input" placeholder="Search by name, email, or phone" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
+        </div>
+      
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-4 mb-4">
+            <select id="category_id" class="px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <option value="">All Categories</option>
+                <?php
+                $stmt = $conn->prepare("SELECT * FROM categories");
+                $stmt->execute();
+                $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($categories as $category) : ?>
+                    <option value="<?php echo $category['id']; ?>">
+                        <?php echo htmlspecialchars($category['name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+             <select id="status" class="px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <option value="">All Statuses</option>
+                <option value="New">New</option>
+                <option value="Contacted">Contacted</option>
+                <option value="Converted">Converted</option>
+             </select>
+             <input type="date" id="start_date" placeholder="Start Date" class="px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
+             <input type="date" id="end_date" placeholder="End Date" class="px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
+             <input type="text" id="city" placeholder="City" class="px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <input type="text" id="state" placeholder="State" class="px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
+               <input type="text" id="country" placeholder="Country" class="px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
+        </div>
     </div>
-
-    <!-- Filters -->
-    <div class="flex flex-wrap gap-2 mb-4">
-        <select id="category_id" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-            <option value="">All Categories</option>
-            <?php
-            $stmt = $conn->prepare("SELECT * FROM categories");
-            $stmt->execute();
-            $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($categories as $category) : ?>
-                <option value="<?php echo $category['id']; ?>">
-                    <?php echo htmlspecialchars($category['name']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-         <select id="status" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-            <option value="">All Statuses</option>
-            <option value="New">New</option>
-            <option value="Contacted">Contacted</option>
-            <option value="Converted">Converted</option>
-        </select>
-    <input type="date" id="start_date" placeholder="Start Date" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-    <input type="date" id="end_date" placeholder="End Date" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-      <input type="text" id="city" placeholder="City" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-     <input type="text" id="state" placeholder="State" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-      <input type="text" id="country" placeholder="Country" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-    </div>
-</div>
-    <div id="delete_button_container" class="hidden mb-4">
-         <form method="POST" action="mass_delete_leads.php">
+         <div id="delete_button_container" class="hidden mb-4">
+            <form method="POST" action="mass_delete_leads.php">
                 <button type="submit" name="delete_selected" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300">Delete Selected</button>
-         </form>
-    </div>
-
-<!-- Search Results -->
-<div id="search_results">
-   <p class="text-gray-600 text-center">Start searching to view leads here.</p>
+             </form>
+        </div>
+    <!-- Search Results -->
+       <div id="search_results">
+           <p class="text-gray-600 text-center">Start searching to view leads here.</p>
+        </div>
+      <div id="pagination-container" class="mt-4 flex justify-center"></div>
 </div>
- <div id="pagination-container" class="mt-4 flex justify-center"></div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('search_input');
