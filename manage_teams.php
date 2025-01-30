@@ -12,8 +12,10 @@ $filter_role = isset($_GET['filter_role']) ? $_GET['filter_role'] : '';
 $filter_department = isset($_GET['filter_department']) ? $_GET['filter_department'] : '';
 
 // Build the base query with JOIN
-$query = "SELECT users.*, team_roles.name as role_name
-          FROM users LEFT JOIN team_roles ON users.role_id = team_roles.id WHERE users.role != 'admin'";
+$query = "SELECT users.*, team_roles.name as role_name, team_departments.name as department_name
+          FROM users LEFT JOIN team_roles ON users.role_id = team_roles.id
+          LEFT JOIN team_departments ON users.department_id = team_departments.id
+          WHERE users.role != 'admin'";
 
 $params = [];
 
@@ -24,11 +26,13 @@ if (!empty($filter_role)) {
 
 }
 if (!empty($filter_department)) {
-     $query .= " AND users.department LIKE :department";
-     $params[':department'] = "%$filter_department%";
+    $query .= " AND users.department_id = :department_id";
+     $params[':department_id'] = $filter_department;
 
 }
+
 $query .= " ORDER BY users.created_at DESC";
+
 // Fetch all users excluding admins
 $stmt = $conn->prepare($query);
 foreach ($params as $key => $value) {
@@ -41,6 +45,12 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt = $conn->prepare("SELECT * FROM team_roles");
 $stmt->execute();
 $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch all departments
+$stmt = $conn->prepare("SELECT * FROM team_departments");
+$stmt->execute();
+$departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 // Include header
 require 'header.php';
@@ -59,12 +69,17 @@ require 'header.php';
                            <option value="<?php echo $role['id']; ?>" <?php if(isset($_GET['filter_role']) && $_GET['filter_role'] == $role['id']) echo "selected"; ?> ><?php echo htmlspecialchars($role['name']); ?></option>
                       <?php endforeach; ?>
                </select>
-                <input type="text" name="filter_department" id="filter_department" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Filter by Department" value="<?php echo isset($_GET['filter_department']) ? $_GET['filter_department'] : '' ?>">
+                <select name="filter_department" id="filter_department" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                   <option value="">Select Department</option>
+                     <?php foreach ($departments as $department): ?>
+                           <option value="<?php echo $department['id']; ?>" <?php if(isset($_GET['filter_department']) && $_GET['filter_department'] == $department['id']) echo "selected"; ?> ><?php echo htmlspecialchars($department['name']); ?></option>
+                      <?php endforeach; ?>
+               </select>
                 <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition duration-300 shadow-md">Filter</button>
              </form>
             <a href="manage_teams.php" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition duration-300 shadow-md">Clear Filter</a>
-       </div>
       </div>
+    </div>
     <!-- Members Table -->
     <div class="bg-gray-100 border border-gray-400 p-6 rounded-lg">
             <table class="w-full text-left">
@@ -73,7 +88,7 @@ require 'header.php';
                         <th class="px-4 py-3">Name</th>
                         <th class="px-4 py-3">Email</th>
                         <th class="px-4 py-3">Role</th>
-                        <th class="px-4 py-3">Department</th>
+                       <th class="px-4 py-3">Department</th>
                         <th class="px-4 py-3">Actions</th>
                     </tr>
                 </thead>
@@ -84,7 +99,7 @@ require 'header.php';
                                 <td class="px-4 py-3"><?php echo htmlspecialchars($member['username']); ?></td>
                                 <td class="px-4 py-3"><?php echo htmlspecialchars($member['email']); ?></td>
                                 <td class="px-4 py-3"><?php echo htmlspecialchars($member['role_name'] ? $member['role_name'] : 'N/A'); ?></td>
-                                <td class="px-4 py-3"><?php echo htmlspecialchars($member['department']); ?></td>
+                                <td class="px-4 py-3"><?php echo htmlspecialchars($member['department_name'] ? $member['department_name'] : 'N/A'); ?></td>
                                  <td class="px-4 py-3 flex gap-2">
                                        <a href="edit_team_member.php?id=<?php echo $member['id']; ?>" class="text-blue-600 hover:underline"><i class="fas fa-edit"></i> Edit</a>
                                          <a href="delete_team_member.php?id=<?php echo $member['id']; ?>" class="text-red-600 hover:underline ml-2"><i class="fas fa-trash-alt"></i> Delete</a>
