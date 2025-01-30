@@ -17,8 +17,8 @@
                               start: ticket.created_at,
                               end: ticket.expected_resolution_date ? ticket.expected_resolution_date : ticket.created_at,
                              url:  `view_ticket.php?id=${ticket.id}`,
-                             backgroundColor:  ticket.priority === 'High' ? '#ef4444' : ( ticket.priority === 'Medium' ? '#facc15' : '#22c55e'),
-                                borderColor:  ticket.priority === 'High' ? '#ef4444' : ( ticket.priority === 'Medium' ? '#facc15' : '#22c55e')
+                                backgroundColor:  ticket.priority === 'High' ? '#ef4444' : ( ticket.priority === 'Medium' ? '#facc15' : '#22c55e'),
+                                 borderColor:  ticket.priority === 'High' ? '#ef4444' : ( ticket.priority === 'Medium' ? '#facc15' : '#22c55e')
                          })),
                       });
                   calendar.render();
