@@ -211,8 +211,8 @@ $tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Include header
 require 'header.php';
 ?>
-
-<h1 class="text-3xl font-bold text-gray-800 mb-6">Customer Details: <?php echo htmlspecialchars($customer['name']); ?></h1>
+<div class="container mx-auto p-6 fade-in">
+<h1 class="text-4xl font-bold text-gray-900 mb-6">Customer Details: <?php echo htmlspecialchars($customer['name']); ?></h1>
     <?php if ($error): ?>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
             <?php echo $error; ?>
@@ -225,12 +225,14 @@ require 'header.php';
         </div>
     <?php endif; ?>
 
-    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Contact Information</h2>
-        <p><strong>Name:</strong> <?php echo htmlspecialchars($customer['name']); ?></p>
-        <p><strong>Email:</strong> <?php echo htmlspecialchars($customer['email']); ?></p>
-        <p><strong>Phone:</strong> <?php echo htmlspecialchars($customer['phone']); ?></p>
-         <div class="mb-4 flex justify-center relative">
+    <div class="bg-white p-6 rounded-2xl shadow-xl mb-8 border-l-4 border-blue-500 transition hover:shadow-2xl">
+         <h2 class="text-2xl font-semibold text-gray-900 mb-4 relative">
+           <i class="fas fa-id-card absolute left-[-20px] top-[-5px] text-blue-500 text-sm"></i> Contact Information
+        </h2>
+        <p class="text-gray-700 mb-2"><span class="font-semibold text-gray-800">Name:</span> <?php echo htmlspecialchars($customer['name']); ?></p>
+        <p class="text-gray-700 mb-2"><span class="font-semibold text-gray-800">Email:</span> <?php echo htmlspecialchars($customer['email']); ?></p>
+        <p class="text-gray-700 mb-2"> <span class="font-semibold text-gray-800">Phone:</span> <?php echo htmlspecialchars($customer['phone']); ?></p>
+         <div class="mb-4 flex justify-center relative mt-4">
                      <?php if($customer['profile_picture']): ?>
                           <img src="<?php echo $customer['profile_picture']; ?>" alt="Profile Picture" class="rounded-full w-32 h-32 object-cover">
                            <form method="post" action="" class="absolute top-0 right-0">
@@ -244,7 +246,7 @@ require 'header.php';
                          </div>
                       <?php endif; ?>
                 </div>
-         <form method="POST" action="" enctype="multipart/form-data">
+         <form method="POST" action="" enctype="multipart/form-data" class="mt-4">
                     <div class="mb-4">
                        <label for="profile_picture" class="block text-gray-700">Profile Picture</label>
                        <input type="file" name="profile_picture" id="profile_picture" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
@@ -253,15 +255,19 @@ require 'header.php';
          </form>
     </div>
      <form method="post" action="">
-        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Company Profile</h2>
+         <div class="bg-white p-6 rounded-2xl shadow-md mb-8 border-l-4 border-green-500 transition hover:shadow-2xl">
+              <h2 class="text-xl font-bold text-gray-800 mb-4 relative">
+                 <i class="fas fa-building absolute left-[-20px] top-[-5px] text-green-500 text-sm"></i> Company Profile
+            </h2>
                  <div class="mb-4">
                    <label for="company" class="block text-gray-700">Company</label>
                        <input type="text" name="company" id="company" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo htmlspecialchars($customer['company'] ?? ''); ?>">
                 </div>
         </div>
-           <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Preferences</h2>
+           <div class="bg-white p-6 rounded-2xl shadow-md mb-8 border-l-4 border-yellow-500 transition hover:shadow-2xl">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 relative">
+               <i class="fas fa-thumbs-up absolute left-[-20px] top-[-5px] text-yellow-500 text-sm"></i> Preferences
+            </h2>
              <ul class="mb-4">
                  <?php if($preferences): ?>
                      <?php foreach ($preferences as $preference): ?>
@@ -282,9 +288,11 @@ require 'header.php';
                 </div>
                 <button type="submit" name="add_preference" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Preference</button>
         </div>
-         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Demographic Information</h2>
-             <div class="mb-4">
+         <div class="bg-white p-6 rounded-2xl shadow-md mb-8 border-l-4 border-purple-500 transition hover:shadow-2xl">
+             <h2 class="text-xl font-bold text-gray-800 mb-4 relative">
+              <i class="fas fa-user-friends absolute left-[-20px] top-[-5px] text-purple-500 text-sm"></i> Demographic Information
+            </h2>
+               <div class="mb-4">
                     <label for="address" class="block text-gray-700">Address</label>
                         <input type="text" name="address" id="address" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"  value="<?php echo htmlspecialchars($customer['address'] ?? ''); ?>">
                    </div>
@@ -322,8 +330,10 @@ require 'header.php';
            <button type="submit" name="update_demographics" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-4">Update Demographics</button>
         </div>
        
-        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Past Interactions</h2>
+        <div class="bg-white p-6 rounded-2xl shadow-md mb-8 border-l-4 border-teal-500 transition hover:shadow-2xl">
+         <h2 class="text-xl font-bold text-gray-800 mb-4 relative">
+               <i class="fas fa-history absolute left-[-20px] top-[-5px] text-teal-500 text-sm"></i> Past Interactions
+              </h2>
              <ul>
                    <?php if($interactions): ?>
                          <?php foreach ($interactions as $interaction): ?>
@@ -355,8 +365,10 @@ require 'header.php';
                  <button type="submit" name="add_interaction" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Interaction</button>
            </form>
     </div>
-          <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-         <h2 class="text-xl font-bold text-gray-800 mb-4">Tags</h2>
+          <div class="bg-white p-6 rounded-lg shadow-md mb-8 border-l-4 border-indigo-500 transition hover:shadow-2xl">
+         <h2 class="text-xl font-bold text-gray-800 mb-4 relative">
+            <i class="fas fa-tags absolute left-[-20px] top-[-5px] text-indigo-500 text-sm"></i> Tags
+         </h2>
              <div class="flex gap-2 mb-4">
                     <?php if($tags): ?>
                        <?php foreach($tags as $tag): ?>
@@ -373,7 +385,7 @@ require 'header.php';
                  </div>
                     <div class="mb-4">
                        <label for="color" class="block text-gray-700">Tag Color</label>
-                             <select name="color" id="color" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                             <select name="color" id="color" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none">
                                    <option value="gray">Gray</option>
                                    <option value="red">Red</option>
                                    <option value="green">Green</option>
@@ -388,6 +400,7 @@ require 'header.php';
     <div class="mb-4">
         <a href="manage_customers.php"  class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Back To Customers</a>
    </div>
+</div>
 
 <?php
 // Include footer

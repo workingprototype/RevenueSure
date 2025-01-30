@@ -40,17 +40,20 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Include header
 require 'header.php';
 ?>
-
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Import Leads</h1>
+<div class="container mx-auto p-6 fade-in">
+        <h1 class="text-4xl font-bold text-gray-900 mb-6">Import Leads</h1>
 
         <!-- Import Leads Section -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Import Leads</h2>
+        <div class="bg-white p-6 rounded-2xl shadow-xl mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 relative">
+                <i class="fas fa-file-import absolute left-[-20px] top-[-5px] text-blue-500 text-sm"></i> Import Leads
+            </h2>
             <form method="POST" action="" enctype="multipart/form-data">
-                <input type="file" name="csv_file" accept=".csv" class="mb-4" required>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Import CSV</button>
+                <input type="file" name="csv_file" accept=".csv" class="mb-4 w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                <button type="submit" class="bg-blue-700 text-white px-6 py-3 rounded-xl hover:bg-blue-900 transition duration-300 shadow-md">Import CSV</button>
             </form>
         </div>
+</div>
 <?php
 // Include footer
 require 'footer.php';

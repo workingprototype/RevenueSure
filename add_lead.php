@@ -56,60 +56,63 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Include header
 require 'header.php';
 ?>
+<div class="container mx-auto p-6 fade-in">
+    <h1 class="text-4xl font-bold text-gray-900 mb-6">Add Lead</h1>
 
-    <div class="container mx-auto mt-10 px-4">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Add Lead</h1>
+    <!-- Display error or success message -->
+    <?php if ($error): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+            <?php echo $error; ?>
+        </div>
+    <?php endif; ?>
 
-        <!-- Display error or success message -->
-        <?php if ($error): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-                <?php echo $error; ?>
-            </div>
-        <?php endif; ?>
+    <?php if ($success): ?>
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
+            <?php echo $success; ?>
+        </div>
+    <?php endif; ?>
 
-        <?php if ($success): ?>
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
-                <?php echo $success; ?>
-            </div>
-        <?php endif; ?>
-
-        <!-- Add Lead Form -->
-        <form method="POST" action="" class="bg-white p-6 rounded-lg shadow-md">
+    <!-- Add Lead Form -->
+    <div class="bg-white p-6 rounded-2xl shadow-xl">
+        <form method="POST" action="">
             <div class="mb-4">
                 <label for="name" class="block text-gray-700">Name</label>
-                <input type="text" name="name" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                <input type="text" name="name" id="name" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" required>
             </div>
             <div class="mb-4">
                 <label for="phone" class="block text-gray-700">Phone</label>
-                <input type="text" name="phone" id="phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                <input type="text" name="phone" id="phone" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" required>
             </div>
             <div class="mb-4">
                 <label for="email" class="block text-gray-700">Email</label>
-                <input type="email" name="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                <input type="email" name="email" id="email" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" required>
             </div>
-            <div class="mb-4">
+              <div class="mb-4">
                 <label for="category_id" class="block text-gray-700">Category</label>
-                <select name="category_id" id="category_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                <select name="category_id" id="category_id" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none" required>
+                    <option value="">Select Category</option>
                     <?php foreach ($categories as $category): ?>
                         <option value="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="mb-4">
-    <label for="assigned_to" class="block text-gray-700">Assign To</label>
-    <select name="assigned_to" id="assigned_to" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-        <option value="">Unassigned</option>
-        <?php
-        $stmt = $conn->prepare("SELECT * FROM employees ORDER BY name ASC");
-        $stmt->execute();
-        $employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($employees as $employee): ?>
-            <option value="<?php echo $employee['id']; ?>"><?php echo htmlspecialchars($employee['name']); ?></option>
-        <?php endforeach; ?>
-    </select>
-</div>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Lead</button>
+             <div class="mb-4">
+                <label for="assigned_to" class="block text-gray-700">Assign To</label>
+               <select name="assigned_to" id="assigned_to" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none">
+                    <option value="">Unassigned</option>
+                    <?php
+                    $stmt = $conn->prepare("SELECT * FROM employees ORDER BY name ASC");
+                    $stmt->execute();
+                    $employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($employees as $employee): ?>
+                        <option value="<?php echo $employee['id']; ?>"><?php echo htmlspecialchars($employee['name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <button type="submit" class="bg-blue-700 text-white px-6 py-3 rounded-xl hover:bg-blue-900 transition duration-300 shadow-md">Add Lead</button>
         </form>
+     </div>
+</div>
 
 <?php
 // Include footer
