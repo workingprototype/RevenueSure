@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $stmt->bindParam(':billing_country', $billing_country);
     $stmt->bindParam(':discount_type', $discount_type);
        $stmt->bindParam(':discount_amount', $discount_amount);
-       $stmt->bindParam(':template_name', $template_name);
+        $stmt->bindParam(':template_name', $template_name);
 
 
     if ($stmt->execute()) {
@@ -139,8 +139,8 @@ $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Include header
 require 'header.php';
 ?>
-
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Create Invoice</h1>
+<div class="container mx-auto p-6 fade-in">
+    <h1 class="text-4xl font-bold text-gray-900 mb-6">Create Invoice</h1>
      <?php if ($error): ?>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
             <?php echo $error; ?>
@@ -152,18 +152,18 @@ require 'header.php';
             <?php echo $success; ?>
         </div>
     <?php endif; ?>
-    <div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="bg-white p-6 rounded-2xl shadow-xl">
         <form method="POST" action="">
             <div class="mb-4">
                 <label for="template_name" class="block text-gray-700">Select Template</label>
-                <select name="template_name" id="template_name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <select name="template_name" id="template_name" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none">
                     <option value="default">Default</option>
                     <option value="contractor">Contractor</option>
                 </select>
             </div>
             <div class="mb-4">
                 <label for="lead_customer_type" class="block text-gray-700">Invoice For</label>
-                 <select name="lead_customer_type" id="lead_customer_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="showCustomerLeadDetails(this.value)">
+                 <select name="lead_customer_type" id="lead_customer_type" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none" onchange="showCustomerLeadDetails(this.value)">
                         <option value="">Select</option>
                     <option value="lead">Lead</option>
                    <option value="customer">Customer</option>
@@ -171,7 +171,7 @@ require 'header.php';
               </div>
             <div class="mb-4 hidden" id="lead_select_container">
                 <label for="lead_id" class="block text-gray-700">Select Lead</label>
-                    <select name="lead_id" id="lead_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="updateLeadInfo(this)">
+                    <select name="lead_id" id="lead_id" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none" onchange="updateLeadInfo(this)">
                         <option value="">Select Lead</option>
                         <?php foreach ($leads as $lead): ?>
                             <option value="<?php echo $lead['id']; ?>" data-name="<?php echo $lead['name']; ?>" data-email="<?php echo $lead['email']; ?>" data-phone="<?php echo $lead['phone']; ?>">
@@ -182,7 +182,7 @@ require 'header.php';
               </div>
                  <div class="mb-4 hidden" id="customer_select_container">
                 <label for="customer_id" class="block text-gray-700">Select Customer</label>
-                <select name="customer_id" id="customer_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="updateCustomerInfo(this)">
+                <select name="customer_id" id="customer_id" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none" onchange="updateCustomerInfo(this)">
                      <option value="">Select Customer</option>
                     <?php foreach ($customers as $customer): ?>
                          <option value="<?php echo $customer['id']; ?>" data-name="<?php echo $customer['name']; ?>" data-email="<?php echo $customer['email']; ?>" data-phone="<?php echo $customer['phone']; ?>" data-address="<?php echo $customer['address']; ?>">
@@ -193,39 +193,39 @@ require 'header.php';
               </div>
            <div class="mb-4">
                 <label for="invoice_number" class="block text-gray-700">Invoice Number</label>
-                <input type="text" name="invoice_number" id="invoice_number" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo $invoice_number; ?>" readonly>
+                <input type="text" name="invoice_number" id="invoice_number" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo $invoice_number; ?>" readonly>
             </div>
              <div class="mb-4">
                 <label for="bill_to_name" class="block text-gray-700">Bill To Name</label>
-                <input type="text" name="bill_to_name" id="bill_to_name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                <input type="text" name="bill_to_name" id="bill_to_name" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" required>
             </div>
             <div class="mb-4">
                 <label for="bill_to_address" class="block text-gray-700">Bill To Address</label>
-                <input type="text" name="bill_to_address" id="bill_to_address" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <input type="text" name="bill_to_address" id="bill_to_address" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
             </div>
             <div class="mb-4">
                 <label for="bill_to_email" class="block text-gray-700">Bill To Email</label>
-                <input type="email" name="bill_to_email" id="bill_to_email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" >
+                <input type="email" name="bill_to_email" id="bill_to_email" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" required>
             </div>
                 <div class="mb-4">
                     <label for="bill_to_phone" class="block text-gray-700">Bill To Phone</label>
-                    <input type="text" name="bill_to_phone" id="bill_to_phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    <input type="text" name="bill_to_phone" id="bill_to_phone" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
                </div>
               <div class="mb-4">
                 <label for="ship_to_address" class="block text-gray-700">Ship To Address (Optional)</label>
-                <input type="text" name="ship_to_address" id="ship_to_address" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <input type="text" name="ship_to_address" id="ship_to_address" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
              </div>
            <div class="mb-4">
                 <label for="issue_date" class="block text-gray-700">Issue Date</label>
-                <input type="date" name="issue_date" id="issue_date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo date('Y-m-d'); ?>" required>
+                <input type="date" name="issue_date" id="issue_date" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo date('Y-m-d'); ?>" required>
             </div>
             <div class="mb-4">
                 <label for="due_date" class="block text-gray-700">Due Date</label>
-                <input type="date" name="due_date" id="due_date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                <input type="date" name="due_date" id="due_date" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" required>
             </div>
-                <div class="mb-4">
+              <div class="mb-4">
                     <label for="billing_country" class="block text-gray-700">Billing Country</label>
-                       <select name="billing_country" id="billing_country" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                       <select name="billing_country" id="billing_country" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none">
                            <option value="">Select Country</option>
                             <option value="us">United States</option>
                              <option value="ca">Canada</option>
@@ -238,18 +238,18 @@ require 'header.php';
                 </div>
                 <div class="mb-4">
                 <label for="tax_method" class="block text-gray-700">Tax Method</label>
-                <input type="text" name="tax_method" id="tax_method" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" readonly>
+                <input type="text" name="tax_method" id="tax_method" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"  value="" readonly>
             </div>
-                <div class="mb-4">
+               <div class="mb-4">
                      <label for="discount_type" class="block text-gray-700">Discount Type</label>
-                       <select name="discount_type" id="discount_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="toggleDiscountInput()">
+                       <select name="discount_type" id="discount_type" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none" onchange="toggleDiscountInput()">
                              <option value="fixed">Fixed</option>
                              <option value="percentage">Percentage</option>
                         </select>
-                </div>
+                 </div>
                <div class="mb-4">
                      <label for="discount_amount" class="block text-gray-700">Discount Amount</label>
-                     <input type="number" name="discount_amount" id="discount_amount" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" min="0">
+                     <input type="number" name="discount_amount" id="discount_amount" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" min="0">
                 </div>
 
                <!-- Items -->
@@ -259,60 +259,60 @@ require 'header.php';
                  <div class="flex gap-4 mb-4 border-b-2 border-gray-200 pb-4" data-item-id="0">
                      <div class="flex-1">
                          <label for="item_product_service_0" class="block text-gray-700">Product/Service</label>
-                            <input type="text" name="items[0][product_service]" id="item_product_service_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                            <input type="text" name="items[0][product_service]" id="item_product_service_0" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" required>
                      </div>
                       <div class="flex-1">
                         <label for="item_quantity_0" class="block text-gray-700">Quantity</label>
-                            <input type="number" name="items[0][quantity]" id="item_quantity_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="calculateItemSubtotal(this)" value="1" min="1" required>
-                     </div>
+                            <input type="number" name="items[0][quantity]" id="item_quantity_0" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="calculateItemSubtotal(this)" value="1" min="1" required>
+                      </div>
                      <div class="flex-1">
                          <label for="item_unit_price_0" class="block text-gray-700">Unit Price</label>
-                           <input type="number" name="items[0][unit_price]" id="item_unit_price_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="calculateItemSubtotal(this)" required>
+                           <input type="number" name="items[0][unit_price]" id="item_unit_price_0" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="calculateItemSubtotal(this)" required>
                      </div>
                       <div class="flex-1">
                             <label for="item_tax_0" class="block text-gray-700">Tax</label>
-                            <input type="number" name="items[0][tax]" id="item_tax_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)">
-                      </div>
-                         <div class="flex-1">
-                           <label for="item_discount_0" class="block text-gray-700">Discount</label>
-                                <input type="number" name="items[0][discount]" id="item_discount_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)" >
-                        </div>
-                         <div class="flex-1">
-                             <label for="item_subtotal_0" class="block text-gray-700">Subtotal</label>
-                            <input type="number" name="items[0][subtotal]" id="item_subtotal_0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0"  readonly>
-                        </div>
+                            <input type="number" name="items[0][tax]" id="item_tax_0" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)">
+                     </div>
+                       <div class="flex-1">
+                         <label for="item_discount_0" class="block text-gray-700">Discount</label>
+                          <input type="number" name="items[0][discount]" id="item_discount_0" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)" >
+                    </div>
+                   <div class="flex-1">
+                         <label for="item_subtotal_0" class="block text-gray-700">Subtotal</label>
+                        <input type="number" name="items[0][subtotal]" id="item_subtotal_0" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" value="0"  readonly>
+                   </div>
+                    <button type="button" onclick="removeItem(this)" class="remove_item bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-700 transition duration-300"><i class="fas fa-trash-alt"></i></button>
                  </div>
             </div>
-            <button type="button" id="add_item" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add Item</button>
+            <button type="button" id="add_item" class="bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 transition duration-300">Add Item</button>
         </div>
-             <div class="mb-4">
-                <label for="additional_charges" class="block text-gray-700">Additional Charges</label>
-                <input type="number" name="additional_charges" id="additional_charges" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateTotal()" >
-            </div>
-            <div class="mb-4">
-                <label for="payment_terms" class="block text-gray-700">Payment Terms</label>
-                    <select name="payment_terms" id="payment_terms" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-                        <option value="Net 15">Net 15</option>
-                         <option value="Net 30">Net 30</option>
-                         <option value="Due on Receipt">Due on Receipt</option>
-                         <option value="Custom">Custom</option>
-                   </select>
-           </div>
               <div class="mb-4">
-                <label for="notes" class="block text-gray-700">Notes</label>
-                <textarea name="notes" id="notes" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+                <label for="additional_charges" class="block text-gray-700">Additional Charges</label>
+                <input type="number" name="additional_charges" id="additional_charges" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateTotal()">
             </div>
-            <div class="mb-4">
-                <label for="footer" class="block text-gray-700">Footer</label>
-                <textarea name="footer" id="footer" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
-            </div>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Create Invoice</button>
+              <div class="mb-4">
+                <label for="payment_terms" class="block text-gray-700">Payment Terms</label>
+                   <select name="payment_terms" id="payment_terms" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none">
+                            <option value="Net 15">Net 15</option>
+                             <option value="Net 30">Net 30</option>
+                             <option value="Due on Receipt">Due on Receipt</option>
+                                <option value="Custom">Custom</option>
+                    </select>
+              </div>
+              <div class="mb-4">
+                 <label for="notes" class="block text-gray-700">Notes</label>
+                <textarea name="notes" id="notes" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+             </div>
+             <div class="mb-4">
+               <label for="footer" class="block text-gray-700">Footer</label>
+                <textarea name="footer" id="footer" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+             </div>
+            <button type="submit" class="bg-blue-700 text-white px-6 py-3 rounded-xl hover:bg-blue-900 transition duration-300 shadow-md">Create Invoice</button>
         </form>
     </div>
 <script>
-    let item_count = 1;
-
-     function showCustomerLeadDetails(type){
+        let item_count = 1;
+    function showCustomerLeadDetails(type){
             const leadSelectContainer = document.getElementById('lead_select_container');
             const customerSelectContainer = document.getElementById('customer_select_container');
              if(type == 'lead') {
@@ -324,14 +324,13 @@ require 'header.php';
              }else {
                    leadSelectContainer.classList.add('hidden');
                 customerSelectContainer.classList.add('hidden');
-                 document.getElementById('bill_to_name').value = "";
+                  document.getElementById('bill_to_name').value = "";
                 document.getElementById('bill_to_address').value = "";
                 document.getElementById('bill_to_email').value = "";
                  document.getElementById('bill_to_phone').value = "";
              }
       }
-
-    function updateLeadInfo(selectElement) {
+       function updateLeadInfo(selectElement) {
          const selectedOption = selectElement.options[selectElement.selectedIndex];
         if(selectedOption.value != ""){
             const name = selectedOption.dataset.name;
@@ -343,58 +342,63 @@ require 'header.php';
         }else {
             document.getElementById('bill_to_name').value = "";
             document.getElementById('bill_to_email').value = "";
-             document.getElementById('bill_to_phone').value = "";
-         }
+            document.getElementById('bill_to_phone').value = "";
+        }
      }
    function updateCustomerInfo(selectElement) {
         const selectedOption = selectElement.options[selectElement.selectedIndex];
-         if(selectedOption.value != ""){
+        if(selectedOption.value != ""){
            const name = selectedOption.dataset.name;
             const email = selectedOption.dataset.email;
             const phone = selectedOption.dataset.phone;
               const address = selectedOption.dataset.address;
-              document.getElementById('bill_to_name').value = name;
+               document.getElementById('bill_to_name').value = name;
              document.getElementById('bill_to_email').value = email;
-              document.getElementById('bill_to_phone').value = phone;
-              document.getElementById('bill_to_address').value = address;
-        } else {
+            document.getElementById('bill_to_phone').value = phone;
+             document.getElementById('bill_to_address').value = address;
+        }else {
              document.getElementById('bill_to_name').value = "";
               document.getElementById('bill_to_email').value = "";
             document.getElementById('bill_to_phone').value = "";
              document.getElementById('bill_to_address').value = "";
         }
     }
-
-    document.getElementById('add_item').addEventListener('click', function () {
-       const container = document.getElementById('invoice_items_container');
+         function removeItem(button){
+              const item = button.closest('[data-item-id]');
+              item.remove();
+              calculateTotal();
+           }
+        document.getElementById('add_item').addEventListener('click', function () {
+           const container = document.getElementById('invoice_items_container');
           const newItem = document.createElement('div');
         newItem.classList.add('flex', 'gap-4', 'mb-4', 'border-b-2', 'border-gray-200', 'pb-4');
          newItem.dataset.item_id = item_count;
           newItem.innerHTML = `
               <div class="flex-1">
                  <label for="item_product_service_${item_count}" class="block text-gray-700">Product/Service</label>
-                     <input type="text" name="items[${item_count}][product_service]" id="item_product_service_${item_count}" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                     <input type="text" name="items[${item_count}][product_service]" id="item_product_service_${item_count}" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" required>
                 </div>
                   <div class="flex-1">
                    <label for="item_quantity_${item_count}" class="block text-gray-700">Quantity</label>
-                    <input type="number" name="items[${item_count}][quantity]" id="item_quantity_${item_count}" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="calculateItemSubtotal(this)" value="1" min="1" required>
+                    <input type="number" name="items[${item_count}][quantity]" id="item_quantity_${item_count}" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="calculateItemSubtotal(this)" value="1" min="1" required>
                   </div>
                  <div class="flex-1">
                      <label for="item_unit_price_${item_count}" class="block text-gray-700">Unit Price</label>
-                     <input type="number" name="items[${item_count}][unit_price]" id="item_unit_price_${item_count}" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="calculateItemSubtotal(this)" required>
+                     <input type="number" name="items[${item_count}][unit_price]" id="item_unit_price_${item_count}" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" onchange="calculateItemSubtotal(this)" required>
                 </div>
-                 <div class="flex-1">
+                   <div class="flex-1">
                         <label for="item_tax_${item_count}" class="block text-gray-700">Tax</label>
-                        <input type="number" name="items[${item_count}][tax]" id="item_tax_${item_count}" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)">
+                        <input type="number" name="items[${item_count}][tax]" id="item_tax_${item_count}" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)">
                  </div>
-                  <div class="flex-1">
+                 <div class="flex-1">
                     <label for="item_discount_${item_count}" class="block text-gray-700">Discount</label>
-                        <input type="number" name="items[${item_count}][discount]" id="item_discount_${item_count}" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)" >
+                        <input type="number" name="items[${item_count}][discount]" id="item_discount_${item_count}" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" value="0" onchange="calculateItemSubtotal(this)" >
                 </div>
                  <div class="flex-1">
                      <label for="item_subtotal_${item_count}" class="block text-gray-700">Subtotal</label>
-                    <input type="number" name="items[${item_count}][subtotal]" id="item_subtotal_${item_count}" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="0"  readonly>
+                    <input type="number" name="items[${item_count}][subtotal]" id="item_subtotal_${item_count}" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" value="0"  readonly>
                 </div>
+                   <button type="button" onclick="removeItem(this)" class="remove_item bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-700 transition duration-300"><i class="fas fa-trash-alt"></i></button>
             `;
            container.appendChild(newItem);
            item_count++;
@@ -403,11 +407,10 @@ require 'header.php';
           const itemId = input.closest('[data-item-id]').dataset.item_id;
             const quantity = document.getElementById(`item_quantity_${itemId}`).value;
             const unitPrice = document.getElementById(`item_unit_price_${itemId}`).value;
-           const taxInput = document.getElementById(`item_tax_${itemId}`);
+            const taxInput = document.getElementById(`item_tax_${itemId}`);
             const discountInput = document.getElementById(`item_discount_${itemId}`);
-
-             const tax = taxInput.value ? parseFloat(taxInput.value) : 0;
-           const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
+             const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
+           const tax = taxInput.value ? parseFloat(taxInput.value) : 0;
             const subtotalInput = document.getElementById(`item_subtotal_${itemId}`);
             const subtotal = (quantity * unitPrice) + tax - discount;
 
@@ -423,12 +426,12 @@ require 'header.php';
               const itemId = item.dataset.item_id;
                const subtotalValue = document.getElementById(`item_subtotal_${itemId}`).value;
               const taxInput = document.getElementById(`item_tax_${itemId}`);
-              const discountInput = document.getElementById(`item_discount_${itemId}`);
-               const tax = taxInput.value ? parseFloat(taxInput.value) : 0;
-            const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
+               const discountInput = document.getElementById(`item_discount_${itemId}`);
+                const tax = taxInput.value ? parseFloat(taxInput.value) : 0;
+                const discount = discountInput.value ? parseFloat(discountInput.value) : 0;
                 subtotal += parseFloat(subtotalValue);
-                 total_tax += tax;
-                 total_discount += discount
+                  total_tax += tax;
+                  total_discount += discount
              });
              const additionalChargesInput = document.getElementById('additional_charges');
               const additional_charges = additionalChargesInput.value ? parseFloat(additionalChargesInput.value) : 0;
@@ -436,13 +439,13 @@ require 'header.php';
           const total = (subtotal  + additional_charges ) - total_discount;
           document.getElementById('total').value = total.toFixed(2);
       }
-      // Auto Due Date
+       // Auto Due Date
          document.getElementById('payment_terms').addEventListener('change', function() {
         const issueDateInput = document.getElementById('issue_date');
          const dueDateInput = document.getElementById('due_date');
           const paymentTerms = this.value;
-        if(paymentTerms != 'Custom'){
-                const issueDate = new Date(issueDateInput.value);
+        if (paymentTerms != 'Custom'){
+           const issueDate = new Date(issueDateInput.value);
                   let dueDate = null;
                 if (paymentTerms === 'Net 15') {
                     dueDate = new Date(issueDate.getTime() + (15 * 24 * 60 * 60 * 1000));
@@ -452,12 +455,12 @@ require 'header.php';
                       dueDate = issueDate;
                }
                if (dueDate) {
-                  const formattedDueDate = dueDate.toISOString().split('T')[0];
+                    const formattedDueDate = dueDate.toISOString().split('T')[0];
                       dueDateInput.value = formattedDueDate;
                 }
           }
     });
-      document.getElementById('billing_country').addEventListener('change', function() {
+    document.getElementById('billing_country').addEventListener('change', function() {
        const billing_country = this.value;
        const taxInput = document.getElementById('tax_method');
           if(billing_country === 'us'){
@@ -479,10 +482,10 @@ require 'header.php';
          }
     });
         showCustomerLeadDetails(document.getElementById('lead_customer_type').value);
-          function toggleDiscountInput() {
+      function toggleDiscountInput() {
             const discountType = document.getElementById('discount_type').value;
             const discountInput = document.getElementById('discount_amount');
-               if(discountType === 'percentage'){
+            if(discountType === 'percentage'){
                 discountInput.max = 100;
                } else {
                    discountInput.max = null;
@@ -490,7 +493,6 @@ require 'header.php';
              }
             toggleDiscountInput();
 </script>
-
 <?php
 // Include footer
 require 'footer.php';

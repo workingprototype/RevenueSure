@@ -11,8 +11,8 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
     <!-- Include FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <style>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+     <style>
         :root {
             --primary-color: #007aff; /* Apple Blue */
             --secondary-color: #4cd964; /* Apple Green */
@@ -127,7 +127,19 @@
                border-radius: 8px;
 
             }
-     </style>
+            .top-nav-button {
+                transition: all 0.3s ease-in-out;
+            }
+              .top-nav-button:hover {
+                   background: rgba(255,255,255,0.1);
+            }
+             .top-nav-dropdown {
+               z-index: 50;
+               border: 1px solid rgba(0,0,0,0.07);
+                border-radius: 12px;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            }
+    </style>
 </head>
 <body class="bg-gray-100">
     <!-- Navigation Bar -->
@@ -150,7 +162,7 @@
                        return strpos($current_page, $path) !== false;
                       }
                     ?>
-                    <a href="dashboard.php" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
+                   <a href="dashboard.php" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
                     <a href="your_leads.php" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('your_leads.php') ? 'active' : ''; ?>"><i class="fas fa-user-circle mr-2"></i>Your Leads</a>
                     <a href="search_leads.php" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('search_leads.php') ? 'active' : ''; ?>"><i class="fas fa-search mr-2"></i>Search Leads</a>
                    <a href="view_tasks.php" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('view_tasks.php') ? 'active' : ''; ?>"><i class="fas fa-tasks mr-2"></i>View Tasks</a>
@@ -196,14 +208,14 @@
                                 <a href="add_invoice.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_invoice.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Invoice</a>
                             </div>
                         </div>
-                        <div class="menu-item <?php if (isParentActive('manage_projects.php') || isParentActive('add_project.php') || isParentActive('view_project.php') || isParentActive('manage_project_categories.php')) echo 'active'; ?>">
+                       <div class="menu-item <?php if (isParentActive('manage_projects.php') || isParentActive('add_project.php') || isParentActive('view_project.php') || isParentActive('manage_project_categories.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Manage Projects</a>
                             <div class="submenu">
                                 <a href="manage_projects.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_projects.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Projects</a>
                                  <a href="add_project.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_project.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Project</a>
-                                    <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
+                                     <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
                             </div>
-                        </div>
+                       </div>
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                          <a href="settings.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
 
@@ -222,8 +234,8 @@
             <nav class="bg-blue-600 p-4 text-white mb-6 rounded-md">
                 <div class="container mx-auto flex justify-end items-center">
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <div class="relative mr-4">
-                            <button id="profileButton" class="hover:underline relative flex items-center">
+                       <div class="relative top-nav-button mr-4 hover:bg-white/10 p-1.5 rounded-full transition-colors" >
+                            <button id="profileButton" class="relative flex items-center">
                                 <?php
                                 $stmt = $conn->prepare("SELECT profile_picture FROM users WHERE id = :user_id");
                                 $stmt->bindParam(':user_id', $_SESSION['user_id']);
@@ -237,13 +249,13 @@
                                     <i class="fas fa-user-circle fa-lg"></i>
                                 <?php endif; ?>
                             </button>
-                             <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
+                             <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg top-nav-dropdown">
                                 <a href="profile.php" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
                                 <a href="logout.php" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</a>
                               </div>
                          </div>
-                        <div class="relative">
-                            <button id="notificationButton" class="hover:underline relative">
+                         <div class="relative top-nav-button hover:bg-white/10 p-1.5 rounded-full transition-colors">
+                            <button id="notificationButton" class="relative">
                                 <!-- Bell Icon -->
                                 <i class="fas fa-bell"></i>
                                 <?php
@@ -256,7 +268,7 @@
                                     <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full absolute -top-2 -right-2"><?php echo $unread; ?></span>
                                 <?php endif; ?>
                             </button>
-                            <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border rounded shadow-md">
+                            <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg top-nav-dropdown">
                                 <?php
                                 $stmt = $conn->prepare("SELECT * FROM notifications WHERE user_id = :user_id ORDER BY created_at DESC LIMIT 5");
                                 $stmt->bindParam(':user_id', $_SESSION['user_id']);
