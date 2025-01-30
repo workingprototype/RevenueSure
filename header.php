@@ -223,7 +223,13 @@
                                     <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
                             </div>
                         </div>
-
+                         <div class="menu-item <?php if (isParentActive('manage_tickets.php') || isParentActive('add_ticket.php') || isParentActive('view_ticket.php')) echo 'active'; ?>">
+                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-ticket-alt mr-2"></i>Manage Tickets</a>
+                                <div class="submenu">
+                                  <a href="manage_tickets.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_tickets.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Tickets</a>
+                                    <a href="add_ticket.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_ticket.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Ticket</a>
+                               </div>
+                        </div>
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                          <a href="settings.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
 
