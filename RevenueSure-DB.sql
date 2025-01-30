@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 30, 2025 at 06:24 PM
+-- Generation Time: Jan 30, 2025 at 06:52 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -554,6 +554,31 @@ INSERT INTO `support_ticket_comments` (`id`, `ticket_id`, `user_id`, `comment`, 
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `support_ticket_tasks`
+--
+
+CREATE TABLE `support_ticket_tasks` (
+  `id` int(11) NOT NULL,
+  `ticket_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `due_date` datetime DEFAULT NULL,
+  `status` enum('To Do','In Progress','Completed') DEFAULT 'To Do',
+  `assigned_to` int(11) DEFAULT NULL,
+  `priority` enum('Low','Medium','High') DEFAULT 'Medium',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `support_ticket_tasks`
+--
+
+INSERT INTO `support_ticket_tasks` (`id`, `ticket_id`, `title`, `description`, `due_date`, `status`, `assigned_to`, `priority`, `created_at`) VALUES
+(1, 2, 'Hire an engineer for this', 'Hire an angular developer', '2025-01-31 23:04:00', 'In Progress', 4, 'Medium', '2025-01-30 17:35:13');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tasks`
 --
 
@@ -955,6 +980,14 @@ ALTER TABLE `support_ticket_comments`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `support_ticket_tasks`
+--
+ALTER TABLE `support_ticket_tasks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ticket_id` (`ticket_id`),
+  ADD KEY `assigned_to` (`assigned_to`);
+
+--
 -- Indexes for table `tasks`
 --
 ALTER TABLE `tasks`
@@ -1181,6 +1214,12 @@ ALTER TABLE `support_ticket_comments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `support_ticket_tasks`
+--
+ALTER TABLE `support_ticket_tasks`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
@@ -1369,6 +1408,13 @@ ALTER TABLE `support_ticket_attachments`
 ALTER TABLE `support_ticket_comments`
   ADD CONSTRAINT `support_ticket_comments_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `support_tickets` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `support_ticket_comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `support_ticket_tasks`
+--
+ALTER TABLE `support_ticket_tasks`
+  ADD CONSTRAINT `support_ticket_tasks_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `support_tickets` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `support_ticket_tasks_ibfk_2` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `tasks`
