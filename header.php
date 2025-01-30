@@ -183,7 +183,6 @@
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-user-tie mr-2"></i>Manage Leads</a>
                             <div class="submenu">
                                   <a href="add_lead.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_lead.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Lead</a>
-                                  <a href="leads_list.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('leads_list.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Leads</a>
                                    <a href="import_leads.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('import_leads.php') ? 'active' : ''; ?>"><i class="fas fa-file-import mr-2"></i>Import Leads</a>
                             </div>
                         </div>
