@@ -38,23 +38,18 @@
              flex-direction: column;
              justify-content: flex-start;
           }
-           .menu-item a {
-                display: flex;
-                align-items: center;
-                 padding: 12px 20px;
-              margin: 0 10px;
-                transition: color 0.2s ease, background-color 0.2s ease, border-left-color 0.2s ease;
-                border-left: 4px solid transparent;
-             color: #4a5568;
-             font-size: 0.9rem;
-            }
-         .menu-item a:hover {
-               background-color: rgba(0,0,0,0.03);
-                border-left-color: var(--primary-color);
-                color: #000;
-
-        }
-       .menu-item .submenu a:hover {
+          
+          .menu-item a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 0 10px;
+    transition: color 0.4s ease, background-color 0.4s ease, border-left-color 0.4s ease; /* Slowed down transition */
+    border-left: 4px solid transparent;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+.menu-item .submenu a:hover {
             background-color: rgba(0,0,0,0.03);
             color: #000;
         }
@@ -70,18 +65,20 @@
             background-color: rgba(0,0,0,0.04);
             border-left-color: var(--primary-color);
         }
-        .submenu {
-          padding-left: 10px;
-            transition: all 0.2s ease;
-             margin-top: 5px;
-             border-left: 2px solid #94a3b8;
-            overflow:hidden;
-            max-height: 0;
-            }
-        .menu-item:hover .submenu {
-           max-height: 1000px;
-             animation: fadeIn 0.3s ease-in-out; /* Apply the fade-in animation on hover */
-        }
+        
+.submenu {
+    padding-left: 10px;
+    transition: all 0.4s ease; /* Slowed down transition */
+    margin-top: 5px;
+    border-left: 2px solid #94a3b8;
+    overflow: hidden;
+    max-height: 0;
+}
+        
+.menu-item:hover .submenu {
+    max-height: 1000px;
+    animation: fadeIn 0.6s ease-in-out; /* Slowed down fade-in animation */
+}
 
             .fade-in-up {
             animation: fadeInUp 0.3s ease-in-out; /* Apply the fade-in-up animation on load */
@@ -89,24 +86,25 @@
              .fade-in {
                  animation: fadeIn 0.3s ease-in-out; /* Apply the fade-in animation on load */
            }
-          @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-           }
-          @keyframes fadeInUp {
-              from {
-                opacity: 0;
-                  transform: translateY(20px);
-                }
-              to {
-                 opacity: 1;
-                 transform: translateY(0);
-             }
-          }
+           @keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
           button {
               transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
              }
