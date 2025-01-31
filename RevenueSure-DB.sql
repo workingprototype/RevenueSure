@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 31, 2025 at 07:08 PM
+-- Generation Time: Jan 31, 2025 at 08:09 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -291,6 +291,18 @@ INSERT INTO `expense_comments` (`id`, `expense_id`, `user_id`, `comment`, `creat
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `featured_knowledge_base_articles`
+--
+
+CREATE TABLE `featured_knowledge_base_articles` (
+  `id` int(11) NOT NULL,
+  `article_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `invoices`
 --
 
@@ -401,6 +413,7 @@ CREATE TABLE `knowledge_base_articles` (
   `content` text DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
   `visibility` enum('all','team','admin') DEFAULT 'all',
+  `access_level` enum('public','private') DEFAULT 'public',
   `user_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
@@ -410,8 +423,8 @@ CREATE TABLE `knowledge_base_articles` (
 -- Dumping data for table `knowledge_base_articles`
 --
 
-INSERT INTO `knowledge_base_articles` (`id`, `title`, `content`, `category_id`, `visibility`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 'How to login', '<p>This is a demo article</p>', 2, 'team', 2, '2025-01-31 18:01:02', NULL);
+INSERT INTO `knowledge_base_articles` (`id`, `title`, `content`, `category_id`, `visibility`, `access_level`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 'How to login', '<p>This is a demo article</p>', 2, 'team', 'public', 2, '2025-01-31 18:01:02', NULL);
 
 -- --------------------------------------------------------
 
@@ -459,8 +472,17 @@ CREATE TABLE `knowledge_base_article_requests` (
 CREATE TABLE `knowledge_base_article_tags` (
   `id` int(11) NOT NULL,
   `article_id` int(11) NOT NULL,
-  `tag` varchar(100) NOT NULL
+  `tag` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `knowledge_base_article_tags`
+--
+
+INSERT INTO `knowledge_base_article_tags` (`id`, `article_id`, `tag`, `created_at`) VALUES
+(1, 1, 'guide', '2025-01-31 19:00:12'),
+(2, 1, 'login', '2025-01-31 19:00:12');
 
 -- --------------------------------------------------------
 
@@ -1143,6 +1165,13 @@ ALTER TABLE `expense_comments`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `featured_knowledge_base_articles`
+--
+ALTER TABLE `featured_knowledge_base_articles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `article_id` (`article_id`);
+
+--
 -- Indexes for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -1170,6 +1199,8 @@ ALTER TABLE `invoice_settings`
 ALTER TABLE `knowledge_base_articles`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
+ALTER TABLE `knowledge_base_articles` ADD FULLTEXT KEY `title` (`title`,`content`);
+ALTER TABLE `knowledge_base_articles` ADD FULLTEXT KEY `title_2` (`title`,`content`);
 
 --
 -- Indexes for table `knowledge_base_article_ratings`
@@ -1472,6 +1503,12 @@ ALTER TABLE `expense_comments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `featured_knowledge_base_articles`
+--
+ALTER TABLE `featured_knowledge_base_articles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -1511,7 +1548,7 @@ ALTER TABLE `knowledge_base_article_requests`
 -- AUTO_INCREMENT for table `knowledge_base_article_tags`
 --
 ALTER TABLE `knowledge_base_article_tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `knowledge_base_article_versions`
@@ -1731,6 +1768,12 @@ ALTER TABLE `expense_approvals`
 ALTER TABLE `expense_comments`
   ADD CONSTRAINT `expense_comments_ibfk_1` FOREIGN KEY (`expense_id`) REFERENCES `expenses` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `expense_comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `featured_knowledge_base_articles`
+--
+ALTER TABLE `featured_knowledge_base_articles`
+  ADD CONSTRAINT `featured_knowledge_base_articles_ibfk_1` FOREIGN KEY (`article_id`) REFERENCES `knowledge_base_articles` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `invoices`

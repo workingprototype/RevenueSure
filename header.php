@@ -8,11 +8,13 @@
     <meta name="keywords" content="leads, businesses, management, platform">
     <meta name="author" content="Your Name">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
+     <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
+
     <!-- Include FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-     <style>
+      <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    <style>
         :root {
             --primary-color: #007aff; /* Apple Blue */
             --secondary-color: #4cd964; /* Apple Green */
@@ -40,115 +42,205 @@
           }
           
           .menu-item a {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    margin: 0 10px;
-    transition: color 0.4s ease, background-color 0.4s ease, border-left-color 0.4s ease; /* Slowed down transition */
-    border-left: 4px solid transparent;
-    color: #4a5568;
-    font-size: 0.9rem;
-}
-.menu-item .submenu a:hover {
-            background-color: rgba(0,0,0,0.03);
-            color: #000;
-        }
+           display: flex;
+                align-items: center;
+            padding: 12px 20px;
+              margin: 0 10px;
+            transition: color 0.4s ease, background-color 0.4s ease, border-left-color 0.4s ease; /* Slowed down transition */
+             border-left: 4px solid transparent;
+            color: #4a5568;
+             font-size: 0.9rem;
+           }
+          .menu-item .submenu a:hover {
+              background-color: rgba(0,0,0,0.03);
+             color: #000;
+           }
          .menu-item .submenu a {
               padding: 12px 30px;
-              font-size: 0.85rem;
-              transition: color 0.2s ease, background-color 0.2s ease;
-
+             font-size: 0.85rem;
+            transition: color 0.2s ease, background-color 0.2s ease;
             }
 
          .menu-item.active a {
           color: #000;
-            background-color: rgba(0,0,0,0.04);
-            border-left-color: var(--primary-color);
-        }
-        
-.submenu {
-    padding-left: 10px;
-    transition: all 0.4s ease; /* Slowed down transition */
-    margin-top: 5px;
-    border-left: 2px solid #94a3b8;
-    overflow: hidden;
-    max-height: 0;
-}
-        
-.menu-item:hover .submenu {
-    max-height: 1000px;
-    animation: fadeIn 0.6s ease-in-out; /* Slowed down fade-in animation */
-}
+             background-color: rgba(0,0,0,0.04);
+           border-left-color: var(--primary-color);
+          }
+      .submenu {
+            padding-left: 10px;
+            transition: all 0.4s ease; /* Slowed down transition */
+             margin-top: 5px;
+               border-left: 2px solid #94a3b8;
+             overflow: hidden;
+               max-height: 0;
+         }
+
+        .menu-item:hover .submenu {
+            max-height: 1000px;
+          animation: fadeIn 0.6s ease-in-out; /* Slowed down fade-in animation */
+         }
 
             .fade-in-up {
             animation: fadeInUp 0.3s ease-in-out; /* Apply the fade-in-up animation on load */
             }
-             .fade-in {
+            .fade-in {
                  animation: fadeIn 0.3s ease-in-out; /* Apply the fade-in animation on load */
-           }
+            }
            @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
+              from {
+                 opacity: 0;
+              }
+             to {
+                opacity: 1;
+               }
+          }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-          button {
+          @keyframes fadeInUp {
+            from {
+               opacity: 0;
+               transform: translateY(20px);
+            }
+             to {
+                 opacity: 1;
+                 transform: translateY(0);
+             }
+           }
+           button {
               transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
              }
             button:active {
             transform: scale(0.98);
-            }
-          input:focus, select:focus, textarea:focus {
-                border-color: var(--primary-color);
-                 box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-            }
-           .bg-white {
-              transition: all 0.3s ease-in-out;
-               box-shadow: 0 2px 5px rgba(0,0,0,0.1);
            }
-           input,select, textarea {
-             transition: all 0.3s ease-in-out;
-             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-               border-radius: 8px;
+            input:focus, select:focus, textarea:focus {
+                border-color: var(--primary-color);
+               box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+             }
+          .bg-white {
+               transition: all 0.3s ease-in-out;
+               box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            input,select, textarea {
+                 transition: all 0.3s ease-in-out;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                  border-radius: 8px;
 
             }
-            .top-nav-button {
-                transition: all 0.3s ease-in-out;
+             .top-nav-button {
+               transition: all 0.3s ease-in-out;
             }
               .top-nav-button:hover {
-                   background: rgba(255,255,255,0.1);
-            }
-             .top-nav-dropdown {
+                    background: rgba(255,255,255,0.1);
+             }
+                .top-nav-dropdown {
                z-index: 50;
                border: 1px solid rgba(0,0,0,0.07);
-                border-radius: 12px;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-            }
+                 border-radius: 12px;
+                  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+               }
               .top-nav-dropdown a{
                 padding: 10px;
-                display: block;
-                transition: all 0.2s ease;
-              }
-               .top-nav-dropdown a:hover{
-                 background: #f2f2f2;
+                 display: block;
+               transition: all 0.2s ease;
                }
+                .top-nav-dropdown a:hover{
+                   background: #f2f2f2;
+                 }
+                 .paper-doc {
+            font-family: 'Georgia', serif;
+            max-width: 800px;
+            margin: 20px auto;
+             padding: 40px 60px;
+            background-color: #fdfdfd;
+              border: 1px solid #e2e2e2;
+              box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+             border-radius: 15px;
+           line-height: 1.7;
+              font-size: 16px;
+        }
+         .paper-doc h1, .paper-doc h2, .paper-doc h3, .paper-doc h4, .paper-doc h5, .paper-doc h6 {
+             font-family: 'Roboto Slab', serif;
+            margin-bottom: 15px;
+              line-height: 1.4;
+            color: #333;
+              font-weight: 700;
+
+        }
+          .paper-doc h1{
+               font-size: 2.5rem;
+
+           }
+              .paper-doc h2 {
+                font-size: 2rem;
+                   border-bottom: 2px solid #f2f2f2;
+                padding-bottom: 6px;
+              }
+             .paper-doc h3{
+                 font-size: 1.75rem
+             }
+               .paper-doc h4{
+                font-size: 1.5rem;
+                  
+              }
+               .paper-doc h5{
+                font-size: 1.25rem;
+               }
+                .paper-doc h6{
+                   font-size: 1.1rem;
+             }
+        .paper-doc a {
+             color: #0056b3;
+              text-decoration: none;
+                 border-bottom: 1px solid transparent;
+             transition: border-bottom 0.3s ease;
+          }
+      .paper-doc a:hover {
+             border-bottom: 1px solid #0056b3;
+       }
+        .paper-doc p{
+            margin-bottom: 15px;
+        }
+         .paper-doc ol,.paper-doc ul {
+            padding-left: 25px;
+            margin-bottom: 15px;
+
+        }
+        .paper-doc ul li {
+            list-style-type: disc;
+              margin-bottom: 10px;
+        }
+        .paper-doc ol li {
+             list-style-type: decimal;
+              margin-bottom: 10px;
+         }
+          .paper-doc blockquote {
+             margin: 20px 0;
+               padding: 15px 20px;
+                border-left: 4px solid #c0c0c0;
+               font-style: italic;
+                color: #555;
+                background-color: #fafafa;
+          }
+          .paper-doc .rating-bookmark-container {
+               display: flex;
+                justify-content: space-between;
+               align-items: center;
+               margin-top: 30px;
+              border-top: 1px solid #f2f2f2;
+                  padding-top: 15px;
+          }
+          .paper-doc .rating-bookmark-container button {
+                transition: all 0.3s ease;
+           }
+             .paper-doc .rating-bookmark-container button:hover {
+                   color: #0056b3;
+              }
+                 .paper-doc .rating-bookmark-container textarea {
+                       margin-top: 5px;
+                    }
     </style>
 </head>
 <body class="bg-gray-100">
-    <!-- Navigation Bar -->
+   <!-- Navigation Bar -->
     <div class="flex h-screen fade-in-up">
         <!-- Left Sidebar -->
         <aside class="bg-gray-100 text-gray-700 w-64 p-4">
@@ -162,9 +254,8 @@
                          $current_page = basename($_SERVER['PHP_SELF']);
                          return strpos($current_page, $path) === 0;
                     }
-
                      function isParentActive($path) {
-                         $current_page = basename($_SERVER['PHP_SELF']);
+                        $current_page = basename($_SERVER['PHP_SELF']);
                        return strpos($current_page, $path) !== false;
                       }
                     ?>
@@ -213,55 +304,52 @@
                                 <a href="add_invoice.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_invoice.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Invoice</a>
                             </div>
                         </div>
-                       <div class="menu-item <?php if (isParentActive('manage_projects.php') || isParentActive('add_project.php') || isParentActive('view_project.php') || isParentActive('manage_project_categories.php')) echo 'active'; ?>">
+                         <div class="menu-item <?php if (isParentActive('manage_projects.php') || isParentActive('add_project.php') || isParentActive('view_project.php') || isParentActive('manage_project_categories.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Manage Projects</a>
                             <div class="submenu">
                                 <a href="manage_projects.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_projects.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Projects</a>
                                  <a href="add_project.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_project.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Project</a>
                                     <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
                             </div>
-                        </div>
-                        <div class="menu-item <?php if (isParentActive('manage_tickets.php') || isParentActive('add_ticket.php') || isParentActive('view_ticket.php')) echo 'active'; ?>">
+                         </div>
+                       <div class="menu-item <?php if (isParentActive('manage_tickets.php') || isParentActive('add_ticket.php') || isParentActive('view_ticket.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-ticket-alt mr-2"></i>Manage Tickets</a>
                             <div class="submenu">
                                 <a href="manage_tickets.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_tickets.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Tickets</a>
                                     <a href="add_ticket.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_ticket.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Ticket</a>
                                 </div>
                         </div>
-                       <div class="menu-item <?php if (isParentActive('manage_teams.php') || isParentActive('add_team_member.php') || isParentActive('manage_roles.php') || isParentActive('manage_departments.php')) echo 'active'; ?>">
+                     <div class="menu-item <?php if (isParentActive('manage_teams.php') || isParentActive('add_team_member.php') || isParentActive('manage_roles.php') || isParentActive('manage_departments.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-users-cog mr-2"></i>Manage Team</a>
-                             <div class="submenu">
-                                    <a href="manage_teams.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_teams.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Team</a>
-                                     <a href="add_team_member.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_team_member.php') ? 'active' : ''; ?>"><i class="fas fa-user-plus mr-2"></i>Add Team Member</a>
-                                      <a href="manage_roles.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_roles.php') ? 'active' : ''; ?>"><i class="fas fa-user-tag mr-2"></i>Manage Roles</a>
-                                         <a href="manage_departments.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_departments.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Manage Departments</a>
+                            <div class="submenu">
+                                  <a href="manage_teams.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_teams.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Team</a>
+                                    <a href="add_team_member.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_team_member.php') ? 'active' : ''; ?>"><i class="fas fa-user-plus mr-2"></i>Add Team Member</a>
+                                     <a href="manage_roles.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_roles.php') ? 'active' : ''; ?>"><i class="fas fa-user-tag mr-2"></i>Manage Roles</a>
+                                        <a href="manage_departments.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_departments.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Manage Departments</a>
                                </div>
-                       </div>
-                       <div class="menu-item <?php if (isParentActive('manage_expenses.php') || isParentActive('add_expense.php')) echo 'active'; ?>">
-                           <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-money-bill-wave mr-2"></i>Manage Expenses</a>
-                           <div class="submenu">
-                                <a href="manage_expenses.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_expenses.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Expenses</a>
-                                 <a href="add_expense.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_expense.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Record Expense</a>
                         </div>
-                        
-                     
-                       </div>
-                       <div class="menu-item <?php if(isParentActive('manage_knowledge_base.php') || isParentActive('add_knowledge_base_article.php') || isParentActive('view_knowledge_base_article.php')) echo 'active' ?>">
+                          <div class="menu-item <?php if (isParentActive('manage_knowledge_base.php') || isParentActive('add_knowledge_base_article.php') || isParentActive('view_knowledge_base_article.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-book mr-2"></i>Knowledge Base</a>
                             <div class="submenu">
-                                  <a href="manage_knowledge_base.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i> View Articles</a>
-                                   <a href="add_knowledge_base_article.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_knowledge_base_article.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i> Add Article</a>
-                                        <a href="manage_knowledge_base_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base_categories.php') ? 'active' : ''; ?>"> <i class="fas fa-list-ul mr-2"></i>Manage Categories</a>
+                                 <a href="manage_knowledge_base.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i> View Articles</a>
+                                    <a href="add_knowledge_base_article.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_knowledge_base_article.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i> Add Article</a>
+                                      <a href="manage_knowledge_base_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base_categories.php') ? 'active' : ''; ?>"> <i class="fas fa-list-alt mr-2"></i>Manage Categories</a>
                                </div>
                         </div>
+                       <div class="menu-item <?php if (isParentActive('manage_expenses.php') || isParentActive('add_expense.php')) echo 'active'; ?>">
+                         <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-money-bill-wave mr-2"></i>Manage Expenses</a>
+                        <div class="submenu">
+                                <a href="manage_expenses.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_expenses.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Expenses</a>
+                                  <a href="add_expense.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_expense.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Record Expense</a>
+                            </div>
+                      </div>
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
-                         <a href="settings.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
-                        
+                        <a href="settings.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
                     <?php endif; ?>
                      <a href="logout.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg mt-4"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
                 <?php else: ?>
-                    <a href="login.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg"><i class="fas fa-sign-in-alt mr-2"></i>Login</a>
-                    <a href="register.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg"><i class="fas fa-user-plus mr-2"></i>Register</a>
+                   <a href="login.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg"><i class="fas fa-sign-in-alt mr-2"></i>Login</a>
+                     <a href="register.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg"><i class="fas fa-user-plus mr-2"></i>Register</a>
                  <?php endif; ?>
              </nav>
         </aside>
