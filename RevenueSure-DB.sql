@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 30, 2025 at 06:52 PM
+-- Generation Time: Jan 31, 2025 at 04:11 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -529,6 +529,13 @@ CREATE TABLE `support_ticket_attachments` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `support_ticket_attachments`
+--
+
+INSERT INTO `support_ticket_attachments` (`id`, `ticket_id`, `file_name`, `file_path`, `created_at`) VALUES
+(1, 1, '20-0129_DEMO.png', 'uploads/679c3db6a1e8a_20-0129_DEMO.png', '2025-01-31 03:04:22');
+
 -- --------------------------------------------------------
 
 --
@@ -549,7 +556,9 @@ CREATE TABLE `support_ticket_comments` (
 
 INSERT INTO `support_ticket_comments` (`id`, `ticket_id`, `user_id`, `comment`, `created_at`) VALUES
 (1, 1, 2, 'Hi guys, any update on this ticket?', '2025-01-30 12:30:50'),
-(2, 1, 2, 'Its under development', '2025-01-30 14:10:52');
+(2, 1, 2, 'Its under development', '2025-01-30 14:10:52'),
+(3, 1, 2, 'Hi team ?', '2025-01-31 03:03:42'),
+(4, 1, 2, 'Yo', '2025-01-31 03:11:23');
 
 -- --------------------------------------------------------
 
@@ -1205,13 +1214,13 @@ ALTER TABLE `support_tickets`
 -- AUTO_INCREMENT for table `support_ticket_attachments`
 --
 ALTER TABLE `support_ticket_attachments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `support_ticket_comments`
 --
 ALTER TABLE `support_ticket_comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `support_ticket_tasks`

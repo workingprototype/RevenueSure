@@ -156,27 +156,52 @@ require 'header.php';
                     <?php endif; ?>
            </div>
              <!-- Add Comment -->
-        <div class="bg-white border-2 border-gray-200 p-6 rounded-lg mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Add Comment</h2>
-            <form method="POST" action="">
-                <textarea name="comment" id="comment" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Write a comment..."></textarea>
-                <button type="submit" name="add_comment" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-4">Add Comment</button>
-            </form>
-           <?php if($comments): ?>
-            <h2 class="text-xl font-bold text-gray-800 mt-6 mb-4">Comments</h2>
-                  <ul>
-                        <?php foreach ($comments as $comment): ?>
-                             <li class="p-4 border-b border-gray-100 my-2 bg-gray-50 rounded-lg">
-                                 <div class="flex justify-between items-start mb-2">
-                                      <p class="text-gray-800"><?php echo htmlspecialchars($comment['comment']); ?></p>
-                                     <p class="text-gray-500 text-sm"><?php echo htmlspecialchars($comment['username']); ?>  -  <?php echo htmlspecialchars(date('Y-m-d H:i', strtotime($comment['created_at']))); ?></p>
-                                   </div>
-                                </li>
-                            <?php endforeach; ?>
+        <!-- Add Comment -->
+            <div class="bg-white border-2 border-gray-100 p-6 rounded-lg mb-8">
+              <h2 class="text-xl font-bold text-gray-800 mb-4 relative">
+                    Comments
+                 </h2>
+                     <form method="POST" action="" class="mb-4">
+                        <input type="hidden" name="parent_id" id="parent_id">
+                           <textarea name="comment" id="comment" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Write a comment..."></textarea>
+                         <button type="submit" name="add_comment" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-4">Add Comment</button>
+                   </form>
+                   <?php if($comments): ?>
+                        <h2 class="text-xl font-bold text-gray-800 mt-6 mb-4">Comments</h2>
+                       <ul id="comment-list">
+                           <?php
+                                function displayComments($comments, $parentId = null, $level = 0) {
+                                  global $conn;
+                                    foreach ($comments as $comment) {
+                                        if ($comment['parent_id'] == $parentId) {
+                                            $indent = str_repeat('   ', $level);
+                                          echo '<li class="p-4 border-b border-gray-100 my-2 bg-gray-50 rounded-lg" style="margin-left: ' . ($level*20) . 'px;" data-comment-id="' . $comment['id'] . '" >
+                                                   <div class="flex justify-between items-center mb-2">
+                                                     <p class="text-gray-800">' . $indent . htmlspecialchars($comment['comment']) . '</p>
+                                                  </div>
+                                                    <div class="text-right">
+                                                            <p class="text-gray-500 text-sm">
+                                                            <i class="fas fa-user-circle mr-1"></i> '. htmlspecialchars($comment['username']) .' - '. htmlspecialchars(date('Y-m-d H:i', strtotime($comment['created_at']))) . '</p>
+                                                      </div>
+                                                      <div class="flex justify-end gap-2">
+                                                          <button  onclick="replyToComment('. $comment['id'] .')" class="text-blue-600 hover:underline">Reply</button>
+                                                    </div>
+                                            ';
+                                        displayComments($comments, $comment['id'], $level + 1);
+                                        echo '</li>';
+                                        }
+
+                                    }
+                                  }
+                                    displayComments($comments);
+                                ?>
                         </ul>
+                    <?php else: ?>
+                         <p class="text-gray-600">No comments yet!</p>
                     <?php endif; ?>
-             </div>
-           </div>
+                </div>
+           
+        </div>
 
          <!--  Tasks and Attachments Section (Right Side) -->
         <div class="w-full md:w-1/4 px-4 mb-6">
