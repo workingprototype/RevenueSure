@@ -15,13 +15,19 @@ $user_id = $_SESSION['user_id'];
 if (!empty($search) && !empty($type)) {
     $results = [];
     switch ($type) {
-        case 'task':
+       case 'task':
           $stmt = $conn->prepare("SELECT id, description as title FROM tasks WHERE user_id = :user_id AND description LIKE :search LIMIT 10");
            $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
              $stmt->bindParam(':user_id', $user_id);
            $stmt->execute();
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
            break;
+         case 'employee':
+            $stmt = $conn->prepare("SELECT id, name FROM employees WHERE name LIKE :search LIMIT 10");
+           $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            break;
         case 'lead':
             $stmt = $conn->prepare("SELECT id, name FROM leads WHERE name LIKE :search AND assigned_to = :user_id ORDER BY name ASC LIMIT 5");
             $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
@@ -30,7 +36,7 @@ if (!empty($search) && !empty($type)) {
              $assignedLeads = $stmt->fetchAll(PDO::FETCH_ASSOC);
                $stmt = $conn->prepare("SELECT id, name FROM leads WHERE name LIKE :search AND (assigned_to IS NULL OR assigned_to != :user_id) ORDER BY name ASC LIMIT 5");
                  $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
-                $stmt->bindParam(':user_id', $user_id);
+                 $stmt->bindParam(':user_id', $user_id);
                 $stmt->execute();
                 $unassignedLeads = $stmt->fetchAll(PDO::FETCH_ASSOC);
                  $results = array_merge($assignedLeads, $unassignedLeads);
@@ -40,7 +46,6 @@ if (!empty($search) && !empty($type)) {
             $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
             $stmt->execute();
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
             break;
           default:
              break;

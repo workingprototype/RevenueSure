@@ -308,6 +308,7 @@
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Manage Projects</a>
                             <div class="submenu">
                                 <a href="manage_projects.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_projects.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Projects</a>
+                                <a href="manage_discussions.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_discussions.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Discussions</a>
                                  <a href="add_project.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_project.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Project</a>
                                     <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
                             </div>

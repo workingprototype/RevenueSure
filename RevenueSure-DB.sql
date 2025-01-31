@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 31, 2025 at 09:19 PM
+-- Generation Time: Jan 31, 2025 at 10:31 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -176,6 +176,79 @@ CREATE TABLE `customer_tags` (
 INSERT INTO `customer_tags` (`id`, `customer_id`, `tag`, `color`, `created_at`) VALUES
 (1, 1, 'VIP', 'gray', '2025-01-28 09:25:13'),
 (2, 1, 'High value', 'red', '2025-01-28 09:30:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `discussions`
+--
+
+CREATE TABLE `discussions` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `type` enum('internal','external') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `discussions`
+--
+
+INSERT INTO `discussions` (`id`, `title`, `user_id`, `type`, `created_at`) VALUES
+(1, 'Initial Documentation Request', 2, 'internal', '2025-01-31 20:35:30'),
+(3, 'Legal Document Request', 2, 'external', '2025-01-31 21:10:19');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `discussion_messages`
+--
+
+CREATE TABLE `discussion_messages` (
+  `id` int(11) NOT NULL,
+  `discussion_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `sent_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `parent_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `discussion_messages`
+--
+
+INSERT INTO `discussion_messages` (`id`, `discussion_id`, `user_id`, `message`, `sent_at`, `parent_id`) VALUES
+(1, 1, 2, 'Hi Jabbar,\r\nPlease provide the initial documentation for your repo?', '2025-01-31 20:35:30', NULL),
+(3, 3, 2, 'Hi Jabbar,\r\nPlease send your document', '2025-01-31 21:10:19', NULL),
+(4, 3, 5, 'Where should I send it?', '2025-01-31 21:27:46', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `discussion_participants`
+--
+
+CREATE TABLE `discussion_participants` (
+  `id` int(11) NOT NULL,
+  `discussion_id` int(11) NOT NULL,
+  `participant_id` int(11) NOT NULL,
+  `participant_type` enum('user','employee','customer') NOT NULL,
+  `last_viewed` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `discussion_participants`
+--
+
+INSERT INTO `discussion_participants` (`id`, `discussion_id`, `participant_id`, `participant_type`, `last_viewed`, `created_at`) VALUES
+(1, 1, 1, 'user', NULL, '2025-01-31 20:35:30'),
+(2, 1, 1, 'employee', NULL, '2025-01-31 20:35:30'),
+(3, 1, 1, 'customer', NULL, '2025-01-31 20:35:30'),
+(7, 3, 4, 'user', NULL, '2025-01-31 21:10:19'),
+(8, 3, 2, 'employee', '2025-01-31 21:24:29', '2025-01-31 21:10:19'),
+(9, 3, 1, 'customer', NULL, '2025-01-31 21:10:19');
 
 -- --------------------------------------------------------
 
@@ -1068,7 +1141,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `credits`, `created_at`, `role`, `profile_picture`, `role_id`, `department_id`) VALUES
 (1, 'Peel Hullin', 'user@demo.com', '$2y$10$8z2JpAs7QU3aMkHL59SC.O4rjZevbePDApd7947XYt.LfdOVlvA7.', 100, '2025-01-26 05:53:17', 'user', NULL, 5, NULL),
 (2, 'GGBoiA', 'admin@demo.com', '$2y$10$qtyaY8G3jceTluy42gCT.ey.SYmGAUcj5Oi3bnDxOxnCL.7w4nbJq', 0, '2025-01-26 06:17:01', 'admin', 'uploads/profile/67987cff6f90a_kisspng-avatar-youtube-person-kahoot-a-roommate-who-plays-with-a-cell-phone-5b4d74010dd214.7783760115318026250566.jpg', NULL, NULL),
-(4, 'John The Support Man', 'john@support.com', '$2y$10$6mZ3cSv8FM7fxg3Ui6JwquHyYnTtHsx1H9ZxtaFYqHG/anoV0C1o.', 0, '2025-01-30 14:46:28', 'user', NULL, 1, NULL);
+(4, 'John The Support Man', 'john@support.com', '$2y$10$6mZ3cSv8FM7fxg3Ui6JwquHyYnTtHsx1H9ZxtaFYqHG/anoV0C1o.', 0, '2025-01-30 14:46:28', 'user', NULL, 1, NULL),
+(5, 'admin2', 'admin2@demo.com', '$2y$10$xhjAQ4eMVDwSaP5gB2x0sus4lk/9uU7MJZF9NHcQ0o9cyZifO6.b6', 0, '2025-01-31 21:26:14', 'admin', 'uploads/profile/679d4030dfe71_M0ekXd9R_400x400.jpg', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1133,6 +1207,30 @@ ALTER TABLE `customer_preferences`
 ALTER TABLE `customer_tags`
   ADD PRIMARY KEY (`id`),
   ADD KEY `customer_id` (`customer_id`);
+
+--
+-- Indexes for table `discussions`
+--
+ALTER TABLE `discussions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `discussion_messages`
+--
+ALTER TABLE `discussion_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `discussion_id` (`discussion_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `parent_id` (`parent_id`);
+
+--
+-- Indexes for table `discussion_participants`
+--
+ALTER TABLE `discussion_participants`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `discussion_id` (`discussion_id`),
+  ADD KEY `participant_id` (`participant_id`);
 
 --
 -- Indexes for table `employees`
@@ -1425,7 +1523,8 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`),
   ADD KEY `role_id` (`role_id`),
-  ADD KEY `department_id` (`department_id`);
+  ADD KEY `department_id` (`department_id`),
+  ADD KEY `id` (`id`);
 
 --
 -- Indexes for table `user_credits`
@@ -1479,6 +1578,24 @@ ALTER TABLE `customer_preferences`
 --
 ALTER TABLE `customer_tags`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `discussions`
+--
+ALTER TABLE `discussions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `discussion_messages`
+--
+ALTER TABLE `discussion_messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `discussion_participants`
+--
+ALTER TABLE `discussion_participants`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `employees`
@@ -1712,7 +1829,7 @@ ALTER TABLE `todos`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `user_credits`
@@ -1753,6 +1870,26 @@ ALTER TABLE `customer_preferences`
 --
 ALTER TABLE `customer_tags`
   ADD CONSTRAINT `customer_tags_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `discussions`
+--
+ALTER TABLE `discussions`
+  ADD CONSTRAINT `discussions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `discussion_messages`
+--
+ALTER TABLE `discussion_messages`
+  ADD CONSTRAINT `discussion_messages_ibfk_1` FOREIGN KEY (`discussion_id`) REFERENCES `discussions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `discussion_messages_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `discussion_messages_ibfk_3` FOREIGN KEY (`parent_id`) REFERENCES `discussion_messages` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `discussion_participants`
+--
+ALTER TABLE `discussion_participants`
+  ADD CONSTRAINT `discussion_participants_ibfk_1` FOREIGN KEY (`discussion_id`) REFERENCES `discussions` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `expenses`
