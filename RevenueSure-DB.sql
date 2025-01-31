@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 31, 2025 at 08:09 PM
+-- Generation Time: Jan 31, 2025 at 08:32 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -412,19 +412,20 @@ CREATE TABLE `knowledge_base_articles` (
   `title` varchar(255) NOT NULL,
   `content` text DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `visibility` enum('all','team','admin') DEFAULT 'all',
+  `visibility` enum('all','team','admin','draft') DEFAULT 'all',
   `access_level` enum('public','private') DEFAULT 'public',
   `user_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  `view_count` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `knowledge_base_articles`
 --
 
-INSERT INTO `knowledge_base_articles` (`id`, `title`, `content`, `category_id`, `visibility`, `access_level`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 'How to login', '<p>This is a demo article</p>', 2, 'team', 'public', 2, '2025-01-31 18:01:02', NULL);
+INSERT INTO `knowledge_base_articles` (`id`, `title`, `content`, `category_id`, `visibility`, `access_level`, `user_id`, `created_at`, `updated_at`, `view_count`) VALUES
+(1, 'How to login', '<p>This is a demo article</p>', 2, 'team', 'public', 2, '2025-01-31 18:01:02', '2025-01-31 19:30:43', 5);
 
 -- --------------------------------------------------------
 
