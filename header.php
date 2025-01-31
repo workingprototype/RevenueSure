@@ -239,6 +239,13 @@
                                          <a href="manage_departments.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_departments.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Manage Departments</a>
                                </div>
                        </div>
+                       <div class="menu-item <?php if (isParentActive('manage_expenses.php') || isParentActive('add_expense.php')) echo 'active'; ?>">
+                           <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-money-bill-wave mr-2"></i>Manage Expenses</a>
+                           <div class="submenu">
+                                <a href="manage_expenses.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_expenses.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Expenses</a>
+                                 <a href="add_expense.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_expense.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Record Expense</a>
+                           </div>
+                       </div>
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                          <a href="settings.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
 
