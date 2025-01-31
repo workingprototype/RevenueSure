@@ -277,10 +277,19 @@ require 'header.php';
                     <input type="date" name="end_date" id="end_date" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" value="<?php echo isset($_GET['end_date']) ? $_GET['end_date'] : '' ?>">
                     <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition duration-300 shadow-md uppercase tracking-wide">Filter</button>
                  </form>
-               <a href="manage_tickets.php" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition duration-300 shadow-md">Clear Filter</a>
-         </div>
+                 <?php if (!empty($filter_status) || !empty($filter_category) || !empty($filter_priority) || !empty($filter_assigned_to) || !empty($filter_start_date) || !empty($filter_end_date)): ?>
+    <a href="manage_tickets.php" class="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition duration-300 shadow-md">
+        CLEAR FILTER
+    </a>
+<?php endif; ?>
+                </div>
     </div>
-    <div class="mb-8 border border-gray-400 bg-gray-100 rounded-lg p-6">
+    <?php
+// Check if any filter is applied
+$filters_applied = !empty($filter_status) || !empty($filter_category) || !empty($filter_priority) || !empty($filter_assigned_to) || !empty($filter_start_date) || !empty($filter_end_date);
+?>
+    <?php if ($filters_applied): ?>
+    <div class="applied-filters mb-8 border border-gray-400 bg-gray-100 rounded-lg p-6">
       <h2 class="text-xl font-bold text-gray-800 mb-4 relative">
            Applied Filters
       </h2>
@@ -315,6 +324,7 @@ require 'header.php';
         <?php endif; ?>
     </ul>
     </div>
+    <?php endif; ?>
         <div class="mb-8 border border-gray-400 bg-gray-100 rounded-lg p-6">
           <?php
             switch ($view) {
