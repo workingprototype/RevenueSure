@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 31, 2025 at 10:31 PM
+-- Generation Time: Jan 31, 2025 at 10:57 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -188,6 +188,7 @@ CREATE TABLE `discussions` (
   `title` varchar(255) NOT NULL,
   `user_id` int(11) NOT NULL,
   `type` enum('internal','external') NOT NULL,
+  `status` enum('open','closed') NOT NULL DEFAULT 'open',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -195,9 +196,9 @@ CREATE TABLE `discussions` (
 -- Dumping data for table `discussions`
 --
 
-INSERT INTO `discussions` (`id`, `title`, `user_id`, `type`, `created_at`) VALUES
-(1, 'Initial Documentation Request', 2, 'internal', '2025-01-31 20:35:30'),
-(3, 'Legal Document Request', 2, 'external', '2025-01-31 21:10:19');
+INSERT INTO `discussions` (`id`, `title`, `user_id`, `type`, `status`, `created_at`) VALUES
+(1, 'Initial Documentation Request', 2, 'internal', 'closed', '2025-01-31 20:35:30'),
+(3, 'Legal Document Request', 2, 'external', 'open', '2025-01-31 21:10:19');
 
 -- --------------------------------------------------------
 
@@ -209,6 +210,7 @@ CREATE TABLE `discussion_messages` (
   `id` int(11) NOT NULL,
   `discussion_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `user_type` enum('user','employee','customer') NOT NULL DEFAULT 'user',
   `message` text NOT NULL,
   `sent_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `parent_id` int(11) DEFAULT NULL
@@ -218,10 +220,10 @@ CREATE TABLE `discussion_messages` (
 -- Dumping data for table `discussion_messages`
 --
 
-INSERT INTO `discussion_messages` (`id`, `discussion_id`, `user_id`, `message`, `sent_at`, `parent_id`) VALUES
-(1, 1, 2, 'Hi Jabbar,\r\nPlease provide the initial documentation for your repo?', '2025-01-31 20:35:30', NULL),
-(3, 3, 2, 'Hi Jabbar,\r\nPlease send your document', '2025-01-31 21:10:19', NULL),
-(4, 3, 5, 'Where should I send it?', '2025-01-31 21:27:46', 3);
+INSERT INTO `discussion_messages` (`id`, `discussion_id`, `user_id`, `user_type`, `message`, `sent_at`, `parent_id`) VALUES
+(1, 1, 2, 'user', 'Hi Jabbar,\r\nPlease provide the initial documentation for your repo?', '2025-01-31 20:35:30', NULL),
+(3, 3, 2, 'user', 'Hi Jabbar,\r\nPlease send your document', '2025-01-31 21:10:19', NULL),
+(4, 3, 5, 'user', 'Where should I send it?', '2025-01-31 21:27:46', 3);
 
 -- --------------------------------------------------------
 
