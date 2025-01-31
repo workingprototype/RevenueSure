@@ -242,11 +242,21 @@
                            <div class="submenu">
                                 <a href="manage_expenses.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_expenses.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Expenses</a>
                                  <a href="add_expense.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_expense.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Record Expense</a>
-                           </div>
+                        </div>
+                        
+                     
                        </div>
+                       <div class="menu-item <?php if(isParentActive('manage_knowledge_base.php') || isParentActive('add_knowledge_base_article.php') || isParentActive('view_knowledge_base_article.php')) echo 'active' ?>">
+                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-book mr-2"></i>Knowledge Base</a>
+                            <div class="submenu">
+                                  <a href="manage_knowledge_base.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i> View Articles</a>
+                                   <a href="add_knowledge_base_article.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_knowledge_base_article.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i> Add Article</a>
+                                        <a href="manage_knowledge_base_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base_categories.php') ? 'active' : ''; ?>"> <i class="fas fa-list-ul mr-2"></i>Manage Categories</a>
+                               </div>
+                        </div>
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                          <a href="settings.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
-
+                        
                     <?php endif; ?>
                      <a href="logout.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg mt-4"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
                 <?php else: ?>

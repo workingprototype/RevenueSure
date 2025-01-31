@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 31, 2025 at 04:11 AM
+-- Generation Time: Jan 31, 2025 at 07:08 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -202,6 +202,95 @@ INSERT INTO `employees` (`id`, `name`, `email`, `phone`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `expenses`
+--
+
+CREATE TABLE `expenses` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `expense_date` date NOT NULL,
+  `project_id` int(11) DEFAULT NULL,
+  `user_id` int(11) NOT NULL,
+  `invoice_id` int(11) DEFAULT NULL,
+  `payment_mode` enum('Cash','Credit Card','Bank Transfer','Online Payment','Check') DEFAULT 'Cash',
+  `transaction_nature` enum('Reimbursable','Business Expense','Personal Expense') DEFAULT 'Business Expense',
+  `receipt_path` varchar(255) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `approval_status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `expenses`
+--
+
+INSERT INTO `expenses` (`id`, `name`, `category_id`, `amount`, `expense_date`, `project_id`, `user_id`, `invoice_id`, `payment_mode`, `transaction_nature`, `receipt_path`, `notes`, `approval_status`, `created_at`) VALUES
+(1, 'AWS Bill', 1, 1220.00, '2025-01-29', 6, 2, 4, 'Credit Card', 'Reimbursable', NULL, 'AWS server bill racked up', 'Pending', '2025-01-31 04:19:55'),
+(2, 'Battery', 1, 10.00, '2025-01-16', NULL, 2, NULL, 'Cash', 'Business Expense', 'uploads/receipts/679c74f7303aa_360_F_176121489_0n5AF6Y7zVXVahgAv2q66OLv5Lf1FR15.jpg', 'Battery swap', 'Pending', '2025-01-31 07:00:07'),
+(3, 'Firmware Purchased', 2, 1304.00, '2025-01-28', NULL, 2, NULL, 'Online Payment', 'Personal Expense', 'uploads/receipts/679c764b97598_360_F_176121489_0n5AF6Y7zVXVahgAv2q66OLv5Lf1FR15.jpg', 'Purchased the hardware firmware', 'Pending', '2025-01-31 07:05:47');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `expense_approvals`
+--
+
+CREATE TABLE `expense_approvals` (
+  `id` int(11) NOT NULL,
+  `expense_id` int(11) NOT NULL,
+  `approver_id` int(11) NOT NULL,
+  `status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
+  `rejection_reason` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `expense_categories`
+--
+
+CREATE TABLE `expense_categories` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `expense_categories`
+--
+
+INSERT INTO `expense_categories` (`id`, `name`, `created_at`) VALUES
+(1, 'Server Costs', '2025-01-31 03:31:40'),
+(2, 'Software Purchases', '2025-01-31 03:57:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `expense_comments`
+--
+
+CREATE TABLE `expense_comments` (
+  `id` int(11) NOT NULL,
+  `expense_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `comment` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `expense_comments`
+--
+
+INSERT INTO `expense_comments` (`id`, `expense_id`, `user_id`, `comment`, `created_at`) VALUES
+(1, 3, 2, 'HMM', '2025-01-31 07:08:33'),
+(2, 3, 2, 'Nice', '2025-01-31 07:11:27');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `invoices`
 --
 
@@ -299,6 +388,136 @@ CREATE TABLE `invoice_settings` (
 
 INSERT INTO `invoice_settings` (`id`, `company_name`, `company_logo`, `company_tagline`, `company_address_line1`, `company_address_line2`, `company_phone_number`, `overdue_charge_type`, `overdue_charge_amount`, `overdue_charge_period`, `thank_you_message`, `user_id`, `created_at`) VALUES
 (1, 'RevenueSure', 'uploads/logo/679a05e10e149_DEMO-fin-change.png', 'Fo Sho', 'Building #5, Park Avenue Road', 'NY City', '+1 234-546-4554', 'percentage', 10.00, 'days', 'Thanks bro!', 2, '2025-01-29 10:41:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `knowledge_base_articles`
+--
+
+CREATE TABLE `knowledge_base_articles` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `content` text DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `visibility` enum('all','team','admin') DEFAULT 'all',
+  `user_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `knowledge_base_articles`
+--
+
+INSERT INTO `knowledge_base_articles` (`id`, `title`, `content`, `category_id`, `visibility`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 'How to login', '<p>This is a demo article</p>', 2, 'team', 2, '2025-01-31 18:01:02', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `knowledge_base_article_ratings`
+--
+
+CREATE TABLE `knowledge_base_article_ratings` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `article_id` int(11) NOT NULL,
+  `rating` enum('upvote','downvote') NOT NULL,
+  `comment` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `knowledge_base_article_ratings`
+--
+
+INSERT INTO `knowledge_base_article_ratings` (`id`, `user_id`, `article_id`, `rating`, `comment`, `created_at`) VALUES
+(1, 2, 1, 'upvote', '', '2025-01-31 18:01:08'),
+(2, 2, 1, 'upvote', '', '2025-01-31 18:01:10');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `knowledge_base_article_requests`
+--
+
+CREATE TABLE `knowledge_base_article_requests` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `request_type` enum('New Guide Needed','Existing Guide Needs Update','New FAQ Suggestion') NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `knowledge_base_article_tags`
+--
+
+CREATE TABLE `knowledge_base_article_tags` (
+  `id` int(11) NOT NULL,
+  `article_id` int(11) NOT NULL,
+  `tag` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `knowledge_base_article_versions`
+--
+
+CREATE TABLE `knowledge_base_article_versions` (
+  `id` int(11) NOT NULL,
+  `article_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `version` int(11) NOT NULL,
+  `content` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `knowledge_base_bookmarks`
+--
+
+CREATE TABLE `knowledge_base_bookmarks` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `article_id` int(11) NOT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `knowledge_base_bookmarks`
+--
+
+INSERT INTO `knowledge_base_bookmarks` (`id`, `user_id`, `article_id`, `notes`, `created_at`) VALUES
+(2, 2, 1, 'Nice', '2025-01-31 18:02:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `knowledge_base_categories`
+--
+
+CREATE TABLE `knowledge_base_categories` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `parent_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `knowledge_base_categories`
+--
+
+INSERT INTO `knowledge_base_categories` (`id`, `name`, `parent_id`, `created_at`) VALUES
+(1, 'Handbok', NULL, '2025-01-31 17:58:14'),
+(2, 'Server Guide', NULL, '2025-01-31 18:00:19');
 
 -- --------------------------------------------------------
 
@@ -892,6 +1111,38 @@ ALTER TABLE `employees`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `expenses`
+--
+ALTER TABLE `expenses`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `category_id` (`category_id`),
+  ADD KEY `project_id` (`project_id`),
+  ADD KEY `invoice_id` (`invoice_id`);
+
+--
+-- Indexes for table `expense_approvals`
+--
+ALTER TABLE `expense_approvals`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `expense_id` (`expense_id`),
+  ADD KEY `approver_id` (`approver_id`);
+
+--
+-- Indexes for table `expense_categories`
+--
+ALTER TABLE `expense_categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `expense_comments`
+--
+ALTER TABLE `expense_comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `expense_id` (`expense_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -912,6 +1163,58 @@ ALTER TABLE `invoice_items`
 ALTER TABLE `invoice_settings`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `knowledge_base_articles`
+--
+ALTER TABLE `knowledge_base_articles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `knowledge_base_article_ratings`
+--
+ALTER TABLE `knowledge_base_article_ratings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `article_id` (`article_id`);
+
+--
+-- Indexes for table `knowledge_base_article_requests`
+--
+ALTER TABLE `knowledge_base_article_requests`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `knowledge_base_article_tags`
+--
+ALTER TABLE `knowledge_base_article_tags`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `article_id` (`article_id`);
+
+--
+-- Indexes for table `knowledge_base_article_versions`
+--
+ALTER TABLE `knowledge_base_article_versions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `article_id` (`article_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `knowledge_base_bookmarks`
+--
+ALTER TABLE `knowledge_base_bookmarks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `article_id` (`article_id`);
+
+--
+-- Indexes for table `knowledge_base_categories`
+--
+ALTER TABLE `knowledge_base_categories`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parent_id` (`parent_id`);
 
 --
 -- Indexes for table `leads`
@@ -1145,6 +1448,30 @@ ALTER TABLE `employees`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `expenses`
+--
+ALTER TABLE `expenses`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `expense_approvals`
+--
+ALTER TABLE `expense_approvals`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `expense_categories`
+--
+ALTER TABLE `expense_categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `expense_comments`
+--
+ALTER TABLE `expense_comments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -1161,6 +1488,48 @@ ALTER TABLE `invoice_items`
 --
 ALTER TABLE `invoice_settings`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `knowledge_base_articles`
+--
+ALTER TABLE `knowledge_base_articles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `knowledge_base_article_ratings`
+--
+ALTER TABLE `knowledge_base_article_ratings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `knowledge_base_article_requests`
+--
+ALTER TABLE `knowledge_base_article_requests`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `knowledge_base_article_tags`
+--
+ALTER TABLE `knowledge_base_article_tags`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `knowledge_base_article_versions`
+--
+ALTER TABLE `knowledge_base_article_versions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `knowledge_base_bookmarks`
+--
+ALTER TABLE `knowledge_base_bookmarks`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `knowledge_base_categories`
+--
+ALTER TABLE `knowledge_base_categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `leads`
@@ -1341,6 +1710,29 @@ ALTER TABLE `customer_tags`
   ADD CONSTRAINT `customer_tags_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `expenses`
+--
+ALTER TABLE `expenses`
+  ADD CONSTRAINT `expenses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `expenses_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `expense_categories` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `expenses_ibfk_3` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `expenses_ibfk_4` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `expense_approvals`
+--
+ALTER TABLE `expense_approvals`
+  ADD CONSTRAINT `expense_approvals_ibfk_1` FOREIGN KEY (`expense_id`) REFERENCES `expenses` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `expense_approvals_ibfk_2` FOREIGN KEY (`approver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `expense_comments`
+--
+ALTER TABLE `expense_comments`
+  ADD CONSTRAINT `expense_comments_ibfk_1` FOREIGN KEY (`expense_id`) REFERENCES `expenses` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `expense_comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -1358,6 +1750,51 @@ ALTER TABLE `invoice_items`
 --
 ALTER TABLE `invoice_settings`
   ADD CONSTRAINT `invoice_settings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `knowledge_base_articles`
+--
+ALTER TABLE `knowledge_base_articles`
+  ADD CONSTRAINT `knowledge_base_articles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `knowledge_base_article_ratings`
+--
+ALTER TABLE `knowledge_base_article_ratings`
+  ADD CONSTRAINT `knowledge_base_article_ratings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `knowledge_base_article_ratings_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `knowledge_base_articles` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `knowledge_base_article_requests`
+--
+ALTER TABLE `knowledge_base_article_requests`
+  ADD CONSTRAINT `knowledge_base_article_requests_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `knowledge_base_article_tags`
+--
+ALTER TABLE `knowledge_base_article_tags`
+  ADD CONSTRAINT `knowledge_base_article_tags_ibfk_1` FOREIGN KEY (`article_id`) REFERENCES `knowledge_base_articles` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `knowledge_base_article_versions`
+--
+ALTER TABLE `knowledge_base_article_versions`
+  ADD CONSTRAINT `knowledge_base_article_versions_ibfk_1` FOREIGN KEY (`article_id`) REFERENCES `knowledge_base_articles` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `knowledge_base_article_versions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `knowledge_base_bookmarks`
+--
+ALTER TABLE `knowledge_base_bookmarks`
+  ADD CONSTRAINT `knowledge_base_bookmarks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `knowledge_base_bookmarks_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `knowledge_base_articles` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `knowledge_base_categories`
+--
+ALTER TABLE `knowledge_base_categories`
+  ADD CONSTRAINT `knowledge_base_categories_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `knowledge_base_categories` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `leads`

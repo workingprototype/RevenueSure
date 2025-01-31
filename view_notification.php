@@ -51,6 +51,12 @@ if ($notification) {
                 exit();
             }
               break;
+        case 'knowledge_base_article_update':
+              // Redirect to the knowledge base article
+               $related_id = $notification['related_id'];
+               header("Location: view_knowledge_base_article.php?id=$related_id");
+              exit();
+         break;
          default:
             header("Location: dashboard.php");
             break;
@@ -60,3 +66,4 @@ if ($notification) {
     header("Location: dashboard.php");
     exit();
 }
+?>
