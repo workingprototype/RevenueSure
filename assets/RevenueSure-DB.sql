@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 31, 2025 at 07:19 AM
+-- Generation Time: Jan 31, 2025 at 06:29 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -218,6 +218,7 @@ CREATE TABLE `expenses` (
   `transaction_nature` enum('Reimbursable','Business Expense','Personal Expense') DEFAULT 'Business Expense',
   `receipt_path` varchar(255) DEFAULT NULL,
   `notes` text DEFAULT NULL,
+  `approval_status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -225,8 +226,10 @@ CREATE TABLE `expenses` (
 -- Dumping data for table `expenses`
 --
 
-INSERT INTO `expenses` (`id`, `name`, `category_id`, `amount`, `expense_date`, `project_id`, `user_id`, `invoice_id`, `payment_mode`, `transaction_nature`, `receipt_path`, `notes`, `created_at`) VALUES
-(1, 'AWS Bill', 1, 1220.00, '2025-01-29', 6, 2, 4, 'Credit Card', 'Reimbursable', NULL, 'AWS server bill racked up', '2025-01-31 04:19:55');
+INSERT INTO `expenses` (`id`, `name`, `category_id`, `amount`, `expense_date`, `project_id`, `user_id`, `invoice_id`, `payment_mode`, `transaction_nature`, `receipt_path`, `notes`, `approval_status`, `created_at`) VALUES
+(1, 'AWS Bill', 1, 1220.00, '2025-01-29', 6, 2, 4, 'Credit Card', 'Reimbursable', NULL, 'AWS server bill racked up', 'Pending', '2025-01-31 04:19:55'),
+(2, 'Battery', 1, 10.00, '2025-01-16', NULL, 2, NULL, 'Cash', 'Business Expense', 'uploads/receipts/679c74f7303aa_360_F_176121489_0n5AF6Y7zVXVahgAv2q66OLv5Lf1FR15.jpg', 'Battery swap', 'Pending', '2025-01-31 07:00:07'),
+(3, 'Firmware Purchased', 2, 1304.00, '2025-01-28', NULL, 2, NULL, 'Online Payment', 'Personal Expense', 'uploads/receipts/679c764b97598_360_F_176121489_0n5AF6Y7zVXVahgAv2q66OLv5Lf1FR15.jpg', 'Purchased the hardware firmware', 'Pending', '2025-01-31 07:05:47');
 
 -- --------------------------------------------------------
 
@@ -262,6 +265,28 @@ CREATE TABLE `expense_categories` (
 INSERT INTO `expense_categories` (`id`, `name`, `created_at`) VALUES
 (1, 'Server Costs', '2025-01-31 03:31:40'),
 (2, 'Software Purchases', '2025-01-31 03:57:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `expense_comments`
+--
+
+CREATE TABLE `expense_comments` (
+  `id` int(11) NOT NULL,
+  `expense_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `comment` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `expense_comments`
+--
+
+INSERT INTO `expense_comments` (`id`, `expense_id`, `user_id`, `comment`, `created_at`) VALUES
+(1, 3, 2, 'HMM', '2025-01-31 07:08:33'),
+(2, 3, 2, 'Nice', '2025-01-31 07:11:27');
 
 -- --------------------------------------------------------
 
@@ -980,6 +1005,14 @@ ALTER TABLE `expense_categories`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `expense_comments`
+--
+ALTER TABLE `expense_comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `expense_id` (`expense_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -1236,7 +1269,7 @@ ALTER TABLE `employees`
 -- AUTO_INCREMENT for table `expenses`
 --
 ALTER TABLE `expenses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `expense_approvals`
@@ -1249,6 +1282,12 @@ ALTER TABLE `expense_approvals`
 --
 ALTER TABLE `expense_categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `expense_comments`
+--
+ALTER TABLE `expense_comments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `invoices`
@@ -1461,6 +1500,13 @@ ALTER TABLE `expenses`
 ALTER TABLE `expense_approvals`
   ADD CONSTRAINT `expense_approvals_ibfk_1` FOREIGN KEY (`expense_id`) REFERENCES `expenses` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `expense_approvals_ibfk_2` FOREIGN KEY (`approver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `expense_comments`
+--
+ALTER TABLE `expense_comments`
+  ADD CONSTRAINT `expense_comments_ibfk_1` FOREIGN KEY (`expense_id`) REFERENCES `expenses` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `expense_comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `invoices`
