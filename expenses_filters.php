@@ -63,5 +63,12 @@
                          <input type="date" name="end_date" id="end_date" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="End Date" value="<?php echo isset($_GET['end_date']) ? $_GET['end_date'] : '' ?>">
                        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition duration-300 shadow-md">Filter</button>
                  </form>
-                 <a href="manage_expenses.php" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition duration-300 shadow-md">Clear Filter</a>
-           </div>
+                 <?php
+$hasFilters = !empty($_GET['search']) || !empty($_GET['category_id']) || !empty($_GET['user_id']) || !empty($_GET['project_id']) || !empty($_GET['invoice_id']) || !empty($_GET['payment_mode']) || !empty($_GET['transaction_nature']) || !empty($_GET['start_date']) || !empty($_GET['end_date']);
+?>
+                 <?php if ($hasFilters): ?>
+        <a href="manage_expenses.php" class="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition duration-300 shadow-md">
+            <i class="fas fa-times-circle mr-2"></i> Clear Filters
+        </a>
+    <?php endif; ?>
+                </div>
