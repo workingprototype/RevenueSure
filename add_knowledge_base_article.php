@@ -112,7 +112,7 @@ require 'header.php';
                </div>
             <div class="mb-4">
               <label for="content" class="block text-gray-700">Content</label>
-               <textarea name="content" id="content" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+               <textarea name="content" id="content" class="w-full px-4 py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
             </div>
             <div class="mb-4">
                 <label for="category_id" class="block text-gray-700">Category</label>

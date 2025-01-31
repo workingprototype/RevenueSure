@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 31, 2025 at 08:32 PM
+-- Generation Time: Jan 31, 2025 at 09:19 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -425,7 +425,7 @@ CREATE TABLE `knowledge_base_articles` (
 --
 
 INSERT INTO `knowledge_base_articles` (`id`, `title`, `content`, `category_id`, `visibility`, `access_level`, `user_id`, `created_at`, `updated_at`, `view_count`) VALUES
-(1, 'How to login', '<p>This is a demo article</p>', 2, 'team', 'public', 2, '2025-01-31 18:01:02', '2025-01-31 19:30:43', 5);
+(1, 'How to login', '<p>This is a demo article</p>', 2, 'team', 'public', 2, '2025-01-31 18:01:02', '2025-01-31 19:46:40', 16);
 
 -- --------------------------------------------------------
 
@@ -463,6 +463,13 @@ CREATE TABLE `knowledge_base_article_requests` (
   `description` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `knowledge_base_article_requests`
+--
+
+INSERT INTO `knowledge_base_article_requests` (`id`, `user_id`, `request_type`, `description`, `created_at`) VALUES
+(1, 2, 'New Guide Needed', 'Need a new guide on the EC2 instance creation', '2025-01-31 19:41:34');
 
 -- --------------------------------------------------------
 
@@ -1543,7 +1550,7 @@ ALTER TABLE `knowledge_base_article_ratings`
 -- AUTO_INCREMENT for table `knowledge_base_article_requests`
 --
 ALTER TABLE `knowledge_base_article_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `knowledge_base_article_tags`

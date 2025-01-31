@@ -329,12 +329,13 @@
                                </div>
                         </div>
                           <div class="menu-item <?php if (isParentActive('manage_knowledge_base.php') || isParentActive('add_knowledge_base_article.php') || isParentActive('view_knowledge_base_article.php')) echo 'active'; ?>">
-                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-book mr-2"></i>Knowledge Base</a>
+                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-book mr-2"></i>Knowledge Base ( KB ) </a>
                             <div class="submenu">
                                  <a href="manage_knowledge_base.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i> View Articles</a>
                                     <a href="add_knowledge_base_article.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_knowledge_base_article.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i> Add Article</a>
-                                      <a href="manage_knowledge_base_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base_categories.php') ? 'active' : ''; ?>"> <i class="fas fa-list-alt mr-2"></i>Manage Categories</a>
-                               </div>
+                                      <a href="manage_knowledge_base_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base_categories.php') ? 'active' : ''; ?>"> <i class="fas fa-list-alt mr-2"></i>Manage KB Categories</a>
+                                      <a href="manage_knowledge_base_requests.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base_requests.php') ? 'active' : ''; ?>"> <i class="fas fa-list-alt mr-2"></i>Knowledge Base Requests</a>
+                                    </div>
                         </div>
                        <div class="menu-item <?php if (isParentActive('manage_expenses.php') || isParentActive('add_expense.php')) echo 'active'; ?>">
                          <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-money-bill-wave mr-2"></i>Manage Expenses</a>
