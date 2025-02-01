@@ -40,11 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['toggle_status'])) {
             $stmt->bindParam(':status', $newStatus);
            if($stmt->execute()){
               //log action for audit
-              $stmt = $conn->prepare("INSERT INTO contract_audit_trail (contract_id, user_id, action) VALUES (:contract_id, :user_id, :action)");
+             $stmt = $conn->prepare("INSERT INTO contract_audit_trail (contract_id, user_id, action) VALUES (:contract_id, :user_id, :action)");
              $stmt->bindParam(':contract_id', $contract_id);
-             $stmt->bindParam(':user_id', $_SESSION['user_id']);
+               $stmt->bindParam(':user_id', $_SESSION['user_id']);
               $stmt->bindParam(':action', 'Contract status changed to '. $newStatus);
-           $stmt->execute();
+            $stmt->execute();
 
               header("Location: view_contract.php?id=$contract_id&success=true");
               exit();
@@ -69,23 +69,22 @@ $audit_trail = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // Add comment handling
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comment'])) {
         $comment = trim($_POST['comment']);
-        if (!empty($comment)) {
+         if (!empty($comment)) {
         //log action for audit
-          $stmt = $conn->prepare("INSERT INTO contract_audit_trail (contract_id, user_id, action, details) VALUES (:contract_id, :user_id, 'Added comment', :comment)");
-          $stmt->bindParam(':contract_id', $contract_id);
-          $stmt->bindParam(':user_id', $_SESSION['user_id']);
-           $stmt->bindParam(':comment', $comment);
-        $stmt->execute();
+            $stmt = $conn->prepare("INSERT INTO contract_audit_trail (contract_id, user_id, action, details) VALUES (:contract_id, :user_id, 'Added comment', :comment)");
+            $stmt->bindParam(':contract_id', $contract_id);
+           $stmt->bindParam(':user_id', $_SESSION['user_id']);
+            $stmt->bindParam(':comment', $comment);
+            $stmt->execute();
 
            $success = "Comment added successfully!";
-            header("Location: view_contract.php?id=$contract_id&success=true");
-            exit();
+           header("Location: view_contract.php?id=$contract_id&success=true");
+               exit();
+         } else {
+                $error = "Comment cannot be empty";
+         }
 
-        } else {
-            $error = "Comment cannot be empty";
-        }
     }
-
 // Include header
 require 'header.php';
 ?>
@@ -114,7 +113,7 @@ require 'header.php';
                              <?php if ($contract['end_date']): ?>
                                    <p class="text-gray-700 mb-2"><strong>End Date:</strong> <?php echo htmlspecialchars($contract['end_date']); ?></p>
                              <?php endif; ?>
-                              <p class="text-gray-700 mb-2"><strong>Status:</strong> <?php echo htmlspecialchars($status); ?></p>
+                               <p class="text-gray-700 mb-2"><strong>Status:</strong> <?php echo htmlspecialchars($status); ?></p>
                  </div>
                    <div>
                     <h2 class="text-xl font-bold text-gray-800 mb-4">Description</h2>
@@ -126,14 +125,14 @@ require 'header.php';
                          <div class="mt-6">
                                   <form method="post" action="">
                                       <label for="status" class="block text-gray-700">Set Status:</label>
-                                       <select name="status" id="status" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none">
-                                           <option value="Draft" <?php if ($status == 'Draft') echo 'selected' ?>>Draft</option>
-                                           <option value="Sent" <?php if ($status == 'Sent') echo 'selected' ?>>Sent</option>
-                                             <option value="Active" <?php if ($status == 'Active') echo 'selected' ?>>Active</option>
+                                         <select name="status" id="status" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 appearance-none">
+                                            <option value="Draft" <?php if ($status == 'Draft') echo 'selected' ?>>Draft</option>
+                                                <option value="Sent" <?php if ($status == 'Sent') echo 'selected' ?>>Sent</option>
+                                              <option value="Active" <?php if ($status == 'Active') echo 'selected' ?>>Active</option>
                                               <option value="Expired" <?php if ($status == 'Expired') echo 'selected' ?>>Expired</option>
-                                               <option value="Canceled" <?php if ($status == 'Canceled') echo 'selected' ?>>Canceled</option>
+                                             <option value="Canceled" <?php if ($status == 'Canceled') echo 'selected' ?>>Canceled</option>
                                        </select>
-                                     <button type="submit" name="toggle_status" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-4"> Update Status </button>
+                                        <button type="submit" name="toggle_status" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-4"> Update Status </button>
                                   </form>
                          </div>
                     <?php endif; ?>
@@ -180,48 +179,52 @@ require 'header.php';
          <?php if($audit_trail): ?>
              <div class="bg-white p-6 rounded-lg shadow-md mb-8">
                  <h2 class="text-xl font-bold text-gray-800 mb-4">Audit Trail</h2>
-                   <ul>
+                     <ul>
                         <?php foreach ($audit_trail as $log): ?>
                            <li class="mb-2">
-                             <p class="text-gray-700">
-                                  <strong><?php echo htmlspecialchars($log['username'] ? $log['username'] : 'System') ?>: </strong>
-                                     <?php echo htmlspecialchars($log['action']); ?>
-                               </p>
-                              <div class="pl-8 text-sm">
-                                   <?php if ($log['ip_address']) :?>
-                                      <p><strong>IP:</strong> <?php echo htmlspecialchars($log['ip_address']); ?> </p>
-                                      <?php endif; ?>
-                                   <?php if ($log['geolocation_data']) :
-                                             $geo_data = json_decode($log['geolocation_data'], true);
-                                                if($geo_data): ?>
-                                               <p> <strong>Location:</strong> <?php echo htmlspecialchars($geo_data['city']) . ", " . htmlspecialchars($geo_data['region']). ", " . htmlspecialchars($geo_data['country']); ?> </p>
-                                       <?php endif; ?>
-                                   <?php endif; ?>
-                                      <?php if ($log['timezone']) :?>
-                                         <p><strong>Timezone:</strong> <?php echo htmlspecialchars($log['timezone']); ?> </p>
+                                <p class="text-gray-700">
+                                     <strong><?php echo htmlspecialchars($log['username'] ? $log['username'] : 'System'); ?>: </strong>
+                                      <?php echo htmlspecialchars($log['action']); ?>
+                                   </p>
+                                  <?php if(!empty($log['details'])): ?>
+                                        <blockquote class="bg-gray-50 p-2 border-l-4 border-gray-200 ml-8 text-sm"><?php echo nl2br(htmlspecialchars($log['details'])); ?></blockquote>
                                      <?php endif; ?>
-                                    <?php if ($log['device_info']) :
-                                        $device_info = json_decode($log['device_info'], true);
-                                           if($device_info): ?>
-                                                 <p><strong>Device:</strong> <?php echo htmlspecialchars($device_info['browser']); ?> - <?php echo htmlspecialchars($device_info['os']); ?></p>
-                                            <?php endif; ?>
-                                    <?php endif; ?>
-                                     <?php if(!empty($log['details'])): ?>
-                                       <blockquote class="bg-gray-50 p-2 border-l-4 border-gray-200  text-sm"><?php echo nl2br(htmlspecialchars($log['details'])); ?></blockquote>
-                                    <?php endif; ?>
-                                   <p class="text-gray-500">  <?php echo htmlspecialchars(date('Y-m-d H:i', strtotime($log['created_at']))); ?></p>
-                              </div>
-                           </li>
-                      <?php endforeach; ?>
+                                   <?php if ($log['ip_address']) :?>
+                                      <p class="pl-8 text-sm"><strong>IP:</strong> <?php echo htmlspecialchars($log['ip_address']); ?> </p>
+                                     <?php endif; ?>
+                                  <?php if ($log['geolocation_data']) :
+                                        $geo_data = json_decode($log['geolocation_data'], true);
+                                          if($geo_data): ?>
+                                            <p class="pl-8 text-sm"><strong>Location:</strong> <?php echo htmlspecialchars($geo_data['city']) . ", " . htmlspecialchars($geo_data['region']). ", " . htmlspecialchars($geo_data['country']); ?> </p>
+                                        <?php endif; ?>
+                                  <?php endif; ?>
+                                    <?php if ($log['timezone']) :?>
+                                        <p class="pl-8 text-sm"><strong>Timezone:</strong> <?php echo htmlspecialchars($log['timezone']); ?> </p>
+                                      <?php endif; ?>
+                                   <?php if ($log['device_info']) :
+                                     $device_info = json_decode($log['device_info'], true);
+                                        if($device_info): ?>
+                                            <p class="pl-8 text-sm"><strong>Device:</strong> <?php echo htmlspecialchars($device_info['browser']); ?> - <?php echo htmlspecialchars($device_info['os']); ?></p>
+                                         <?php endif; ?>
+                                   <?php endif; ?>
+                                     <p class="text-gray-500 text-xs pl-8">  <?php echo htmlspecialchars(date('Y-m-d H:i', strtotime($log['created_at']))); ?></p>
+                             </li>
+                           <?php endforeach; ?>
                     <?php else: ?>
-                         <p class="text-gray-600">No audit logs.</p>
-                   <?php endif; ?>
-            </ul>
-    </div>
+                           <p class="text-gray-600">No audit logs.</p>
+                     <?php endif; ?>
+                </ul>
+               <!-- Add Comment -->
+              <form method="POST" action="" class="mt-4">
+                    <input type="text" name="comment" id="comment" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Add a comment" >
+                   <button type="submit" name="add_comment" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-2">Add Comment</button>
+                </form>
+         </div>
+
         <div class="mt-4 flex justify-center">
           <a href="manage_contracts.php" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300">Back to Contracts</a>
             <a href="edit_contract.php?id=<?php echo $contract['id']; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Contract</a>
-        </div>
+       </div>
  </div>
   <style>
        .contract-content * {
@@ -231,32 +234,31 @@ require 'header.php';
       }
         .contract-content h1 {font-size: 2.5rem; }
       .contract-content h2{
-        font-size: 2rem;
-        }
-      .contract-content h3{
-         font-size: 1.75rem
-       }
-        .contract-content h4{
-           font-size: 1.5rem;
-        }
-         .contract-content h5{
-             font-size: 1.25rem;
+                font-size: 2rem;
+                }
+             .contract-content h3{
+                font-size: 1.75rem;
              }
-            .contract-content h6{
-                font-size: 1.1rem;
-            }
+               .contract-content h4{
+                 font-size: 1.5rem;
+              }
+              .contract-content h5{
+                 font-size: 1.25rem;
+             }
+               .contract-content h6{
+                   font-size: 1.1rem;
+               }
        .contract-content table { border-collapse: collapse; width: 100%; margin-bottom: 15px;}
        .contract-content table, .contract-content th, .contract-content td {border: 1px solid #ddd; padding: 8px;}
       .contract-content blockquote {
          margin: 20px 0;
-        padding: 15px 20px;
-          border-left: 4px solid #c0c0c0;
-          font-style: italic;
-            color: #555;
-            background-color: #fafafa;
-      }
+         padding: 15px 20px;
+           border-left: 4px solid #c0c0c0;
+            font-style: italic;
+              color: #555;
+                 background-color: #fafafa;
+         }
   </style>
-
 <?php
 // Include footer
 require 'footer.php';
