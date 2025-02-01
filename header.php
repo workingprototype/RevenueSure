@@ -145,7 +145,7 @@
                 .top-nav-dropdown a:hover{
                    background: #f2f2f2;
                  }
-                 .paper-doc {
+                  .paper-doc {
             font-family: 'Georgia', serif;
             max-width: 800px;
             margin: 20px auto;
@@ -280,7 +280,7 @@
                                <div class="submenu">
                                   <a href="add_customer.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_customer.php') ? 'active' : ''; ?>"> <i class="fas fa-plus mr-2"></i> Add Customer</a>
                                      <a href="manage_customers.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_customers.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Customers</a>
-                                       <a href="view_customer.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isParentActive('view_customer.php') ? 'active' : ''; ?>"><i class="fas fa-eye mr-2"></i>Customer Profile</a>
+                                     <a href="view_customer.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isParentActive('view_customer.php') ? 'active' : ''; ?>"><i class="fas fa-eye mr-2"></i>Customer Profile</a>
                                 </div>
                         </div>
                          <div class="menu-item <?php if (isParentActive('add_employee.php') || isParentActive('manage_employees.php')) echo 'active'; ?>">
@@ -297,54 +297,62 @@
                                    <a href="add_category.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_category.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Category</a>
                                </div>
                         </div>
-                           <div class="menu-item <?php if (isParentActive('manage_invoices.php') || isParentActive('add_invoice.php')) echo 'active'; ?>">
+                           <div class="menu-item <?php if (isParentActive('manage_invoices.php') || isParentActive('add_invoice.php') || isParentActive('view_invoice.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-file-invoice-dollar mr-2"></i>Manage Invoices</a>
                             <div class="submenu">
                                 <a href="manage_invoices.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_invoices.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Invoices</a>
                                 <a href="add_invoice.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_invoice.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Invoice</a>
+                                 <a href="view_invoice.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isParentActive('view_invoice.php') ? 'active' : ''; ?>"><i class="fas fa-eye mr-2"></i>Invoice Details</a>
                             </div>
                         </div>
-                         <div class="menu-item <?php if (isParentActive('manage_projects.php') || isParentActive('add_project.php') || isParentActive('view_project.php') || isParentActive('manage_project_categories.php')) echo 'active'; ?>">
-                            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Manage Projects</a>
+                            <div class="menu-item <?php if (isParentActive('manage_projects.php') || isParentActive('add_project.php') || isParentActive('view_project.php') || isParentActive('manage_project_categories.php')) echo 'active'; ?>">
+                               <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Manage Projects</a>
                             <div class="submenu">
                                 <a href="manage_projects.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_projects.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Projects</a>
-                                <a href="manage_discussions.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_discussions.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Discussions</a>
+                                    <a href="manage_discussions.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_discussions.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Discussions</a>
                                  <a href="add_project.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_project.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Project</a>
-                                    <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
+                                      <a href="manage_project_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_project_categories.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
                             </div>
-                         </div>
+                        </div>
                        <div class="menu-item <?php if (isParentActive('manage_tickets.php') || isParentActive('add_ticket.php') || isParentActive('view_ticket.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-ticket-alt mr-2"></i>Manage Tickets</a>
                             <div class="submenu">
                                 <a href="manage_tickets.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_tickets.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Tickets</a>
                                     <a href="add_ticket.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_ticket.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Ticket</a>
-                                </div>
+                            </div>
                         </div>
-                     <div class="menu-item <?php if (isParentActive('manage_teams.php') || isParentActive('add_team_member.php') || isParentActive('manage_roles.php') || isParentActive('manage_departments.php')) echo 'active'; ?>">
+                      <div class="menu-item <?php if (isParentActive('manage_teams.php') || isParentActive('add_team_member.php') || isParentActive('manage_roles.php') || isParentActive('manage_departments.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-users-cog mr-2"></i>Manage Team</a>
                             <div class="submenu">
                                   <a href="manage_teams.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_teams.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Team</a>
-                                    <a href="add_team_member.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_team_member.php') ? 'active' : ''; ?>"><i class="fas fa-user-plus mr-2"></i>Add Team Member</a>
-                                     <a href="manage_roles.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_roles.php') ? 'active' : ''; ?>"><i class="fas fa-user-tag mr-2"></i>Manage Roles</a>
-                                        <a href="manage_departments.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_departments.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Manage Departments</a>
+                                  <a href="add_team_member.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_team_member.php') ? 'active' : ''; ?>"><i class="fas fa-user-plus mr-2"></i>Add Team Member</a>
+                                  <a href="manage_roles.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_roles.php') ? 'active' : ''; ?>"><i class="fas fa-user-tag mr-2"></i>Manage Roles</a>
+                                    <a href="manage_departments.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_departments.php') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Manage Departments</a>
                                </div>
                         </div>
-                          <div class="menu-item <?php if (isParentActive('manage_knowledge_base.php') || isParentActive('add_knowledge_base_article.php') || isParentActive('view_knowledge_base_article.php')) echo 'active'; ?>">
+                         <div class="menu-item <?php if (isParentActive('manage_knowledge_base.php') || isParentActive('add_knowledge_base_article.php') || isParentActive('view_knowledge_base_article.php')) echo 'active'; ?>">
                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-book mr-2"></i>Knowledge Base ( KB ) </a>
                             <div class="submenu">
                                  <a href="manage_knowledge_base.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i> View Articles</a>
                                     <a href="add_knowledge_base_article.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_knowledge_base_article.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i> Add Article</a>
                                       <a href="manage_knowledge_base_categories.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base_categories.php') ? 'active' : ''; ?>"> <i class="fas fa-list-alt mr-2"></i>Manage KB Categories</a>
-                                      <a href="manage_knowledge_base_requests.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base_requests.php') ? 'active' : ''; ?>"> <i class="fas fa-list-alt mr-2"></i>Knowledge Base Requests</a>
-                                    </div>
-                        </div>
-                       <div class="menu-item <?php if (isParentActive('manage_expenses.php') || isParentActive('add_expense.php')) echo 'active'; ?>">
-                         <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-money-bill-wave mr-2"></i>Manage Expenses</a>
-                        <div class="submenu">
+                                    <a href="manage_knowledge_base_requests.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_knowledge_base_requests.php') ? 'active' : ''; ?>"> <i class="fas fa-list-alt mr-2"></i>Knowledge Base Requests</a>
+                                </div>
+                         </div>
+                           <div class="menu-item <?php if (isParentActive('manage_expenses.php') || isParentActive('add_expense.php')) echo 'active'; ?>">
+                             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-money-bill-wave mr-2"></i>Manage Expenses</a>
+                            <div class="submenu">
                                 <a href="manage_expenses.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_expenses.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Expenses</a>
-                                  <a href="add_expense.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_expense.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Record Expense</a>
+                                   <a href="add_expense.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_expense.php') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Record Expense</a>
                             </div>
                       </div>
+                            <div class="menu-item <?php if (isParentActive('manage_contracts.php') || isParentActive('add_contract.php')) echo 'active'; ?>">
+                                   <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-file-contract mr-2"></i>Manage Contracts</a>
+                                 <div class="submenu">
+                                        <a href="manage_contracts.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('manage_contracts.php') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Contracts</a>
+                                       <a href="add_contract.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('add_contract.php') ? 'active' : ''; ?>"> <i class="fas fa-plus mr-2"></i> Create Contract</a>
+                                 </div>
+                           </div>
                          <a href="reporting_dashboard.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reporting_dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                         <a href="settings.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
                     <?php endif; ?>
@@ -353,7 +361,7 @@
                    <a href="login.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg"><i class="fas fa-sign-in-alt mr-2"></i>Login</a>
                      <a href="register.php" class="block py-2 px-4 hover:bg-gray-200 rounded-lg"><i class="fas fa-user-plus mr-2"></i>Register</a>
                  <?php endif; ?>
-             </nav>
+            </nav>
         </aside>
 
         <!-- Main Content -->

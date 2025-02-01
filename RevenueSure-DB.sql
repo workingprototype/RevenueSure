@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 01, 2025 at 06:48 AM
+-- Generation Time: Feb 01, 2025 at 02:33 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -62,6 +62,135 @@ CREATE TABLE `categories` (
 INSERT INTO `categories` (`id`, `name`, `created_at`) VALUES
 (1, 'IT', '2025-01-26 06:52:51'),
 (2, 'Restaurants', '2025-01-26 06:53:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contracts`
+--
+
+CREATE TABLE `contracts` (
+  `id` int(11) NOT NULL,
+  `project_id` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `subject` varchar(255) NOT NULL,
+  `contract_value` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `contract_type` varchar(100) DEFAULT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `hide_from_customer` tinyint(1) DEFAULT 0,
+  `contract_text` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `contracts`
+--
+
+INSERT INTO `contracts` (`id`, `project_id`, `customer_id`, `subject`, `contract_value`, `contract_type`, `start_date`, `end_date`, `description`, `hide_from_customer`, `contract_text`, `created_at`, `updated_at`) VALUES
+(1, 6, 1, 'Bridge Development', 1304.00, 'Legal', '2025-02-01', '2025-02-06', 'Development Contract for the bridge', 0, '<p>TEST Contract Text</p>', '2025-02-01 12:14:36', NULL),
+(2, NULL, 2, 'Tower Development', 1300.00, 'Legal', '2025-01-01', '2025-03-15', 'Legal contract for the tower development', 0, '<p><strong>This Infrastructure Development Agreement</strong> (the “Agreement”) is made on this [Date], by and between:</p><p><strong>1. [Client Name/Company Name]</strong>, a company incorporated under the laws of [Country/State], having its principal office at [Address] (hereinafter referred to as “Client”),<br>AND<br><strong>2. [Contractor Name/Company Name]</strong>, a company incorporated under the laws of [Country/State], having its principal office at [Address] (hereinafter referred to as “Contractor”).</p>', '2025-02-01 12:27:30', '2025-02-01 13:22:38');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contract_audit_trail`
+--
+
+CREATE TABLE `contract_audit_trail` (
+  `id` int(11) NOT NULL,
+  `contract_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `action` varchar(255) NOT NULL,
+  `details` text DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `geolocation_data` text DEFAULT NULL,
+  `timezone` varchar(50) DEFAULT NULL,
+  `device_info` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `contract_audit_trail`
+--
+
+INSERT INTO `contract_audit_trail` (`id`, `contract_id`, `user_id`, `action`, `details`, `ip_address`, `geolocation_data`, `timezone`, `device_info`, `created_at`) VALUES
+(1, 2, 5, 'Signature Added', NULL, NULL, NULL, NULL, NULL, '2025-02-01 12:34:42'),
+(2, 2, 5, 'Signature Added', NULL, NULL, NULL, NULL, NULL, '2025-02-01 12:35:14'),
+(3, 2, 5, 'Added comment', 'Great', NULL, NULL, NULL, NULL, '2025-02-01 12:39:32'),
+(4, 2, 5, 'Signature Added', NULL, '::1', '[]', 'Europe/Berlin', '{\"browser\":\"Safari\",\"os\":\"Mac\"}', '2025-02-01 12:40:10'),
+(5, 2, 5, 'Contract Updated', NULL, NULL, NULL, NULL, NULL, '2025-02-01 12:50:13'),
+(6, 2, 5, 'Contract Updated', NULL, NULL, NULL, NULL, NULL, '2025-02-01 12:50:27'),
+(7, 2, 5, 'Contract Updated', NULL, NULL, NULL, NULL, NULL, '2025-02-01 13:22:38');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contract_signatures`
+--
+
+CREATE TABLE `contract_signatures` (
+  `id` int(11) NOT NULL,
+  `contract_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `signature_data` text DEFAULT NULL,
+  `signed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contract_status`
+--
+
+CREATE TABLE `contract_status` (
+  `id` int(11) NOT NULL,
+  `contract_id` int(11) NOT NULL,
+  `status` enum('Draft','Sent','Signed','Active','Expired','Canceled') NOT NULL DEFAULT 'Draft',
+  `status_changed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `contract_status`
+--
+
+INSERT INTO `contract_status` (`id`, `contract_id`, `status`, `status_changed_at`) VALUES
+(1, 1, 'Draft', '2025-02-01 12:14:36'),
+(2, 1, 'Sent', '2025-02-01 12:23:24'),
+(3, 1, 'Active', '2025-02-01 12:23:27'),
+(4, 1, 'Sent', '2025-02-01 12:23:31'),
+(5, 1, 'Draft', '2025-02-01 12:23:33'),
+(6, 1, 'Sent', '2025-02-01 12:23:35'),
+(7, 1, 'Active', '2025-02-01 12:23:42'),
+(8, 1, 'Draft', '2025-02-01 12:26:04'),
+(9, 1, 'Active', '2025-02-01 12:26:08'),
+(10, 2, 'Draft', '2025-02-01 12:27:30'),
+(11, 2, 'Active', '2025-02-01 12:28:34'),
+(12, 2, 'Active', '2025-02-01 12:30:25'),
+(13, 2, 'Active', '2025-02-01 12:34:42'),
+(14, 2, 'Active', '2025-02-01 12:35:14'),
+(15, 2, 'Active', '2025-02-01 12:40:10');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contract_types`
+--
+
+CREATE TABLE `contract_types` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `contract_types`
+--
+
+INSERT INTO `contract_types` (`id`, `name`, `created_at`) VALUES
+(1, 'Legal', '2025-02-01 07:54:34');
 
 -- --------------------------------------------------------
 
@@ -1193,6 +1322,44 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `contracts`
+--
+ALTER TABLE `contracts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `project_id` (`project_id`),
+  ADD KEY `customer_id` (`customer_id`);
+
+--
+-- Indexes for table `contract_audit_trail`
+--
+ALTER TABLE `contract_audit_trail`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contract_id` (`contract_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `contract_signatures`
+--
+ALTER TABLE `contract_signatures`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contract_id` (`contract_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `contract_status`
+--
+ALTER TABLE `contract_status`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contract_id` (`contract_id`);
+
+--
+-- Indexes for table `contract_types`
+--
+ALTER TABLE `contract_types`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
 -- Indexes for table `customers`
 --
 ALTER TABLE `customers`
@@ -1575,6 +1742,36 @@ ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `contracts`
+--
+ALTER TABLE `contracts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `contract_audit_trail`
+--
+ALTER TABLE `contract_audit_trail`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `contract_signatures`
+--
+ALTER TABLE `contract_signatures`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `contract_status`
+--
+ALTER TABLE `contract_status`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `contract_types`
+--
+ALTER TABLE `contract_types`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
@@ -1877,6 +2074,33 @@ ALTER TABLE `user_credits`
 --
 ALTER TABLE `attachments`
   ADD CONSTRAINT `attachments_ibfk_1` FOREIGN KEY (`lead_id`) REFERENCES `leads` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `contracts`
+--
+ALTER TABLE `contracts`
+  ADD CONSTRAINT `contracts_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `contracts_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `contract_audit_trail`
+--
+ALTER TABLE `contract_audit_trail`
+  ADD CONSTRAINT `contract_audit_trail_ibfk_1` FOREIGN KEY (`contract_id`) REFERENCES `contracts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `contract_audit_trail_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `contract_signatures`
+--
+ALTER TABLE `contract_signatures`
+  ADD CONSTRAINT `contract_signatures_ibfk_1` FOREIGN KEY (`contract_id`) REFERENCES `contracts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `contract_signatures_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `contract_status`
+--
+ALTER TABLE `contract_status`
+  ADD CONSTRAINT `contract_status_ibfk_1` FOREIGN KEY (`contract_id`) REFERENCES `contracts` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `customer_custom_fields`
