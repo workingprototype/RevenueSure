@@ -46,6 +46,7 @@ if (!empty($search) && !empty($type)) {
             $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
             $stmt->execute();
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
             break;
           default:
              break;

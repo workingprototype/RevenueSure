@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 31, 2025 at 10:57 PM
+-- Generation Time: Feb 01, 2025 at 06:48 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -198,7 +198,21 @@ CREATE TABLE `discussions` (
 
 INSERT INTO `discussions` (`id`, `title`, `user_id`, `type`, `status`, `created_at`) VALUES
 (1, 'Initial Documentation Request', 2, 'internal', 'closed', '2025-01-31 20:35:30'),
-(3, 'Legal Document Request', 2, 'external', 'open', '2025-01-31 21:10:19');
+(3, 'Legal Document Request', 2, 'external', 'closed', '2025-01-31 21:10:19');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `discussion_attachments`
+--
+
+CREATE TABLE `discussion_attachments` (
+  `id` int(11) NOT NULL,
+  `message_id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -223,7 +237,9 @@ CREATE TABLE `discussion_messages` (
 INSERT INTO `discussion_messages` (`id`, `discussion_id`, `user_id`, `user_type`, `message`, `sent_at`, `parent_id`) VALUES
 (1, 1, 2, 'user', 'Hi Jabbar,\r\nPlease provide the initial documentation for your repo?', '2025-01-31 20:35:30', NULL),
 (3, 3, 2, 'user', 'Hi Jabbar,\r\nPlease send your document', '2025-01-31 21:10:19', NULL),
-(4, 3, 5, 'user', 'Where should I send it?', '2025-01-31 21:27:46', 3);
+(4, 3, 5, 'user', 'Where should I send it?', '2025-01-31 21:27:46', 3),
+(5, 1, 5, 'user', 'Sure!', '2025-01-31 21:59:26', NULL),
+(8, 3, 5, 'user', 'Sure', '2025-01-31 22:11:30', NULL);
 
 -- --------------------------------------------------------
 
@@ -1218,6 +1234,13 @@ ALTER TABLE `discussions`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `discussion_attachments`
+--
+ALTER TABLE `discussion_attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `message_id` (`message_id`);
+
+--
 -- Indexes for table `discussion_messages`
 --
 ALTER TABLE `discussion_messages`
@@ -1588,10 +1611,16 @@ ALTER TABLE `discussions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `discussion_attachments`
+--
+ALTER TABLE `discussion_attachments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `discussion_messages`
 --
 ALTER TABLE `discussion_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `discussion_participants`
@@ -1878,6 +1907,12 @@ ALTER TABLE `customer_tags`
 --
 ALTER TABLE `discussions`
   ADD CONSTRAINT `discussions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `discussion_attachments`
+--
+ALTER TABLE `discussion_attachments`
+  ADD CONSTRAINT `discussion_attachments_ibfk_1` FOREIGN KEY (`message_id`) REFERENCES `discussion_messages` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `discussion_messages`

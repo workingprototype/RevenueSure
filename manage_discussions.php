@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors' , 1);
+error_reporting(E_ALL);
 session_start();
 require 'db.php';
 
@@ -61,14 +63,17 @@ function categorize_discussion($discussion, $all_participants, $unread_counts, $
     $created_at = new DateTime($discussion['created_at']);
        $days_difference = $current_timestamp->diff($created_at)->days;
     $has_unread_messages = $unread_counts[$discussion['id']] > 0;
-      $last_message_time = $last_message_times[$discussion['id']];
-
+    $last_message_time = $last_message_times[$discussion['id']];
        $days_since_last_message = 0;
         if ($last_message_time) {
-            $last_message_time_dt = new DateTime($last_message_time);
+             $last_message_time_dt = new DateTime($last_message_time);
             $days_since_last_message = $current_timestamp->diff($last_message_time_dt)->days;
-          }
-          
+         }
+
+    $is_ongoing = false;
+      if($last_message_time && $days_since_last_message <= 7){
+         $is_ongoing = true;
+        }
      // Check if the user who created discussion replied in the thread or not. if they replied and there are unread messages, its an ongoing discussion
       $stmt = $GLOBALS['conn']->prepare("SELECT id FROM discussion_messages WHERE discussion_id = :discussion_id AND user_id = :user_id AND parent_id IS NULL");
           $stmt->bindParam(':discussion_id', $discussion['id']);
@@ -81,22 +86,22 @@ function categorize_discussion($discussion, $all_participants, $unread_counts, $
                  $stmt =  $GLOBALS['conn']->prepare("SELECT id FROM discussion_messages WHERE discussion_id = :discussion_id AND user_id != :user_id AND parent_id = :initial_message_id");
                      $stmt->bindParam(':discussion_id', $discussion['id']);
                      $stmt->bindParam(':user_id', $discussion['user_id']);
-                     $stmt->bindParam(':initial_message_id', $initial_message_id);
+                      $stmt->bindParam(':initial_message_id', $initial_message_id);
                       $stmt->execute();
                       $has_initial_message_reply  = $stmt->fetch(PDO::FETCH_ASSOC);
 
           }
 
 
- if ($has_unread_messages && !$has_initial_message_reply) {
+  if ($has_unread_messages && !$has_initial_message_reply) {
             return 'New Discussions';
-    } else if($has_unread_messages || $is_ongoing){
-        return 'Ongoing Discussions';
-    } else if ($discussion['status'] === 'closed') {
-        return 'Previous Discussions';
-    }else {
+     } else if ($has_unread_messages || $is_ongoing){
             return 'Ongoing Discussions';
-         }
+       } else if ($discussion['status'] === 'closed') {
+           return 'Previous Discussions';
+      } else {
+         return 'Ongoing Discussions';
+       }
 }
 
 // Include header
@@ -127,8 +132,8 @@ require 'header.php';
                                                  if($i < 2){
                                                     if(isset($participant['name'])){
                                                         echo htmlspecialchars($participant['name']) . ($i < count($participants)-1 ? ',' : '');
-                                                    }else {
-                                                         echo htmlspecialchars($participant['username']) . ($i < count($participants)-1 ? ',' : '');
+                                                    } else {
+                                                      echo htmlspecialchars($participant['username']) . ($i < count($participants)-1 ? ',' : '');
                                                         }
                                                      } else if ($i == 2){
                                                      echo '...';
@@ -170,13 +175,12 @@ require 'header.php';
                                                   if ($participants){
                                                     foreach($participants as $i => $participant){
                                                       if($i < 2){
-                                                           if(isset($participant['name'])){
-                                                                echo htmlspecialchars($participant['name']) . ($i < count($participants)-1 ? ',' : '');
-                                                            }else {
-                                                                 echo htmlspecialchars($participant['username']) . ($i < count($participants)-1 ? ',' : '');
-                                                            }
-
-                                                         }else if($i == 2){
+                                                       if(isset($participant['name'])){
+                                                            echo htmlspecialchars($participant['name']) . ($i < count($participants)-1 ? ',' : '');
+                                                        }else {
+                                                             echo htmlspecialchars($participant['username']) . ($i < count($participants)-1 ? ',' : '');
+                                                       }
+                                                          } else if($i == 2){
                                                            echo '...';
                                                        }
                                                      }
@@ -185,9 +189,9 @@ require 'header.php';
                                                  }
                                                  ?>
                                        </p>
-                                        <?php if ($last_message_times[$discussion['id']] ) : ?>
+                                         <?php if ($last_message_times[$discussion['id']] ) : ?>
                                             <p class="text-gray-500 text-sm">Last message: <?php echo htmlspecialchars(date('Y-m-d H:i', strtotime($last_message_times[$discussion['id']]))) ?></p>
-                                       <?php endif; ?>
+                                        <?php endif; ?>
                                    </div>
                                     <div class="flex items-center">
                                          <?php if($unread_counts[$discussion['id']] > 0): ?>
@@ -217,13 +221,14 @@ require 'header.php';
                                           <?php $participants = $all_participants[$discussion['id']];
                                             if ($participants){
                                                    foreach($participants as $i => $participant){
-                                                     if($i < 2){
-                                                            if(isset($participant['name'])){
-                                                                echo htmlspecialchars($participant['name']) . ($i < count($participants)-1 ? ',' : '');
-                                                           } else {
+                                                       if($i < 2){
+                                                          if(isset($participant['name'])){
+                                                               echo htmlspecialchars($participant['name']) . ($i < count($participants)-1 ? ',' : '');
+                                                           }else {
                                                                 echo htmlspecialchars($participant['username']) . ($i < count($participants)-1 ? ',' : '');
-                                                          }
-                                                       } else if ($i == 2){
+                                                             }
+
+                                                        } else if ($i == 2){
                                                            echo '...';
                                                        }
                                                      }
