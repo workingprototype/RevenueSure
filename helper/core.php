@@ -1,0 +1,72 @@
+<?php
+
+require_once __DIR__ . '/functions.php'; // Use absolute path
+define('ROOT_PATH', __DIR__ . '/../'); // Absolute path to project root (one level up from helper)
+define('IS_DEVELOPMENT', ($_ENV['APP_ENV'] ?? 'production') === 'development');
+
+try {
+    $host = $_ENV['DB_HOST'] ?? 'localhost';
+    $dbname = $_ENV['DB_NAME'] ?? 'lead_platform';
+    $username = $_ENV['DB_USER'] ?? 'root';
+    $password = $_ENV['DB_PASS'] ?? '';
+
+    $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ];
+    $conn = new PDO($dsn, $username, $password, $options);
+} catch (PDOException $e) {
+    throw new PDOException($e->getMessage(), (int)$e->getCode());
+}
+
+if (IS_DEVELOPMENT) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(0);
+    ini_set('display_errors', 0);
+}
+
+/**
+ * Checks if the current user has admin privileges.
+ *
+ * @return bool True if the user is an admin, false otherwise.
+ */
+function isAdmin(): bool {
+    return isset($_SESSION['user_id']) && isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+}
+
+/**
+ * Redirects the user to the appropriate dashboard after login based on their role.
+ *
+ * @param string $role The user's role (e.g., 'admin', 'user').
+ */
+function loginRedirect(string $role): void {
+    header("Location: " . BASE_URL . "dashboard"); // All users go to the dashboard route
+    exit();
+}
+
+/**
+ * Redirects the user to the login page if they are not authorized.
+ * @param bool $admin_only If true, only admins are allowed.
+ */
+function redirectIfUnauthorized(bool $admin_only = false) {
+        if (session_status() == PHP_SESSION_NONE) {
+           // echo 'Starting a new session';
+           session_start();
+        } else {
+           // echo 'Session already started';
+        }
+
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: " . BASE_URL . "auth/login"); // Use BASE_URL here!
+        exit();
+    }
+
+    if ($admin_only && !isAdmin()) { // Use isAdmin() helper
+        header("Location: " . BASE_URL . "dashboard"); // Use BASE_URL here!
+        exit();
+    }
+}

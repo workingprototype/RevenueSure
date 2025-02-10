@@ -1,13 +1,16 @@
 <?php
+// db.php
+// Database connection settings (consider environment variables if needed)
 $host = 'localhost';
 $dbname = 'lead_platform';
-$username = 'root';
-$password = '';
+$user = 'username';
+$pass = 'password';
 
 try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+} catch(PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+    die();
 }
 ?>
