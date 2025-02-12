@@ -182,7 +182,18 @@ $routes = [
     'accounting/reconciliation' => 'accounting/reconciliation.php',
     'accounting/manage_accountants' => 'accounting/manage_accountants.php',
 
-    'payments/view' => 'payments/view.php'
+    'payments/view' => 'payments/view.php',
+
+    'projects/features/add' => 'projects/features/add.php',
+    'projects/features/edit' => 'projects/features/edit.php',
+    'projects/features/delete' => 'projects/features/delete.php',
+    'projects/features/manage' => 'projects/features/manage.php',
+    'projects/features/view' => 'projects/features/view.php',
+    'projects/issues/add' => 'projects/issues/add.php',
+    'projects/issues/edit' => 'projects/issues/edit.php',
+    'projects/issues/delete' => 'projects/issues/delete.php',
+    'projects/issues/manage' => 'projects/issues/manage.php',
+    'projects/issues/view' => 'projects/issues/view.php',
 ];
 
 // Define routes that should not include header and footer

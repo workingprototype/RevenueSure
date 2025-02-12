@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 12, 2025 at 07:57 PM
+-- Generation Time: Feb 12, 2025 at 10:23 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -561,6 +561,53 @@ CREATE TABLE `featured_knowledge_base_articles` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `feature_attachments`
+--
+
+CREATE TABLE `feature_attachments` (
+  `id` int(11) NOT NULL,
+  `feature_id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feature_comments`
+--
+
+CREATE TABLE `feature_comments` (
+  `id` int(11) NOT NULL,
+  `feature_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `feature_comments`
+--
+
+INSERT INTO `feature_comments` (`id`, `feature_id`, `user_id`, `comment`, `created_at`) VALUES
+(1, 1, 2, 'Nice feature bruh', '2025-02-12 19:22:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feature_dependencies`
+--
+
+CREATE TABLE `feature_dependencies` (
+  `id` int(11) NOT NULL,
+  `feature_id` int(11) NOT NULL,
+  `depends_on_feature_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `invoices`
 --
 
@@ -660,6 +707,34 @@ CREATE TABLE `invoice_settings` (
 
 INSERT INTO `invoice_settings` (`id`, `company_name`, `company_logo`, `company_tagline`, `company_address_line1`, `company_address_line2`, `company_phone_number`, `overdue_charge_type`, `overdue_charge_amount`, `overdue_charge_period`, `thank_you_message`, `user_id`, `created_at`) VALUES
 (1, 'RevenueSure', 'uploads/logo/679a05e10e149_DEMO-fin-change.png', 'Fo Sho', 'Building #5, Park Avenue Road', 'NY City', '+1 234-546-4554', 'percentage', 10.00, 'days', 'Thanks bro!', 2, '2025-01-29 10:41:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `issue_attachments`
+--
+
+CREATE TABLE `issue_attachments` (
+  `id` int(11) NOT NULL,
+  `issue_id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `issue_comments`
+--
+
+CREATE TABLE `issue_comments` (
+  `id` int(11) NOT NULL,
+  `issue_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1014,6 +1089,65 @@ CREATE TABLE `project_categories` (
 
 INSERT INTO `project_categories` (`id`, `name`, `created_at`) VALUES
 (1, 'Industrialization', '2025-01-29 20:51:22');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_features`
+--
+
+CREATE TABLE `project_features` (
+  `id` int(11) NOT NULL,
+  `project_id` int(11) NOT NULL,
+  `feature_id` varchar(50) NOT NULL,
+  `feature_title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `priority` enum('Low','Medium','High','Critical') DEFAULT 'Medium',
+  `status` enum('Planned','In Progress','Under Review','Completed','Deferred') DEFAULT 'Planned',
+  `owner_id` int(11) DEFAULT NULL,
+  `estimated_completion_date` date DEFAULT NULL,
+  `actual_completion_date` date DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_date` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `project_features`
+--
+
+INSERT INTO `project_features` (`id`, `project_id`, `feature_id`, `feature_title`, `description`, `priority`, `status`, `owner_id`, `estimated_completion_date`, `actual_completion_date`, `created_by`, `created_date`) VALUES
+(1, 6, 'FEAT-20250212-001', 'Metro station with announcement features', 'Metro Stations should have an announcement feature to tell users the next station time', 'Low', 'Planned', 4, '2025-02-14', NULL, 2, '2025-02-12 19:19:46');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_issues`
+--
+
+CREATE TABLE `project_issues` (
+  `id` int(11) NOT NULL,
+  `project_id` int(11) NOT NULL,
+  `issue_id` varchar(50) NOT NULL,
+  `issue_title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `issue_type` enum('Bug','Enhancement','Task','Improvement') NOT NULL DEFAULT 'Bug',
+  `priority` enum('Low','Medium','High','Critical') NOT NULL DEFAULT 'Medium',
+  `status` enum('Open','In Progress','Resolved','Closed','Reopened') NOT NULL DEFAULT 'Open',
+  `reported_by` int(11) DEFAULT NULL,
+  `assigned_to` int(11) DEFAULT NULL,
+  `related_feature_id` int(11) DEFAULT NULL,
+  `date_reported` timestamp NOT NULL DEFAULT current_timestamp(),
+  `resolution_date` date DEFAULT NULL,
+  `steps_to_reproduce` text DEFAULT NULL,
+  `environment_version` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `project_issues`
+--
+
+INSERT INTO `project_issues` (`id`, `project_id`, `issue_id`, `issue_title`, `description`, `issue_type`, `priority`, `status`, `reported_by`, `assigned_to`, `related_feature_id`, `date_reported`, `resolution_date`, `steps_to_reproduce`, `environment_version`) VALUES
+(1, 6, 'ISSUE-20250212-001', 'Track construction delay in Zone 4', 'The construction in Zone 4 has encountered unexpected delays due to weather conditions, which has caused a setback in the overall timeline. The issue may result in delays for the entire metro line completion.', 'Enhancement', 'High', 'Open', 2, 2, 1, '2025-02-12 20:57:38', '2025-02-15', '1) Review current construction status in Zone 4.\r\n2) Assess weather conditions over the last two weeks.\r\n3) Identify the impact on the work schedule.', 'Metro Infrastructure Project Version 2.3, Zone 4 Construction Site');
 
 -- --------------------------------------------------------
 
@@ -1578,6 +1712,29 @@ ALTER TABLE `featured_knowledge_base_articles`
   ADD KEY `article_id` (`article_id`);
 
 --
+-- Indexes for table `feature_attachments`
+--
+ALTER TABLE `feature_attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `feature_id` (`feature_id`);
+
+--
+-- Indexes for table `feature_comments`
+--
+ALTER TABLE `feature_comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `feature_id` (`feature_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `feature_dependencies`
+--
+ALTER TABLE `feature_dependencies`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `feature_id` (`feature_id`),
+  ADD KEY `depends_on_feature_id` (`depends_on_feature_id`);
+
+--
 -- Indexes for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -1597,6 +1754,21 @@ ALTER TABLE `invoice_items`
 --
 ALTER TABLE `invoice_settings`
   ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `issue_attachments`
+--
+ALTER TABLE `issue_attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `issue_id` (`issue_id`);
+
+--
+-- Indexes for table `issue_comments`
+--
+ALTER TABLE `issue_comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `issue_id` (`issue_id`),
   ADD KEY `user_id` (`user_id`);
 
 --
@@ -1705,6 +1877,26 @@ ALTER TABLE `projects`
 --
 ALTER TABLE `project_categories`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `project_features`
+--
+ALTER TABLE `project_features`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `feature_id` (`feature_id`),
+  ADD KEY `project_id` (`project_id`),
+  ADD KEY `owner_id` (`owner_id`);
+
+--
+-- Indexes for table `project_issues`
+--
+ALTER TABLE `project_issues`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `issue_id` (`issue_id`),
+  ADD KEY `project_id` (`project_id`),
+  ADD KEY `reported_by` (`reported_by`),
+  ADD KEY `assigned_to` (`assigned_to`),
+  ADD KEY `related_feature_id` (`related_feature_id`);
 
 --
 -- Indexes for table `reconciliation_ledger_entries`
@@ -1998,6 +2190,24 @@ ALTER TABLE `featured_knowledge_base_articles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `feature_attachments`
+--
+ALTER TABLE `feature_attachments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `feature_comments`
+--
+ALTER TABLE `feature_comments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `feature_dependencies`
+--
+ALTER TABLE `feature_dependencies`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -2014,6 +2224,18 @@ ALTER TABLE `invoice_items`
 --
 ALTER TABLE `invoice_settings`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `issue_attachments`
+--
+ALTER TABLE `issue_attachments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `issue_comments`
+--
+ALTER TABLE `issue_comments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `knowledge_base_articles`
@@ -2097,6 +2319,18 @@ ALTER TABLE `projects`
 -- AUTO_INCREMENT for table `project_categories`
 --
 ALTER TABLE `project_categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `project_features`
+--
+ALTER TABLE `project_features`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `project_issues`
+--
+ALTER TABLE `project_issues`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
@@ -2330,6 +2564,26 @@ ALTER TABLE `featured_knowledge_base_articles`
   ADD CONSTRAINT `featured_knowledge_base_articles_ibfk_1` FOREIGN KEY (`article_id`) REFERENCES `knowledge_base_articles` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `feature_attachments`
+--
+ALTER TABLE `feature_attachments`
+  ADD CONSTRAINT `feature_attachments_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `project_features` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `feature_comments`
+--
+ALTER TABLE `feature_comments`
+  ADD CONSTRAINT `feature_comments_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `project_features` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `feature_comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `feature_dependencies`
+--
+ALTER TABLE `feature_dependencies`
+  ADD CONSTRAINT `feature_dependencies_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `project_features` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `feature_dependencies_ibfk_2` FOREIGN KEY (`depends_on_feature_id`) REFERENCES `project_features` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -2347,6 +2601,19 @@ ALTER TABLE `invoice_items`
 --
 ALTER TABLE `invoice_settings`
   ADD CONSTRAINT `invoice_settings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `issue_attachments`
+--
+ALTER TABLE `issue_attachments`
+  ADD CONSTRAINT `issue_attachments_ibfk_1` FOREIGN KEY (`issue_id`) REFERENCES `project_issues` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `issue_comments`
+--
+ALTER TABLE `issue_comments`
+  ADD CONSTRAINT `issue_comments_ibfk_1` FOREIGN KEY (`issue_id`) REFERENCES `project_issues` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `issue_comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `knowledge_base_articles`
@@ -2433,6 +2700,22 @@ ALTER TABLE `payments`
 ALTER TABLE `projects`
   ADD CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`project_manager_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `projects_ibfk_2` FOREIGN KEY (`project_category_id`) REFERENCES `project_categories` (`id`);
+
+--
+-- Constraints for table `project_features`
+--
+ALTER TABLE `project_features`
+  ADD CONSTRAINT `project_features_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `project_features_ibfk_2` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `project_issues`
+--
+ALTER TABLE `project_issues`
+  ADD CONSTRAINT `project_issues_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `project_issues_ibfk_2` FOREIGN KEY (`reported_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `project_issues_ibfk_3` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `project_issues_ibfk_4` FOREIGN KEY (`related_feature_id`) REFERENCES `project_features` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `reconciliation_ledger_entries`
