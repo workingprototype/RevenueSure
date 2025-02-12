@@ -175,7 +175,14 @@ $routes = [
     'todos/mark_complete' => 'todos/mark_complete.php',
 
     'reports/leads/dashboard' => 'reports/leads/dashboard.php',
-    'notifications/view' => 'notifications/view.php'
+    'notifications/view' => 'notifications/view.php',
+        // Accounting Routes
+        'accounting/dashboard' => 'accounting/dashboard.php',
+        'accounting/ledger' => 'accounting/ledger.php',
+        'accounting/reconciliation' => 'accounting/reconciliation.php',
+        'accounting/manage_accountants' => 'accounting/manage_accountants.php',
+
+        'payments/view' => 'payments/view.php'
 ];
 
 // Define routes that should not include header and footer
