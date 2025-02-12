@@ -1,6 +1,6 @@
 <?php
 require_once ROOT_PATH . 'helper/core.php';
-redirectIfUnauthorized(true); // Requires user to be logged in
+redirectIfUnauthorized(true);
 
 $error = '';
 $success = '';
@@ -20,7 +20,7 @@ $invoice = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$invoice) {
     echo "Invoice not found.";
-    exit;
+    exit();
 }
 
 // Calculate remaining balance
@@ -33,7 +33,7 @@ $stmt->execute();
 $invoice_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch payment history
-$stmt = $conn->prepare("SELECT * FROM payments WHERE invoice_id = :invoice_id ORDER BY payment_date DESC");
+$stmt = $conn->prepare("SELECT *, DATE_FORMAT(payment_date, '%Y-%m-%d %H:%i:%s') AS formatted_payment_date FROM payments WHERE invoice_id = :invoice_id ORDER BY payment_date DESC");
 $stmt->bindParam(':invoice_id', $invoice_id);
 $stmt->execute();
 $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -93,7 +93,7 @@ if($invoice['status'] != 'Paid' && $due_days < 0){
     $stmt->bindParam(':invoice_id', $invoice_id);
     $stmt->execute();
     header("Location: " . BASE_URL . "invoices/view?id=$invoice_id");
-    exit;
+    exit();
 }
 
 
@@ -226,7 +226,7 @@ if($invoice['status'] != 'Paid' && $due_days < 0){
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="mb-4">
                         <label for="payment_method" class="block text-gray-700 mb-2">Payment Method</label>
-                        <select name="payment_method" id="payment_method" class="w-full px-4 py-2 border rounded-lg" required>
+                        <select name="payment_method" id="payment_method" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
                             <option value="Credit Card">Credit Card</option>
                             <option value="Bank Transfer">Bank Transfer</option>
                             <option value="PayPal">PayPal</option>
@@ -235,12 +235,12 @@ if($invoice['status'] != 'Paid' && $due_days < 0){
                     </div>
                     <div class="mb-4">
                         <label for="transaction_id" class="block text-gray-700 mb-2">Transaction ID</label>
-                        <input type="text" name="transaction_id" id="transaction_id" class="w-full px-4 py-2 border rounded-lg">
+                        <input type="text" name="transaction_id" id="transaction_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
                     </div>
                     <div class="mb-4">
                         <label for="amount" class="block text-gray-700 mb-2">Amount</label>
                         <input type="number" name="amount" id="amount" 
-                               class="w-full px-4 py-2 border rounded-lg"
+                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                                min="0" 
                                step="0.01" 
                                value="<?php echo htmlspecialchars($remaining_balance); ?>" 
@@ -256,12 +256,43 @@ if($invoice['status'] != 'Paid' && $due_days < 0){
         <div class="mt-4 text-gray-600 text-sm">
           <p>Make all checks payable to <?php echo htmlspecialchars($company_name); ?>.</p>
             <?php if ($overdue_charge_type && $overdue_charge_amount && $overdue_charge_period): ?>
-                  <p>Total due in <?php echo $due_days; ?> days. Overdue accounts subject to a service charge of <?php  if($overdue_charge_type == 'percentage') echo htmlspecialchars($overdue_charge_amount) . '%'; else echo htmlspecialchars($overdue_charge_amount) . '$'; ?> per <?php echo htmlspecialchars($overdue_charge_period); ?>.</p>
+                  <p>Total due in <?php echo $due_days; ?> days. Overdue accounts subject to a service charge of <?php if($overdue_charge_type == 'percentage') echo htmlspecialchars($overdue_charge_amount) . '%'; else echo htmlspecialchars($overdue_charge_amount) . '$'; ?> per <?php echo htmlspecialchars($overdue_charge_period); ?>.</p>
            <?php else: ?>
                     <p>Total due in 15 days. Overdue accounts subject to a service charge of 1% per month.</p>
              <?php endif; ?>
              <p class="mt-4"><?php echo htmlspecialchars($thank_you_message); ?></p>
         </div>
+
+           <!--Display payments made for the invoice. -->
+          <div class="mt-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Payment History</h2>
+            <?php if($payments): ?>
+                <table class="w-full text-left">
+                   <thead>
+                     <tr class="bg-gray-700 text-white">
+                         <th class="px-4 py-2">Date</th>
+                           <th class="px-4 py-2">Method</th>
+                             <th class="px-4 py-2">Transaction ID</th>
+                             <th class="px-4 py-2">Amount</th>
+                             <th class="px-4 py-2">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php foreach ($payments as $payment): ?>
+                            <tr class="border-b border-gray-500">
+                                 <td class="px-4 py-2"><?php echo htmlspecialchars($payment['formatted_payment_date']); ?></td>
+                                    <td class="px-4 py-2"><?php echo htmlspecialchars($payment['payment_method']); ?></td>
+                                   <td class="px-4 py-2"><?php echo htmlspecialchars($payment['transaction_id'] ?? 'N/A'); ?></td>
+                                     <td class="px-4 py-2">$<?php echo htmlspecialchars($payment['amount']); ?></td>
+                                     <td><a href="<?php echo BASE_URL; ?>payments/view?id=<?php echo $payment['id']; ?>" class="text-blue-600 hover:underline">View Payment</a></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                  </table>
+               <?php else: ?>
+                    <p class="text-gray-700">No payments have been recorded for this invoice.</p>
+               <?php endif; ?>
+          </div>
             
             <div class="mt-4 flex gap-2">
                 <a href="<?php echo BASE_URL; ?>invoices/edit?id=<?php echo $invoice['id']; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Invoice</a>
@@ -313,7 +344,7 @@ if($invoice['status'] != 'Paid' && $due_days < 0){
                       <tr class="border-b">
                        <td class="px-4 py-2"><?php echo htmlspecialchars($item['product_service']); ?></td>
                          <td class="px-4 py-2"><?php echo htmlspecialchars($item['quantity']); ?></td>
-                        <td class="px-4 py-2"><?php echo htmlspecialchars($item['unit_price']); ?></td>
+                        <td class="px-4 py-2">$<?php echo htmlspecialchars($item['unit_price']); ?></td>
                         <td class="px-4 py-2"><?php echo htmlspecialchars($item['tax']); ?></td>
                            <td class="px-4 py-2"><?php echo htmlspecialchars($item['discount']); ?></td>
                         <td class="px-4 py-2">$<?php echo htmlspecialchars($item['subtotal']); ?></td>
@@ -375,18 +406,31 @@ if($invoice['status'] != 'Paid' && $due_days < 0){
            <div class="mb-4">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Payment History</h2>
                <?php if($payments): ?>
-                  <ul class="mt-2">
-                        <?php foreach ($payments as $payment): ?>
-                            <li class="mb-2 border-b pb-2">
-                                 <p class="text-gray-600 text-sm">
-                                      <strong>Date:</strong> <?php echo htmlspecialchars(date('Y-m-d H:i', strtotime($payment['payment_date']))); ?>
-                                 </p>
-                                   <p><strong>Method:</strong> <?php echo htmlspecialchars($payment['payment_method']); ?> , <strong>Transaction ID:</strong> <?php echo htmlspecialchars($payment['transaction_id']); ?></p>
-                                <p class="text-gray-800 font-semibold">$<?php echo htmlspecialchars($payment['amount']); ?> </p>
-                             </li>
-                         <?php endforeach; ?>
-                     </ul>
-                <?php else: ?>
+                  <div class="overflow-x-auto">
+                   <table class="w-full text-left">
+                        <thead>
+                           <tr>
+                                <th class="px-4 py-2">Date</th>
+                                 <th class="px-4 py-2">Method</th>
+                                  <th class="px-4 py-2">Transaction ID</th>
+                                  <th class="px-4 py-2">Amount</th>
+                                  <th class="px-4 py-2">Actions</th>
+                              </tr>
+                            </thead>
+                         <tbody>
+                            <?php foreach ($payments as $payment): ?>
+                                <tr class="border-b border-gray-500">
+                                      <td class="px-4 py-2"><?php echo htmlspecialchars($payment['formatted_payment_date']); ?></td>
+                                      <td class="px-4 py-2"><?php echo htmlspecialchars($payment['payment_method']); ?></td>
+                                      <td class="px-4 py-2"><?php echo htmlspecialchars($payment['transaction_id'] ?? 'N/A'); ?></td>
+                                       <td class="px-4 py-2">$<?php echo htmlspecialchars($payment['amount']); ?></td>
+                                       <td><a href="<?php echo BASE_URL; ?>payments/view?id=<?php echo $payment['id']; ?>" class="text-blue-600 hover:underline">View Payment</a></td>
+                                </tr>
+                            <?php endforeach; ?>
+                         </tbody>
+                   </table>
+                  </div>
+               <?php else: ?>
                     <p class="text-gray-600">No payments recorded for this invoice.</p>
                 <?php endif; ?>
          </div>
@@ -424,4 +468,3 @@ if($invoice['status'] != 'Paid' && $due_days < 0){
 <?php
  }
 ?>
-
