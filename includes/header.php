@@ -14,6 +14,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
       <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
       <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> To be used later for charts in dashboard -->
     <style>
         :root {
@@ -359,6 +360,17 @@
                          <a href="<?php echo BASE_URL; ?>reports/leads/dashboard" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reports/leads/dashboard') ? 'active' : ''; ?>"><i class="fas fa-chart-bar mr-2"></i>Reporting</a>
                         <a href="<?php echo BASE_URL; ?>settings" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings') ? 'active' : ''; ?>"><i class="fas fa-cog mr-2"></i>Settings</a>
                     <?php endif; ?>
+                    <!-- Accounting Menu -->
+       <div class="menu-item <?php if (isParentActive('accounting/dashboard') || isParentActive('accounting/ledger') || isParentActive('accounting/reconciliation') || isParentActive('accounting/manage_accountants')) echo 'active'; ?>">
+             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-calculator mr-2"></i>Accounting</a>
+              <div class="submenu">
+                    <a href="<?php echo BASE_URL; ?>accounting/dashboard" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('accounting/dashboard') ? 'active' : ''; ?>"><i class="fas fa-chart-line mr-2"></i>Dashboard</a>
+                       <a href="<?php echo BASE_URL; ?>accounting/ledger" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('accounting/ledger') ? 'active' : ''; ?>"><i class="fas fa-book mr-2"></i>Ledger</a>
+                       <a href="<?php echo BASE_URL; ?>accounting/reconciliation" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('accounting/reconciliation') ? 'active' : ''; ?>"><i class="fas fa-check-double mr-2"></i>Reconciliation</a>
+                        <a href="<?php echo BASE_URL; ?>accounting/manage_accountants" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('accounting/manage_accountants') ? 'active' : ''; ?>"><i class="fas fa-user-cog mr-2"></i>Manage Accountants</a>
+                 </div>
+         </div>
+     
                      <a href="<?php echo BASE_URL; ?>auth/logout" class="block py-2 px-4 hover:bg-gray-200 rounded-lg mt-4"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
                 <?php else: ?>
                    <a href="<?php echo BASE_URL; ?>auth/login" class="block py-2 px-4 hover:bg-gray-200 rounded-lg"><i class="fas fa-sign-in-alt mr-2"></i>Login</a>

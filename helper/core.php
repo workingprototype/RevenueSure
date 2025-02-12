@@ -30,6 +30,15 @@ if (IS_DEVELOPMENT) {
 }
 
 /**
+ * Returns the base URL of the application.
+ *
+ * @return string The base URL.
+ */
+function baseURL(): string {
+    return BASE_URL;
+}
+
+/**
  * Checks if the current user has admin privileges.
  *
  * @return bool True if the user is an admin, false otherwise.

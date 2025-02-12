@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 01, 2025 at 10:02 PM
+-- Generation Time: Feb 12, 2025 at 12:39 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -20,6 +20,29 @@ SET time_zone = "+00:00";
 --
 -- Database: `lead_platform`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `accountants`
+--
+
+CREATE TABLE `accountants` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `contact_number` varchar(20) DEFAULT NULL,
+  `role` enum('Accountant','Senior Accountant') NOT NULL DEFAULT 'Accountant',
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `accountants`
+--
+
+INSERT INTO `accountants` (`id`, `name`, `email`, `contact_number`, `role`, `active`, `created_at`) VALUES
+(1, 'TEST', 'accountant@demo.com', '123456', 'Accountant', 1, '2025-02-12 07:23:42');
 
 -- --------------------------------------------------------
 
@@ -61,7 +84,8 @@ CREATE TABLE `categories` (
 
 INSERT INTO `categories` (`id`, `name`, `created_at`) VALUES
 (1, 'IT', '2025-01-26 06:52:51'),
-(2, 'Restaurants', '2025-01-26 06:53:15');
+(2, 'Restaurants', '2025-01-26 06:53:15'),
+(3, 'TEST', '2025-02-08 18:22:10');
 
 -- --------------------------------------------------------
 
@@ -234,8 +258,9 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `name`, `email`, `phone`, `created_at`, `company`, `last_interaction`, `address`, `social_media_profiles`, `age`, `gender`, `location`, `job_title`, `industry`, `profile_picture`) VALUES
-(1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01', 'Jabbar Corporations', '2025-01-28 09:13:46', 'NYC', 'https://instagram.com', 44, 'Male', 'NYC', 'Chairman', 'IT', 'public/uploads/profile/6798a5f924b68_pexels-photo-771742.jpeg'),
-(2, 'POP', 'pop@pop.com', '123123', '2025-01-29 11:57:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01', 'Jabbar Corporations', '2025-01-28 09:13:46', 'NYC', 'https://instagram.com', 44, 'Male', 'NYC', 'Chairman', 'IT', 'uploads/profile/6798a5f924b68_pexels-photo-771742.jpeg'),
+(2, 'POP', 'pop@pop.com', '123123', '2025-01-29 11:57:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 'test', 'test@demo.com', '12345', '2025-02-06 04:01:23', 'test', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -407,7 +432,7 @@ INSERT INTO `discussion_participants` (`id`, `discussion_id`, `participant_id`, 
 (2, 1, 1, 'employee', NULL, '2025-01-31 20:35:30'),
 (3, 1, 1, 'customer', NULL, '2025-01-31 20:35:30'),
 (7, 3, 4, 'user', NULL, '2025-01-31 21:10:19'),
-(8, 3, 2, 'employee', '2025-01-31 21:24:29', '2025-01-31 21:10:19'),
+(8, 3, 2, 'employee', '2025-02-10 21:24:24', '2025-01-31 21:10:19'),
 (9, 3, 1, 'customer', NULL, '2025-01-31 21:10:19');
 
 -- --------------------------------------------------------
@@ -461,8 +486,8 @@ CREATE TABLE `expenses` (
 
 INSERT INTO `expenses` (`id`, `name`, `category_id`, `amount`, `expense_date`, `project_id`, `user_id`, `invoice_id`, `payment_mode`, `transaction_nature`, `receipt_path`, `notes`, `approval_status`, `created_at`) VALUES
 (1, 'AWS Bill', 1, 1220.00, '2025-01-29', 6, 2, 4, 'Credit Card', 'Reimbursable', NULL, 'AWS server bill racked up', 'Pending', '2025-01-31 04:19:55'),
-(2, 'Battery', 1, 10.00, '2025-01-16', NULL, 2, NULL, 'Cash', 'Business Expense', 'public/uploads/receipts/679c74f7303aa_360_F_176121489_0n5AF6Y7zVXVahgAv2q66OLv5Lf1FR15.jpg', 'Battery swap', 'Pending', '2025-01-31 07:00:07'),
-(3, 'Firmware Purchased', 2, 1304.00, '2025-01-28', NULL, 2, NULL, 'Online Payment', 'Personal Expense', 'public/uploads/receipts/679c764b97598_360_F_176121489_0n5AF6Y7zVXVahgAv2q66OLv5Lf1FR15.jpg', 'Purchased the hardware firmware', 'Pending', '2025-01-31 07:05:47');
+(2, 'Battery', 1, 10.00, '2025-01-16', NULL, 2, NULL, 'Cash', 'Business Expense', 'uploads/receipts/679c74f7303aa_360_F_176121489_0n5AF6Y7zVXVahgAv2q66OLv5Lf1FR15.jpg', 'Battery swap', 'Pending', '2025-01-31 07:00:07'),
+(3, 'Firmware Purchased', 2, 1304.00, '2025-01-28', NULL, 2, NULL, 'Online Payment', 'Personal Expense', 'uploads/receipts/679c764b97598_360_F_176121489_0n5AF6Y7zVXVahgAv2q66OLv5Lf1FR15.jpg', 'Purchased the hardware firmware', 'Pending', '2025-01-31 07:05:47');
 
 -- --------------------------------------------------------
 
@@ -576,7 +601,8 @@ CREATE TABLE `invoices` (
 
 INSERT INTO `invoices` (`id`, `invoice_number`, `lead_id`, `customer_id`, `issue_date`, `due_date`, `bill_to_name`, `bill_to_address`, `bill_to_email`, `bill_to_phone`, `ship_to_address`, `subtotal`, `tax_method`, `tax`, `discount`, `additional_charges`, `total`, `payment_terms`, `notes`, `footer`, `billing_country`, `discount_type`, `discount_amount`, `created_at`, `template_name`, `paid_amount`, `status`, `payment_date`) VALUES
 (3, 'INV-20250129-001', 1, NULL, '2025-01-29', '2025-01-29', 'John Doe', 'NYC', 'john@demo.com', '+91 123456789', 'NYC', 0.00, 'GST', '[\"8.00\",\"5.00\"]', 0.00, 30.00, 43.00, 'Due on Receipt', '', '', 'in', 'fixed', 0.00, '2025-01-29 09:08:58', 'contractor', 43.00, 'Paid', '2025-01-29 11:59:30'),
-(4, 'INV-20250129-004', NULL, 1, '2025-01-29', '2025-02-13', 'Jabbar2', 'NYC', 'jabbar@demo.com', '12312312', '', 0.00, 'GST', '[\"18.00\",\"18.00\"]', 0.00, 0.00, 36.00, 'Net 15', '', '', 'in', 'percentage', 10.00, '2025-01-29 09:43:24', 'default', 24.00, 'Partially Paid', '2025-01-29 11:52:19');
+(4, 'INV-20250129-004', NULL, 1, '2025-01-29', '2025-02-13', 'Jabbar2', 'NYC', 'jabbar@demo.com', '12312312', '', 0.00, 'GST', '[\"18.00\",\"18.00\"]', 0.00, 0.00, 36.00, 'Net 15', '', '', 'in', 'percentage', 10.00, '2025-01-29 09:43:24', 'default', 24.00, 'Partially Paid', '2025-01-29 11:52:19'),
+(13, 'INV-20250212-005', NULL, 3, '2025-02-12', '2025-02-13', 'test', '', 'test@demo.com', '12345', '', 0.00, 'Sales Tax', '[\"120\"]', 0.00, 0.00, 120.00, 'Net 15', '', '', 'us', 'fixed', 0.00, '2025-02-12 11:32:39', 'contractor', 120.00, 'Paid', '2025-02-12 11:32:43');
 
 -- --------------------------------------------------------
 
@@ -602,8 +628,9 @@ CREATE TABLE `invoice_items` (
 INSERT INTO `invoice_items` (`id`, `invoice_id`, `product_service`, `quantity`, `unit_price`, `tax`, `discount`, `subtotal`) VALUES
 (22, 3, 'Product 2', 2, 120.00, 8.00, 10.00, 0.00),
 (23, 3, 'Product 3', 3, 200.00, 5.00, 10.00, 0.00),
-(24, 4, 'Product 1', 10, 120.00, 18.00, 10.00, 0.00),
-(25, 4, 'Product 2', 10, 100.00, 18.00, 0.00, 0.00);
+(30, 4, 'Product 1', 10, 120.00, 18.00, 10.00, 0.00),
+(31, 4, 'Product 2', 10, 100.00, 18.00, 0.00, 0.00),
+(44, 13, 'TEST 123', 1, 1500.00, 120.00, 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -632,7 +659,7 @@ CREATE TABLE `invoice_settings` (
 --
 
 INSERT INTO `invoice_settings` (`id`, `company_name`, `company_logo`, `company_tagline`, `company_address_line1`, `company_address_line2`, `company_phone_number`, `overdue_charge_type`, `overdue_charge_amount`, `overdue_charge_period`, `thank_you_message`, `user_id`, `created_at`) VALUES
-(1, 'RevenueSure', 'public/uploads/logo/679a05e10e149_DEMO-fin-change.png', 'Fo Sho', 'Building #5, Park Avenue Road', 'NY City', '+1 234-546-4554', 'percentage', 10.00, 'days', 'Thanks bro!', 2, '2025-01-29 10:41:37');
+(1, 'RevenueSure', 'uploads/logo/679a05e10e149_DEMO-fin-change.png', 'Fo Sho', 'Building #5, Park Avenue Road', 'NY City', '+1 234-546-4554', 'percentage', 10.00, 'days', 'Thanks bro!', 2, '2025-01-29 10:41:37');
 
 -- --------------------------------------------------------
 
@@ -658,7 +685,7 @@ CREATE TABLE `knowledge_base_articles` (
 --
 
 INSERT INTO `knowledge_base_articles` (`id`, `title`, `content`, `category_id`, `visibility`, `access_level`, `user_id`, `created_at`, `updated_at`, `view_count`) VALUES
-(1, 'How to login', '<p>This is a demo article</p>', 2, 'team', 'public', 2, '2025-01-31 18:01:02', '2025-02-01 14:05:31', 18);
+(1, 'How to login', '<p>This is a demo article</p>', 2, 'team', 'public', 2, '2025-01-31 18:01:02', '2025-02-06 14:17:10', 21);
 
 -- --------------------------------------------------------
 
@@ -816,7 +843,8 @@ INSERT INTO `leads` (`id`, `name`, `phone`, `email`, `category_id`, `created_at`
 (6, 'jakegyk', '1231238123', 'jake@demo.com', 2, '2025-01-28 04:04:31', 'New', NULL, NULL, NULL, NULL, NULL, 'Website', 1),
 (7, 'PowerLead', '1231823918', 'power@demo.com', 1, '2025-01-28 04:05:31', 'Converted', NULL, 1, NULL, NULL, NULL, 'Website', 2),
 (8, 'Jabbar2', '12312312', 'jabbar@demo.com', 1, '2025-01-28 08:55:40', 'Converted', 1, 2, NULL, NULL, NULL, 'Website', 2),
-(9, 'POP', '123123', 'pop@pop.com', 1, '2025-01-29 11:56:29', 'Converted', 2, 2, NULL, NULL, NULL, 'Website', 1);
+(9, 'POP', '123123', 'pop@pop.com', 1, '2025-01-29 11:56:29', 'Converted', 2, 2, NULL, NULL, NULL, 'Website', 1),
+(10, 'test2', '191919', 'asd@demo.com', 2, '2025-02-10 05:36:10', 'New', NULL, NULL, NULL, NULL, NULL, 'Website', 2);
 
 -- --------------------------------------------------------
 
@@ -842,6 +870,36 @@ INSERT INTO `lead_scores` (`id`, `lead_id`, `website_visits`, `email_opens`, `fo
 (1, 2, 2, 1, 1, 7, '2025-01-27 11:08:55'),
 (3, 5, 0, 1, 1, 5, '2025-01-28 03:59:32'),
 (4, 8, 1, 1, 1, 6, '2025-01-29 12:01:11');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ledger_entries`
+--
+
+CREATE TABLE `ledger_entries` (
+  `id` int(11) NOT NULL,
+  `transaction_date` date NOT NULL,
+  `transaction_id` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `debit_amount` decimal(10,2) DEFAULT 0.00,
+  `credit_amount` decimal(10,2) DEFAULT 0.00,
+  `currency` varchar(10) NOT NULL DEFAULT 'USD',
+  `category` enum('Revenue','Expense','Asset','Liability','Equity') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `invoice_id` int(11) DEFAULT NULL,
+  `expense_id` int(11) DEFAULT NULL,
+  `reconciliation_status` enum('Unreconciled','Matched','Discrepancy') NOT NULL DEFAULT 'Unreconciled',
+  `transaction_type` enum('Invoice','Expense') NOT NULL,
+  `requires_review` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ledger_entries`
+--
+
+INSERT INTO `ledger_entries` (`id`, `transaction_date`, `transaction_id`, `description`, `debit_amount`, `credit_amount`, `currency`, `category`, `created_at`, `invoice_id`, `expense_id`, `reconciliation_status`, `transaction_type`, `requires_review`) VALUES
+(1, '2025-02-12', '', 'Payment received for Invoice #INV-20250212-005', 0.00, 120.00, 'us', 'Revenue', '2025-02-12 11:32:43', 13, NULL, 'Unreconciled', 'Invoice', 0);
 
 -- --------------------------------------------------------
 
@@ -879,7 +937,8 @@ INSERT INTO `notifications` (`id`, `user_id`, `message`, `related_id`, `type`, `
 (13, 2, 'Reminder: Task \'Manual Book Read\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 0, '2025-01-29 10:24:00'),
 (14, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00'),
 (15, 2, 'Reminder: Task \'Make transparent dashboard\' is due on 2025-01-31 16:25:00.', 12, 'task_reminder', 1, '2025-01-31 10:55:00'),
-(16, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00');
+(16, 2, 'Reminder: Task \'procure cement after buying steel\' is due on 2025-01-31 03:36:00.', 8, 'task_reminder', 0, '2025-01-30 22:06:00'),
+(17, 2, 'Reminder: Task \'Manual Book Read\' is due on 2025-01-29 15:54:00.', 2, 'task_reminder', 0, '2025-01-29 10:24:00');
 
 -- --------------------------------------------------------
 
@@ -902,7 +961,8 @@ CREATE TABLE `payments` (
 
 INSERT INTO `payments` (`id`, `invoice_id`, `payment_date`, `payment_method`, `transaction_id`, `amount`) VALUES
 (1, 4, '2025-01-29 11:52:19', 'Credit Card', '1234', 24.00),
-(2, 3, '2025-01-29 11:59:30', 'Cheque', 'ghgjghj', 43.00);
+(2, 3, '2025-01-29 11:59:30', 'Cheque', 'ghgjghj', 43.00),
+(10, 13, '2025-02-12 11:32:43', 'Credit Card', '', 120.00);
 
 -- --------------------------------------------------------
 
@@ -953,6 +1013,33 @@ CREATE TABLE `project_categories` (
 
 INSERT INTO `project_categories` (`id`, `name`, `created_at`) VALUES
 (1, 'Industrialization', '2025-01-29 20:51:22');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reconciliation_ledger_entries`
+--
+
+CREATE TABLE `reconciliation_ledger_entries` (
+  `reconciliation_id` int(11) NOT NULL,
+  `ledger_entry_id` int(11) NOT NULL,
+  `difference_amount` decimal(10,2) DEFAULT 0.00
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reconciliation_records`
+--
+
+CREATE TABLE `reconciliation_records` (
+  `id` int(11) NOT NULL,
+  `reconciliation_date` date NOT NULL,
+  `bank_statement_reference` varchar(255) DEFAULT NULL,
+  `total_difference_amount` decimal(10,2) DEFAULT 0.00,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1016,7 +1103,7 @@ CREATE TABLE `support_ticket_attachments` (
 --
 
 INSERT INTO `support_ticket_attachments` (`id`, `ticket_id`, `file_name`, `file_path`, `created_at`) VALUES
-(1, 1, '20-0129_DEMO.png', 'public/uploads/679c3db6a1e8a_20-0129_DEMO.png', '2025-01-31 03:04:22');
+(1, 1, '20-0129_DEMO.png', 'uploads/679c3db6a1e8a_20-0129_DEMO.png', '2025-01-31 03:04:22');
 
 -- --------------------------------------------------------
 
@@ -1300,7 +1387,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `credits`, `created_at`, `role`, `profile_picture`, `role_id`, `department_id`) VALUES
 (1, 'Peel Hullin', 'user@demo.com', '$2y$10$8z2JpAs7QU3aMkHL59SC.O4rjZevbePDApd7947XYt.LfdOVlvA7.', 100, '2025-01-26 05:53:17', 'user', NULL, 5, NULL),
-(2, 'GGBoiA', 'admin@demo.com', '$2y$10$qtyaY8G3jceTluy42gCT.ey.SYmGAUcj5Oi3bnDxOxnCL.7w4nbJq', 0, '2025-01-26 06:17:01', 'admin', 'public/uploads/profile/67987cff6f90a_kisspng-avatar-youtube-person-kahoot-a-roommate-who-plays-with-a-cell-phone-5b4d74010dd214.7783760115318026250566.jpg', NULL, NULL),
+(2, 'GGBOAI', 'admin@demo.com', '$2y$10$qtyaY8G3jceTluy42gCT.ey.SYmGAUcj5Oi3bnDxOxnCL.7w4nbJq', 0, '2025-01-26 06:17:01', 'admin', NULL, NULL, NULL),
 (4, 'John The Support Man', 'john@support.com', '$2y$10$6mZ3cSv8FM7fxg3Ui6JwquHyYnTtHsx1H9ZxtaFYqHG/anoV0C1o.', 0, '2025-01-30 14:46:28', 'user', NULL, 1, NULL),
 (5, 'admin2', 'admin2@demo.com', '$2y$10$xhjAQ4eMVDwSaP5gB2x0sus4lk/9uU7MJZF9NHcQ0o9cyZifO6.b6', 0, '2025-01-31 21:26:14', 'admin', 'public/uploads/profile/679d4030dfe71_M0ekXd9R_400x400.jpg', NULL, NULL);
 
@@ -1320,6 +1407,13 @@ CREATE TABLE `user_credits` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `accountants`
+--
+ALTER TABLE `accountants`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- Indexes for table `attachments`
@@ -1574,6 +1668,15 @@ ALTER TABLE `lead_scores`
   ADD KEY `lead_id` (`lead_id`);
 
 --
+-- Indexes for table `ledger_entries`
+--
+ALTER TABLE `ledger_entries`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `transaction_id` (`transaction_id`),
+  ADD KEY `invoice_id` (`invoice_id`),
+  ADD KEY `expense_id` (`expense_id`);
+
+--
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -1600,6 +1703,19 @@ ALTER TABLE `projects`
 -- Indexes for table `project_categories`
 --
 ALTER TABLE `project_categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `reconciliation_ledger_entries`
+--
+ALTER TABLE `reconciliation_ledger_entries`
+  ADD PRIMARY KEY (`reconciliation_id`,`ledger_entry_id`),
+  ADD KEY `ledger_entry_id` (`ledger_entry_id`);
+
+--
+-- Indexes for table `reconciliation_records`
+--
+ALTER TABLE `reconciliation_records`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1743,6 +1859,12 @@ ALTER TABLE `user_credits`
 --
 
 --
+-- AUTO_INCREMENT for table `accountants`
+--
+ALTER TABLE `accountants`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `attachments`
 --
 ALTER TABLE `attachments`
@@ -1752,31 +1874,31 @@ ALTER TABLE `attachments`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `contracts`
 --
 ALTER TABLE `contracts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `contract_audit_trail`
 --
 ALTER TABLE `contract_audit_trail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `contract_signatures`
 --
 ALTER TABLE `contract_signatures`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `contract_status`
 --
 ALTER TABLE `contract_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `contract_types`
@@ -1788,7 +1910,7 @@ ALTER TABLE `contract_types`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `customer_custom_fields`
@@ -1878,13 +2000,13 @@ ALTER TABLE `featured_knowledge_base_articles`
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `invoice_items`
 --
 ALTER TABLE `invoice_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `invoice_settings`
@@ -1938,7 +2060,7 @@ ALTER TABLE `knowledge_base_categories`
 -- AUTO_INCREMENT for table `leads`
 --
 ALTER TABLE `leads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `lead_scores`
@@ -1947,16 +2069,22 @@ ALTER TABLE `lead_scores`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `ledger_entries`
+--
+ALTER TABLE `ledger_entries`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `projects`
@@ -1969,6 +2097,12 @@ ALTER TABLE `projects`
 --
 ALTER TABLE `project_categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `reconciliation_records`
+--
+ALTER TABLE `reconciliation_records`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `subtasks`
@@ -2272,6 +2406,15 @@ ALTER TABLE `lead_scores`
   ADD CONSTRAINT `lead_scores_ibfk_1` FOREIGN KEY (`lead_id`) REFERENCES `leads` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `ledger_entries`
+--
+ALTER TABLE `ledger_entries`
+  ADD CONSTRAINT `ledger_entries_ibfk_1` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `ledger_entries_ibfk_2` FOREIGN KEY (`expense_id`) REFERENCES `expenses` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `ledger_entries_ibfk_3` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `ledger_entries_ibfk_4` FOREIGN KEY (`expense_id`) REFERENCES `expenses` (`id`) ON DELETE SET NULL;
+
+--
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -2289,6 +2432,13 @@ ALTER TABLE `payments`
 ALTER TABLE `projects`
   ADD CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`project_manager_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `projects_ibfk_2` FOREIGN KEY (`project_category_id`) REFERENCES `project_categories` (`id`);
+
+--
+-- Constraints for table `reconciliation_ledger_entries`
+--
+ALTER TABLE `reconciliation_ledger_entries`
+  ADD CONSTRAINT `reconciliation_ledger_entries_ibfk_1` FOREIGN KEY (`reconciliation_id`) REFERENCES `reconciliation_records` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reconciliation_ledger_entries_ibfk_2` FOREIGN KEY (`ledger_entry_id`) REFERENCES `ledger_entries` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `subtasks`

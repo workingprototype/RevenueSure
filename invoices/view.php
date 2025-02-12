@@ -220,7 +220,7 @@ if($invoice['status'] != 'Paid' && $due_days < 0){
         <!-- Added Payment Form to Contractor Template -->
         <div class="mt-8">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Record Payment</h2>
-            <form method="POST" action="invoices/record_payment">
+            <form method="POST" action="<?php echo BASE_URL; ?>invoices/record_payment">
             <?php echo csrfTokenInput(); ?>
                 <input type="hidden" name="invoice_id" value="<?php echo $invoice['id']; ?>">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -392,7 +392,7 @@ if($invoice['status'] != 'Paid' && $due_days < 0){
          </div>
            <div class="mb-4">
               <h2 class="text-xl font-bold text-gray-800 mb-4">Record Payment</h2>
-                <form method="POST" action="invoices/record_payment">
+                <form method="POST" action="<?php echo BASE_URL; ?>invoices/record_payment">
                 <?php echo csrfTokenInput(); ?>
                     <input type="hidden" name="invoice_id" value="<?php echo $invoice['id']; ?>">
                     <div class="mb-4">

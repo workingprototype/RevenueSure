@@ -54,6 +54,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {
                      $stmt->bindParam(':receipt_path', $receipt_path);
 
                if ($stmt->execute()) {
+                  // Create a ledger entry for the expense
+                    $stmt = $conn->prepare("
+                    INSERT INTO ledger_entries (transaction_date, transaction_id, description, debit_amount, currency, category, expense_id, transaction_type)
+                    VALUES (:transaction_date, :transaction_id, :description, :debit_amount, :currency, :category, :expense_id, 'Expense')
+                    ");
+                    //Since no transaction ID exist, create one.
+                    $transaction_id = uniqid('EXP-'); //You can generate it anyway you want.
+                    $stmt->bindParam(':transaction_date', $expense_date);
+                    $stmt->bindParam(':transaction_id', $transaction_id);
+                    $stmt->bindParam(':description', $name);
+                    $stmt->bindParam(':debit_amount', $amount);
+                    $stmt->bindValue(':currency', 'USD'); //Most likely you want to track what was the currency.
+                    $stmt->bindParam(':category', $transaction_nature); //or use a meaningful default like 'Expense'
+                    $stmt->bindParam(':expense_id', $expense_id);
+                    $stmt->execute();
+
+
                     $expense_id = $conn->lastInsertId();
                     $success = "Expense recorded successfully!";
                     header("Location: " . BASE_URL . "expenses/view?id=$expense_id&success=true");

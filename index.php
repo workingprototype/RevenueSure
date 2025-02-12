@@ -1,5 +1,5 @@
 <?php
-define('BASE_URL', '/revenuesure-lite/'); // Define the base URL
+define('BASE_URL', '/revenuesure/'); // Define the base URL
 define('ROOT_PATH', __DIR__ . '/'); // Define the root path
 require_once 'vendor/autoload.php';
 
