@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 12, 2025 at 10:23 PM
+-- Generation Time: Feb 12, 2025 at 10:55 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -604,6 +604,53 @@ CREATE TABLE `feature_dependencies` (
   `feature_id` int(11) NOT NULL,
   `depends_on_feature_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feature_resources`
+--
+
+CREATE TABLE `feature_resources` (
+  `id` int(11) NOT NULL,
+  `feature_id` int(11) NOT NULL,
+  `resource_type` enum('Hours','Budget') NOT NULL,
+  `estimated_value` decimal(10,2) DEFAULT 0.00,
+  `actual_value` decimal(10,2) DEFAULT 0.00,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `feature_resources`
+--
+
+INSERT INTO `feature_resources` (`id`, `feature_id`, `resource_type`, `estimated_value`, `actual_value`, `notes`, `created_at`) VALUES
+(1, 1, 'Budget', 1500.00, 250.00, 'Need more than this', '2025-02-12 21:41:03');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feature_subtasks`
+--
+
+CREATE TABLE `feature_subtasks` (
+  `id` int(11) NOT NULL,
+  `feature_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `assigned_to` int(11) DEFAULT NULL,
+  `due_date` datetime DEFAULT NULL,
+  `status` enum('To Do','In Progress','Completed','Blocked') NOT NULL DEFAULT 'To Do',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `feature_subtasks`
+--
+
+INSERT INTO `feature_subtasks` (`id`, `feature_id`, `title`, `description`, `assigned_to`, `due_date`, `status`, `created_at`) VALUES
+(1, 1, 'Purchase microphones', 'Microphone vendor partner purchase', 2, '2025-02-14 03:10:00', 'To Do', '2025-02-12 21:40:30');
 
 -- --------------------------------------------------------
 
@@ -1735,6 +1782,21 @@ ALTER TABLE `feature_dependencies`
   ADD KEY `depends_on_feature_id` (`depends_on_feature_id`);
 
 --
+-- Indexes for table `feature_resources`
+--
+ALTER TABLE `feature_resources`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `feature_id` (`feature_id`);
+
+--
+-- Indexes for table `feature_subtasks`
+--
+ALTER TABLE `feature_subtasks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `feature_id` (`feature_id`),
+  ADD KEY `assigned_to` (`assigned_to`);
+
+--
 -- Indexes for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -2208,6 +2270,18 @@ ALTER TABLE `feature_dependencies`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `feature_resources`
+--
+ALTER TABLE `feature_resources`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `feature_subtasks`
+--
+ALTER TABLE `feature_subtasks`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -2582,6 +2656,19 @@ ALTER TABLE `feature_comments`
 ALTER TABLE `feature_dependencies`
   ADD CONSTRAINT `feature_dependencies_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `project_features` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `feature_dependencies_ibfk_2` FOREIGN KEY (`depends_on_feature_id`) REFERENCES `project_features` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `feature_resources`
+--
+ALTER TABLE `feature_resources`
+  ADD CONSTRAINT `feature_resources_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `project_features` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `feature_subtasks`
+--
+ALTER TABLE `feature_subtasks`
+  ADD CONSTRAINT `feature_subtasks_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `project_features` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `feature_subtasks_ibfk_2` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `invoices`
