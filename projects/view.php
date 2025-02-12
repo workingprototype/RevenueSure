@@ -37,6 +37,18 @@ $stmt->bindParam(':project_id', $project_id);
 $stmt->execute();
 $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Fetch features for the project
+$stmt = $conn->prepare("SELECT * FROM project_features WHERE project_id = :project_id ORDER BY created_date DESC");
+$stmt->bindParam(':project_id', $project_id);
+$stmt->execute();
+$features = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch issues for the project
+$stmt = $conn->prepare("SELECT project_issues.*, users.username AS reported_by_name FROM project_issues JOIN users ON project_issues.reported_by = users.id WHERE project_id = :project_id ORDER BY date_reported DESC");
+$stmt->bindParam(':project_id', $project_id);
+$stmt->execute();
+$issues = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 ?>
 <div class="container mx-auto p-6 fade-in">
@@ -109,7 +121,7 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
                          <?php foreach ($tasks as $task): ?>
                             <tr class="border-b transition hover:bg-gray-100">
                                   <td class="px-4 py-3">
-                                   <a href="<?php echo BASE_URL; ?>tasks/viewtask?id=<?php echo $task['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-gray-800 hover:underline"><?php echo htmlspecialchars($task['task_name']); ?></a>
+                                   <a href="<?php echo BASE_URL; ?>tasks/view?id=<?php echo $task['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-gray-800 hover:underline"><?php echo htmlspecialchars($task['task_name']); ?></a>
                                  </td>
                                  <td class="px-4 py-3"><?php echo htmlspecialchars($task['due_date']); ?></td>
                                  <td class="px-4 py-3"><?php echo htmlspecialchars($task['username']); ?></td>
@@ -166,6 +178,81 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </tbody>
            </table>
     </div>
+     <!-- Feature Tracker Section -->
+     <div class="bg-white p-6 rounded-2xl shadow-xl mb-8">
+         <h2 class="text-xl font-bold text-gray-800 mb-4">Feature Tracker</h2>
+            <?php if ($features): ?>
+                <table class="w-full text-left">
+                     <thead>
+                        <tr>
+                         <th class="px-4 py-2">Feature Title</th>
+                         <th class="px-4 py-2">Priority</th>
+                           <th class="px-4 py-2">Status</th>
+                            <th class="px-4 py-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <?php foreach ($features as $feature): ?>
+                                <tr class="border-b">
+                                      <td class="px-4 py-2"><?php echo htmlspecialchars($feature['feature_title']); ?></td>
+                                       <td class="px-4 py-2"><?php echo htmlspecialchars($feature['priority']); ?></td>
+                                        <td class="px-4 py-2"><?php echo htmlspecialchars($feature['status']); ?></td>
+                                         <td class="px-4 py-2">
+                                             <a href="<?php echo BASE_URL; ?>projects/features/view?id=<?php echo $feature['id']; ?>" class="text-blue-600 hover:underline">View</a>
+                                            <a href="<?php echo BASE_URL; ?>projects/features/edit?id=<?php echo $feature['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-blue-600 hover:underline ml-2">Edit</a>
+                                           <a href="<?php echo BASE_URL; ?>projects/features/delete?id=<?php echo $feature['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-red-600 hover:underline ml-2" onclick="return confirm('Are you sure you want to delete this feature?')">Delete</a>
+                                          </td>
+                                   </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                 </table>
+                <?php else: ?>
+                    <p class="text-gray-600">No Features added yet to the project.</p>
+                <?php endif; ?>
+                <div class="flex justify-between items-center mt-4">
+                       <a href="<?php echo BASE_URL; ?>projects/features/add?project_id=<?php echo $project_id; ?>" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 inline-block">Add Feature</a>
+                    <a href="<?php echo BASE_URL; ?>projects/features/manage?project_id=<?php echo $project_id; ?>" class="text-blue-600 hover:underline">Manage All Features</a>
+                </div>
+            </div>
+
+    <!-- Issue Tracker Section -->
+            <div class="bg-white p-6 rounded-2xl shadow-xl">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Issue Tracker</h2>
+               <?php if ($issues): ?>
+                    <table class="w-full text-left">
+                        <thead>
+                           <tr>
+                              <th class="px-4 py-2">Issue ID</th>
+                                <th class="px-4 py-2">Title</th>
+                                 <th class="px-4 py-2">Reported By</th>
+                                <th class="px-4 py-2">Status</th>
+                                <th class="px-4 py-2">Actions</th>
+                            </tr>
+                        </thead>
+                         <tbody>
+                              <?php foreach ($issues as $issue): ?>
+                                <tr class="border-b">
+                                      <td class="px-4 py-2"><?php echo htmlspecialchars($issue['issue_id']); ?></td>
+                                       <td class="px-4 py-2"><?php echo htmlspecialchars($issue['issue_title']); ?></td>
+                                         <td class="px-4 py-2"><?php echo htmlspecialchars($issue['reported_by_name']); ?></td>
+                                       <td class="px-4 py-2"><?php echo htmlspecialchars($issue['status']); ?></td>
+                                       <td class="px-4 py-2">
+                                            <a href="<?php echo BASE_URL; ?>projects/issues/view?id=<?php echo $issue['id']; ?>" class="text-blue-600 hover:underline">View</a>
+                                            <a href="<?php echo BASE_URL; ?>projects/issues/edit?id=<?php echo $issue['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-blue-600 hover:underline ml-2">Edit</a>
+                                              <a href="<?php echo BASE_URL; ?>projects/issues/delete?id=<?php echo $issue['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-red-600 hover:underline ml-2"  onclick="return confirm('Are you sure you want to delete this issue?')">Delete</a>
+                                        </td>
+                                   </tr>
+                                 <?php endforeach; ?>
+                            </tbody>
+                      </table>
+                 <?php else: ?>
+                         <p class="text-gray-600">No Issues reported yet for the project.</p>
+                     <?php endif; ?>
+                     <div class="flex justify-between items-center mt-4">
+                            <a href="<?php echo BASE_URL; ?>projects/issues/add?project_id=<?php echo $project_id; ?>" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 inline-block">Report New Issue</a>
+                           <a href="<?php echo BASE_URL; ?>projects/issues/manage?project_id=<?php echo $project_id; ?>" class="text-blue-600 hover:underline">Manage All Issues</a>
+                     </div>
+             </div>
     <div class="mt-4">
          <a href="<?php echo BASE_URL; ?>projects/manage" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300 inline-block">Back To Projects</a>
     </div>
