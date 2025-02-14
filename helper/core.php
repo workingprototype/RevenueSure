@@ -3,6 +3,7 @@
 require_once __DIR__ . '/functions.php'; // Use absolute path
 define('ROOT_PATH', __DIR__ . '/../'); // Absolute path to project root (one level up from helper)
 define('IS_DEVELOPMENT', ($_ENV['APP_ENV'] ?? 'production') === 'development');
+define('MAILDIR_BASE', ROOT_PATH . 'maildir/');  // Adjust path if needed
 
 try {
     $host = $_ENV['DB_HOST'] ?? 'localhost';

@@ -203,10 +203,22 @@ $routes = [
     'notes/edit' => 'notes/edit.php',
     'notes/view' => 'notes/view.php',
     'notes/delete' => 'notes/delete.php',
+
+    // Mailbox Routes
+    'mail/index' => 'mail/index.php',
+    'mail/compose' => 'mail/compose.php',
+    'mail/view' => 'mail/view.php',
+    'mail/settings' => 'mail/settings.php',
+    'mail/actions/send' => 'mail/actions/send.php',
+    'mail/actions/delete' => 'mail/actions/delete.php',
+    'mail/actions/mark_read' => 'mail/actions/mark_read.php',
+    'mail/actions/fetch_emails' => 'mail/actions/fetch_emails.php',
+
+    'admin/create_maildirs' => 'admin/create_maildirs.php'
 ];
 
 // Define routes that should not include header and footer
-$excludeHeaderFooter = ['leads/fetch'];
+$excludeHeaderFooter = ['leads/fetch', 'admin/mail_dirs'];
 
 if (array_key_exists($uri, $routes)) {
     if (session_status() == PHP_SESSION_NONE) {
