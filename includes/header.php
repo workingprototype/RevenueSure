@@ -375,13 +375,26 @@
                 </a>
               </div>
             </div>
+            <div class="menu-item <?php if (isParentActive('contracts/manage') || isParentActive('contracts/add')) echo 'active'; ?>">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-file-signature mr-2"></i>Manage Contracts
+              </a>
+              <div class="submenu">
+                <a href="<?php echo BASE_URL; ?>contracts/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('contracts/manage') ? 'active' : ''; ?>">
+                  <i class="fa-solid fa-list-ul mr-2"></i>View Contracts
+                </a>
+                <a href="<?php echo BASE_URL; ?>contracts/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('contracts/add') ? 'active' : ''; ?>">
+                  <i class="fa-solid fa-plus mr-2"></i> Create Contract
+                </a>
+              </div>
+            </div>
             <div class="menu-item <?php if (isParentActive('support_tickets/manage') || isParentActive('support_tickets/add') || isParentActive('support_tickets/view')) echo 'active'; ?>">
               <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
-                <i class="fa-solid fa-headset mr-2"></i>Manage Tickets
+                <i class="fa-solid fa-headset mr-2"></i>Support Tickets
               </a>
               <div class="submenu">
                 <a href="<?php echo BASE_URL; ?>support_tickets/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('support_tickets/manage') ? 'active' : ''; ?>">
-                  <i class="fa-solid fa-list-ul mr-2"></i>View Tickets
+                  <i class="fa-solid fa-list-ul mr-2"></i>Manage Tickets
                 </a>
                 <a href="<?php echo BASE_URL; ?>support_tickets/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('support_tickets/add') ? 'active' : ''; ?>">
                   <i class="fa-solid fa-plus mr-2"></i>Add Ticket
@@ -439,27 +452,27 @@
                 </a>
               </div>
             </div>
-            <div class="menu-item <?php if (isParentActive('contracts/manage') || isParentActive('contracts/add')) echo 'active'; ?>">
+            <!-- User Mailbox-->
+
+           <div class="menu-item <?php if (isParentActive('mail/index') || isParentActive('mail/compose')) echo 'active'; ?>">
               <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
-                <i class="fa-solid fa-file-signature mr-2"></i>Manage Contracts
+                <i class="fa-solid fa-file-signature mr-2"></i>Mailbox
               </a>
               <div class="submenu">
-                <a href="<?php echo BASE_URL; ?>contracts/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('contracts/manage') ? 'active' : ''; ?>">
-                  <i class="fa-solid fa-list-ul mr-2"></i>View Contracts
+                <a href="<?php echo BASE_URL; ?>mail/index" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('mail/compose') ? 'active' : ''; ?>">
+                  <i class="fa-solid fa-list-ul mr-2"></i>Inbox
                 </a>
-                <a href="<?php echo BASE_URL; ?>contracts/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('contracts/add') ? 'active' : ''; ?>">
-                  <i class="fa-solid fa-plus mr-2"></i> Create Contract
+                <a href="<?php echo BASE_URL; ?>mail/compose" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('mail/compose') ? 'active' : ''; ?>">
+                  <i class="fa-solid fa-plus mr-2"></i> Compose
+                </a>
+                </a>
+                <a href="<?php echo BASE_URL; ?>mail/settings" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('mail/settings') ? 'active' : ''; ?>">
+                  <i class="fa-solid fa-plus mr-2"></i> E-mail Settings
                 </a>
               </div>
             </div>
-            <a href="<?php echo BASE_URL; ?>reports/leads/dashboard" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reports/leads/dashboard') ? 'active' : ''; ?>">
-              <i class="fa-solid fa-chart-pie mr-2"></i>Reporting
-            </a>
-            <a href="<?php echo BASE_URL; ?>settings" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings') ? 'active' : ''; ?>">
-              <i class="fa-solid fa-gear mr-2"></i>Settings
-            </a>
-          <?php endif; ?>
-          <!-- Accounting Menu -->
+
+            <!-- Accounting Menu -->
           <div class="menu-item <?php if (isParentActive('accounting/dashboard') || isParentActive('accounting/ledger') || isParentActive('accounting/reconciliation') || isParentActive('accounting/manage_accountants')) echo 'active'; ?>">
             <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
               <i class="fa-solid fa-calculator mr-2"></i>Accounting
@@ -479,7 +492,19 @@
               </a>
             </div>
           </div>
+
+          <div>
+            <a href="<?php echo BASE_URL; ?>reports/leads/dashboard" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('reports/leads/dashboard') ? 'active' : ''; ?>">
+              <i class="fa-solid fa-chart-pie mr-2"></i>Reporting
+            </a>
+            <a href="<?php echo BASE_URL; ?>settings" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('settings') ? 'active' : ''; ?>">
+              <i class="fa-solid fa-gear mr-2"></i>Settings
+            </a>
+          </div>
+          <?php endif; ?>
+           
           
+
           <a href="<?php echo BASE_URL; ?>auth/logout" class="block py-2 px-4 hover:bg-gray-200 rounded-lg mt-4">
             <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
           </a>

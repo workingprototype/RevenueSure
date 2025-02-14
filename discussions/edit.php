@@ -31,7 +31,7 @@ if (!$message) {
 $timeLimit = strtotime($message['sent_at']) + (60*60); // 1 hour
 $currentTime = time();
 if ($currentTime > $timeLimit) {
-     echo "<script>alert('You cannot edit this message as its older than 1 hour.'); window.location.href='discussions/view?id=$discussion_id';</script>";
+     echo "<script>alert('You cannot edit this message as its older than 1 hour.'); window.location.href='<?php echo BASE_URL; ?>discussions/view?id=$discussion_id';</script>";
     exit;
 }
 

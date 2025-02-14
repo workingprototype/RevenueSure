@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_rating'])) {
     } else {
         echo "<script>
                 alert('Error submitting rating.');
-                window.location.href='knowledge_base/view?id={$article_id}';
+                window.location.href='<?php echo BASE_URL; ?>knowledge_base/view?id={$article_id}';
               </script>";
         exit();
     }

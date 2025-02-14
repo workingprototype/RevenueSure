@@ -11,7 +11,7 @@ $stmt = $conn->prepare("DELETE FROM leads WHERE id = :id");
 $stmt->bindParam(':id', $lead_id);
 
 if ($stmt->execute()) {
-    header("Location: " . BASE_URL . "dashboard/index");
+    header("Location: " . BASE_URL . "leads/add");
     exit();
 } else {
     echo "<script>alert('Error deleting lead.');</script>";

@@ -19,12 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':file_type', $file_type);
 
             if ($stmt->execute()) {
-                echo "<script>alert('Note added successfully!'); window.location.href='leads/view?id=$lead_id';</script>";
+                echo "<script>alert('Note added successfully!'); window.location.href='<?php echo BASE_URL; ?>leads/view?id=$lead_id';</script>";
             } else {
-                echo "<script>alert('Error adding note.'); window.location.href='leads/view?id=$lead_id';</script>";
+                echo "<script>alert('Error adding note.'); window.location.href='<?php echo BASE_URL; ?>leads/view?id=$lead_id';</script>";
             }
         } else {
-            echo "<script>alert('Note cannot be empty.'); window.location.href='leads/view?id=$lead_id';</script>";
+            echo "<script>alert('Note cannot be empty.'); window.location.href='<?php echo BASE_URL; ?>leads/view?id=$lead_id';</script>";
         }
     } else {
         // Handle file uploads

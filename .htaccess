@@ -2,7 +2,7 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /revenuesure-lite/
+    RewriteBase /RevenueSure/
 
     # Enforce default routes
     RewriteRule ^dashboard/?$ dashboard/index [L]
@@ -11,7 +11,7 @@
     RewriteRule ^(contracts)$ $1/manage [L,R=301]
     RewriteRule ^(credits)$ $1/manage [L,R=301]
     RewriteRule ^(customers)$ $1/manage [L,R=301]
-    RewriteRule ^(dsahboard)$ $1/index [L,R=301]
+    RewriteRule ^(dashboard)$ $1/index [L,R=301]
     RewriteRule ^(departments)$ $1/manage [L,R=301]
     RewriteRule ^(discussions)$ $1/manage [L,R=301]
     RewriteRule ^(employees)$ $1/manage [L,R=301]
@@ -24,6 +24,7 @@
     RewriteRule ^(projects)$ $1/manage [L,R=301]
     RewriteRule ^(reminders)$ $1/manage [L,R=301]
     RewriteRule ^(reports)$ $1/manage [L,R=301]
+    RewriteRule ^(messaging)$ $1/index [L,R=301]
 
     RewriteRule ^support_tickets/?$ support_tickets/manage [L,R=301]
     RewriteRule ^support_tickets/ticket_tasks/?$ support_tickets/ticket_tasks/manage [L,R=301]

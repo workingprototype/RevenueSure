@@ -25,18 +25,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                 if ($stmt->execute()) {
-                    echo "<script>alert('File uploaded successfully!'); window.location.href='support_tickets/view?id=$ticket_id';</script>";
+                    echo "<script>alert('File uploaded successfully!'); window.location.href='<?php echo BASE_URL; ?>support_tickets/view?id=$ticket_id';</script>";
                      exit();
                 } else {
-                    echo "<script>alert('Error uploading file.'); window.location.href='support_tickets/view?id=$ticket_id';</script>";
+                    echo "<script>alert('Error uploading file.'); window.location.href='<?php echo BASE_URL; ?>support_tickets/view?id=$ticket_id';</script>";
                        exit();
                 }
             } else {
-                echo "<script>alert('Error moving file.'); window.location.href='support_tickets/view?id=$ticket_id';</script>";
+                echo "<script>alert('Error moving file.'); window.location.href='<?php echo BASE_URL; ?>support_tickets/view?id=$ticket_id';</script>";
                  exit();
             }
         } else {
-            echo "<script>alert('No file uploaded or file error.'); window.location.href='support_tickets/view?id=$ticket_id';</script>";
+            echo "<script>alert('No file uploaded or file error.'); window.location.href='<?php echo BASE_URL; ?>support_tickets/view?id=$ticket_id';</script>";
              exit();
         }
 }

@@ -54,7 +54,7 @@ try {
             <h3 class="text-xl font-semibold text-gray-900 mb-2">Your Credits</h3>
             <p class="text-3xl font-bold text-blue-600"><?php echo htmlspecialchars($user['credits'] ?? 0); ?></p>
             <p class="text-gray-600 mt-2">Credits available for accessing leads.</p>
-            <a href="<?php echo BASE_URL; ?><?php echo BASE_URL; ?>credits/manage" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Manage Credits</a>
+            <a href="<?php echo BASE_URL; ?>credits/manage" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Manage Credits</a>
         </div>
 
         <!-- Leads Card -->
@@ -62,7 +62,7 @@ try {
             <h3 class="text-xl font-semibold text-gray-900 mb-2">Total Leads</h3>
             <p class="text-3xl font-bold text-blue-600"><?php echo htmlspecialchars($leads_count ?? 0); ?></p>
             <p class="text-gray-600 mt-2">Leads available in the platform.</p>
-            <a href="<?php echo BASE_URL; ?><?php echo BASE_URL; ?>leads/search" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Search Leads</a>
+            <a href="<?php echo BASE_URL; ?>leads/search" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Search Leads</a>
         </div>
 
         <!-- Admin-Specific Card -->
@@ -70,7 +70,7 @@ try {
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-green-500 transition hover:shadow-2xl">
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">Admin Actions</h3>
                 <p class="text-gray-600">Manage users and leads.</p>
-                <a href="<?php echo BASE_URL; ?><?php echo BASE_URL; ?>reports/leads/dashboard" class="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Go to Reporting Dashboard</a>
+                <a href="<?php echo BASE_URL; ?>reports/leads/dashboard" class="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Go to Reporting Dashboard</a>
             </div>
             <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-purple-500 transition hover:shadow-2xl">
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">Outstanding Payments</h3>
@@ -96,7 +96,7 @@ try {
                 <p class="text-gray-600 mt-2">
                     <strong>Total Outstanding Amount:</strong> $<?php echo htmlspecialchars($outstanding_data['outstanding_amount'] ?? 0); ?>
                 </p>
-                <a href="<?php echo BASE_URL; ?><?php echo BASE_URL; ?>invoices/manage" class="mt-4 inline-block bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-300">View Outstanding Invoices</a>
+                <a href="<?php echo BASE_URL; ?>invoices/manage" class="mt-4 inline-block bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-300">View Outstanding Invoices</a>
             </div>
         <?php endif; ?>
     </div>
@@ -166,9 +166,9 @@ try {
                                 <?php endif; ?>
                             </div>
                             <div class="flex gap-2">
-                                <a href="<?php echo BASE_URL; ?><?php echo BASE_URL; ?>todos/edit?id=<?php echo $todo['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
-                                <a href="<?php echo BASE_URL; ?><?php echo BASE_URL; ?>todos/delete?id=<?php echo $todo['id']; ?>" class="text-red-600 hover:underline">Delete</a>
-                                <a href="<?php echo BASE_URL; ?><?php echo BASE_URL; ?>todos/mark_complete?id=<?php echo $todo['id']; ?>&completed=<?php echo ($todo['is_completed'] == 1 ? 0 : 1); ?>" class="text-green-600 hover:underline"><?php echo $todo['is_completed'] == 1 ? 'Mark Incomplete' : 'Mark Complete'; ?></a>
+                                <a href="<?php echo BASE_URL; ?>todos/edit?id=<?php echo $todo['id']; ?>" class="text-blue-600 hover:underline">Edit</a>
+                                <a href="<?php echo BASE_URL; ?>todos/delete?id=<?php echo $todo['id']; ?>" class="text-red-600 hover:underline">Delete</a>
+                                <a href="<?php echo BASE_URL; ?>todos/mark_complete?id=<?php echo $todo['id']; ?>&completed=<?php echo ($todo['is_completed'] == 1 ? 0 : 1); ?>" class="text-green-600 hover:underline"><?php echo $todo['is_completed'] == 1 ? 'Mark Incomplete' : 'Mark Complete'; ?></a>
                             </div>
                         </div>
                     </li>

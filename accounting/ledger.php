@@ -236,13 +236,13 @@ function getStatusColor($status){
                                                  <?php else : ?>
                                                        N/A
                                                <?php endif; ?>
-                                                <?php if ($activeTab !== 'review'): ?>
-                                                      <form method="POST" action="" class="inline">
-                                                      <?php echo csrfTokenInput(); ?>
-                                                           <input type="hidden" name="review_entry_id" value="<?php echo $entry['id']; ?>">
-                                                             <button type="submit" class="text-yellow-600 hover:underline">Send for Review</button>
-                                                   </form>
-                                              <?php endif; ?>
+                                               <?php if ($activeTab !== 'review'): ?>
+                                                <form method="POST" action="" class="inline">
+                                                    <?php echo csrfTokenInput(); ?>
+                                                    <input type="hidden" name="review_entry_id" value="<?php echo $entry['id']; ?>">
+                                                    <button type="submit" class="text-yellow-600 hover:underline">Send for Review</button>
+                                                </form>
+                                                <?php endif; ?>
                                           </td>
                                 </tr>
                              <?php endforeach; ?>

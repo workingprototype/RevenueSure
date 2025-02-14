@@ -43,13 +43,6 @@ $stmt = $conn->prepare("SELECT projects.*, project_categories.name as category_n
 $stmt->execute();
 $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Project Dashboard</title>
-  <!-- Apple-inspired custom styles -->
   <style>
     /* Global Styles */
     body {
@@ -57,21 +50,26 @@ $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
       background-color: #f8f8f8;
       color: #333;
       margin: 0;
-      padding: 0;
+      padding: 1rem;
     }
-    
     h1 {
       font-size: 2.5rem;
       font-weight: bold;
       margin-bottom: 1rem;
       color: #111;
     }
-    /* Header Buttons */
-    .header-buttons {
+    /* Header and Buttons */
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .header-top {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      justify-content: space-between;
+      align-items: center;
     }
     .apple-button {
       background-color: #007aff;
@@ -91,6 +89,24 @@ $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
     .apple-button:hover {
       background-color: #005bb5;
     }
+    .view-toggle {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .toggle-button {
+      padding: 0.5rem 1rem;
+      background: #e5e5ea;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-size: 0.95rem;
+    }
+    .toggle-button.active,
+    .toggle-button:hover {
+      background: #007aff;
+      color: #fff;
+    }
     /* Feedback Messages */
     .feedback-message {
       border: 1px solid;
@@ -109,32 +125,74 @@ $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
       border-color: #ff3b30;
       color: #ff3b30;
     }
-    /* Table Styles */
-    .apple-table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #fff;
+    /* Projects Container */
+    .projects-container {
+      /* default to card view styles */
+    }
+    /* Card View */
+    .projects-container.card-view .project-card {
+      background: #fff;
       border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      margin-top: 1.5rem;
-    }
-    .apple-table thead {
-      background-color: #f0f0f5;
-    }
-    .apple-table th, .apple-table td {
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       padding: 1rem;
-      text-align: left;
+      margin-bottom: 1rem;
+    }
+    .project-card .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       border-bottom: 1px solid #e5e5e5;
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .project-card .card-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .project-card .card-header .project-id {
+      font-size: 0.9rem;
+      color: #888;
+    }
+    .project-card .card-body p {
+      margin: 0.5rem 0;
       font-size: 0.95rem;
     }
-    .apple-table th {
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #555;
+    .project-card .card-footer {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
     }
-    /* Status Select */
+    /* List View */
+    .projects-container.list-view {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .projects-container.list-view .project-card {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+    }
+    .projects-container.list-view .project-card > div {
+      flex: 1;
+    }
+    /* Grid View */
+    .projects-container.grid-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .projects-container.grid-view .project-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      padding: 1rem;
+    }
+    /* Status Select & Colors */
     .status-select {
       border: none;
       background: none;
@@ -149,7 +207,6 @@ $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
       outline: none;
       box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.5);
     }
-    /* Status Backgrounds */
     .status-not-started {
       background-color: #d1d1d6;
       color: #1c1c1e;
@@ -170,15 +227,11 @@ $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
       background-color: #ffd1d1;
       color: #ff3b30;
     }
-    /* Action Links */
-    .action-links a {
-      color: #007aff;
-      text-decoration: none;
-      margin-right: 1rem;
-      transition: color 0.2s ease;
-    }
-    .action-links a:hover {
-      color: #005bb5;
+    /* Card Actions */
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
     .card-actions a {
       display: inline-block;
@@ -187,21 +240,32 @@ $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
       padding: 0.5rem 1rem;
       border-radius: 8px;
       text-decoration: none;
-      margin-right: 0.5rem;
+      font-size: 0.9rem;
       transition: background-color 0.3s ease;
-    }
-    .card-actions a:last-child {
-      background-color: #ff3b30;
-    }
-    .card-actions a:last-child:hover {
-      background-color: #d32f2f;
     }
     .card-actions a:hover {
       background-color: #005bb5;
     }
   </style>
+</head>
+<body>
   <div class="container">
-    <h1>All Projects and Overview</h1>
+    <div class="header">
+      <div class="header-top">
+        <h1>All Projects and Overview</h1>
+        <a href="<?php echo BASE_URL; ?>projects/add" class="apple-button">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Add Project
+        </a>
+      </div>
+      <div class="view-toggle">
+        <button class="toggle-button active" data-view="card">Card View</button>
+        <button class="toggle-button" data-view="list">List View</button>
+        <button class="toggle-button" data-view="grid">Grid View</button>
+      </div>
+    </div>
 
     <?php if ($success): ?>
       <div class="feedback-message feedback-success">
@@ -214,119 +278,85 @@ $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
       </div>
     <?php endif; ?>
 
-    <div class="header-buttons">
-      <a href="<?php echo BASE_URL; ?>projects/add" class="apple-button">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-        </svg>
-        Add Project
-      </a>
-      <a href="<?php echo BASE_URL; ?>features/add" class="apple-button">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-        </svg> <i class="fas fa-magic mr-2"></i>
-        Features Tracker
-      </a>
-      <a href="<?php echo BASE_URL; ?>issues/add" class="apple-button">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-        </svg> <i class="fas fa-bug mr-2"></i>
-        Issue Tracker
-      </a>
+    <div id="projectsContainer" class="projects-container card-view">
+      <?php if ($projects): ?>
+        <?php foreach ($projects as $project): ?>
+          <div class="project-card">
+            <div class="card-header">
+              <h2><?php echo htmlspecialchars($project['name']); ?></h2>
+              <span class="project-id">#<?php echo htmlspecialchars($project['project_id']); ?></span>
+            </div>
+            <div class="card-body">
+              <p><strong>Manager:</strong> <?php echo htmlspecialchars($project['manager_name']); ?></p>
+              <p><strong>Category:</strong> <?php echo htmlspecialchars($project['category_name']); ?></p>
+              <p><strong>Start Date:</strong> <?php echo htmlspecialchars($project['start_date']); ?></p>
+              <p><strong>Priority:</strong> <?php echo htmlspecialchars($project['priority']); ?></p>
+            </div>
+            <div class="card-footer">
+              <form method="POST" action="">
+                <?php echo csrfTokenInput(); ?>
+                <input type="hidden" name="project_id" value="<?php echo htmlspecialchars($project['id']); ?>">
+                <?php 
+                  $statusClass = '';
+                  switch ($project['status']) {
+                    case 'Not Started':
+                      $statusClass = 'status-not-started';
+                      break;
+                    case 'In Progress':
+                      $statusClass = 'status-in-progress';
+                      break;
+                    case 'Completed':
+                      $statusClass = 'status-completed';
+                      break;
+                    case 'On Hold':
+                      $statusClass = 'status-on-hold';
+                      break;
+                    case 'Canceled':
+                      $statusClass = 'status-canceled';
+                      break;
+                    default:
+                      $statusClass = '';
+                      break;
+                  }
+                ?>
+                <select name="new_status" class="status-select <?php echo $statusClass; ?>" onchange="this.form.submit()">
+                  <option value="Not Started" <?php echo ($project['status'] == 'Not Started') ? 'selected' : ''; ?>>Not Started</option>
+                  <option value="In Progress" <?php echo ($project['status'] == 'In Progress') ? 'selected' : ''; ?>>In Progress</option>
+                  <option value="Completed" <?php echo ($project['status'] == 'Completed') ? 'selected' : ''; ?>>Completed</option>
+                  <option value="On Hold" <?php echo ($project['status'] == 'On Hold') ? 'selected' : ''; ?>>On Hold</option>
+                  <option value="Canceled" <?php echo ($project['status'] == 'Canceled') ? 'selected' : ''; ?>>Canceled</option>
+                </select>
+              </form>
+              <div class="card-actions">
+                <a href="<?php echo BASE_URL; ?>projects/view?id=<?php echo $project['id']; ?>">View</a>
+                <a href="<?php echo BASE_URL; ?>projects/gantt_chart?project_id=<?php echo $project['id']; ?>">Gantt</a>
+                <a href="<?php echo BASE_URL; ?>projects/kanban_board?project_id=<?php echo $project['id']; ?>">Kanban</a>
+                <a href="<?php echo BASE_URL; ?>projects/edit?id=<?php echo $project['id']; ?>">Edit</a>
+                <a href="<?php echo BASE_URL; ?>projects/delete?id=<?php echo $project['id']; ?>">Delete</a>
+              </div>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <p style="text-align: center; padding: 2rem; color: #777;">No projects found.</p>
+      <?php endif; ?>
     </div>
-
-    <table class="apple-table">
-      <thead>
-        <tr>
-          <th>Project ID</th>
-          <th>Name</th>
-          <th>Manager</th>
-          <th>Category</th>
-          <th>Start Date</th>
-          <th>Status</th>
-          <th>Priority</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if ($projects): ?>
-          <?php foreach ($projects as $project): ?>
-            <tr>
-              <td><?php echo htmlspecialchars($project['project_id']); ?></td>
-              <td><?php echo htmlspecialchars($project['name']); ?></td>
-              <td><?php echo htmlspecialchars($project['manager_name']); ?></td>
-              <td><?php echo htmlspecialchars($project['category_name']); ?></td>
-              <td><?php echo htmlspecialchars($project['start_date']); ?></td>
-              <td>
-                <form method="POST" action="">
-                  <?php echo csrfTokenInput(); ?>
-                  <input type="hidden" name="project_id" value="<?php echo htmlspecialchars($project['id']); ?>">
-                  <?php 
-                    $statusClass = '';
-                    switch ($project['status']) {
-                      case 'Not Started':
-                        $statusClass = 'status-not-started';
-                        break;
-                      case 'In Progress':
-                        $statusClass = 'status-in-progress';
-                        break;
-                      case 'Completed':
-                        $statusClass = 'status-completed';
-                        break;
-                      case 'On Hold':
-                        $statusClass = 'status-on-hold';
-                        break;
-                      case 'Canceled':
-                        $statusClass = 'status-canceled';
-                        break;
-                      default:
-                        $statusClass = '';
-                        break;
-                    }
-                  ?>
-                  <select name="new_status" class="status-select <?php echo $statusClass; ?>" onchange="this.form.submit()">
-                    <option value="Not Started" <?php echo ($project['status'] == 'Not Started') ? 'selected' : ''; ?>>Not Started</option>
-                    <option value="In Progress" <?php echo ($project['status'] == 'In Progress') ? 'selected' : ''; ?>>In Progress</option>
-                    <option value="Completed" <?php echo ($project['status'] == 'Completed') ? 'selected' : ''; ?>>Completed</option>
-                    <option value="On Hold" <?php echo ($project['status'] == 'On Hold') ? 'selected' : ''; ?>>On Hold</option>
-                    <option value="Canceled" <?php echo ($project['status'] == 'Canceled') ? 'selected' : ''; ?>>Canceled</option>
-                  </select>
-                </form>
-              </td>
-              <td><?php echo htmlspecialchars($project['priority']); ?></td>
-              <td>
-                <div class="action-links">
-                  <a href="<?php echo BASE_URL; ?>projects/view?id=<?php echo $project['id']; ?>">View Project</a>
-                  <a href="<?php echo BASE_URL; ?>projects/edit?id=<?php echo $project['id']; ?>">Edit Project</a>
-                  <a href="<?php echo BASE_URL; ?>projects/delete?id=<?php echo $project['id']; ?>">Delete Project</a> <!-- Todo: Add discard/ move to bin -->
-                </div>
-                <div class="card-actions" style="margin-top: 0.75rem;">
-                  <a href="<?php echo BASE_URL; ?>projects/features/manage?project_id=<?php echo $project['id']; ?>">
-                  <i class="fas fa-magic mr-2"></i> Manage Features
-                  </a>
-                  <a href="<?php echo BASE_URL; ?>projects/issues/manage?project_id=<?php echo $project['id']; ?>">
-                  <i class="fas fa-bug mr-2"></i> Manage Issues
-                  </a>
-                </div>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <tr>
-            <td colspan="8" style="text-align: center; padding: 2rem; color: #777;">
-              No projects found.
-            </td>
-          </tr>
-        <?php endif; ?>
-      </tbody>
-    </table>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    function confirmDelete(invoiceId) {
-      if (confirm('Are you sure you want to delete this invoice?')) {
-        window.location.href = 'invoices/delete?id=' + invoiceId;
-      }
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+      const toggleButtons = document.querySelectorAll('.toggle-button');
+      const container = document.getElementById('projectsContainer');
+
+      toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          // Remove active class from all buttons, then add to the clicked one
+          toggleButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          // Set container class based on selected view (card, list, grid)
+          const view = this.getAttribute('data-view');
+          container.className = 'projects-container ' + view + '-view';
+        });
+      });
+    });
   </script>

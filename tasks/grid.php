@@ -7,11 +7,11 @@
             <div class="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between fade-in">
                 <div>
                      <h2 class="text-xl font-semibold text-gray-800 mb-2">
-                           <?php if($project_id) : ?> <a href="<?php echo BASE_URL; ?>tasks/viewtask?id=<?php echo $task['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
+                           <?php if($project_id) : ?> <a href="<?php echo BASE_URL; ?>tasks/view?id=<?php echo $task['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
                            <?php elseif($lead_id): ?>
-                                 <a href="<?php echo BASE_URL; ?>tasks/viewtask?id=<?php echo $task['id']; ?>&lead_id=<?php echo $lead_id; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
+                                 <a href="<?php echo BASE_URL; ?>tasks/view?id=<?php echo $task['id']; ?>&lead_id=<?php echo $lead_id; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
                              <?php else :?>
-                               <a href="<?php echo BASE_URL; ?>tasks/viewtask?id=<?php echo $task['id']; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
+                               <a href="<?php echo BASE_URL; ?>tasks/view?id=<?php echo $task['id']; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
                             <?php endif; ?>
                      </h2>
                    

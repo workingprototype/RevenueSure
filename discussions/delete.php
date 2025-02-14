@@ -22,7 +22,7 @@ if ($stmt->execute()) {
     header("Location: " . BASE_URL . "discussions/view?id=$discussion_id");
     exit();
 } else {
-    echo "<script>alert('Error deleting message.'); window.location.href='discussions/view?id=$discussion_id';</script>";
+    echo "<script>alert('Error deleting message.'); window.location.href='<?php echo BASE_URL; ?>discussions/view?id=$discussion_id';</script>";
     exit();
 }
 ?>

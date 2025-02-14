@@ -27,15 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file']) && $_FILES['f
            header("Location: " . BASE_URL . "discussions/view?id=$discussion_id&success=true");
             exit();
         } else {
-           echo "<script>alert('Error uploading file.'); window.location.href='discussions/view?id=$discussion_id';</script>";
+           echo "<script>alert('Error uploading file.'); window.location.href='<?php echo BASE_URL; ?>discussions/view?id=$discussion_id';</script>";
              exit();
         }
     } else {
-        echo "<script>alert('Error moving file.'); window.location.href='discussions/view?id=$discussion_id';</script>";
+        echo "<script>alert('Error moving file.'); window.location.href='<?php echo BASE_URL; ?>discussions/view?id=$discussion_id';</script>";
         exit();
     }
 } else {
-    echo "<script>alert('No file uploaded or file error.'); window.location.href='discussions/view?id=$discussion_id';</script>";
+    echo "<script>alert('No file uploaded or file error.'); window.location.href='<?php echo BASE_URL; ?>discussions/view?id=$discussion_id';</script>";
      exit();
 }
 ?>

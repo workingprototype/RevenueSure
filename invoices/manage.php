@@ -435,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function confirmDelete(invoiceId) {
     if (confirm('Are you sure you want to delete this invoice?')) {
-        window.location.href = 'invoices/delete?id=' + invoiceId;
+        window.location.href = '<?php echo BASE_URL; ?>invoices/delete?id=' + invoiceId;
     }
 }
 </script>

@@ -1,6 +1,5 @@
 <?php
-// db.php
-// Database connection settings (consider environment variables if needed)
+
 $host = 'localhost';
 $dbname = 'lead_platform';
 $user = 'username';

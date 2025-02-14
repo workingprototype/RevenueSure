@@ -20,11 +20,11 @@
                     <?php foreach ($tasks as $task): ?>
                         <tr class="border-b transition hover:bg-gray-100">
                               <td class="px-4 py-3">
-                                     <?php if($project_id) : ?> <a href="<?php echo BASE_URL; ?>tasks/viewtask?id=<?php echo $task['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
+                                     <?php if($project_id) : ?> <a href="<?php echo BASE_URL; ?>tasks/view?id=<?php echo $task['id']; ?>&project_id=<?php echo $project_id; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
                                     <?php elseif($lead_id): ?>
-                                          <a href="<?php echo BASE_URL; ?>tasks/viewtask?id=<?php echo $task['id']; ?>&lead_id=<?php echo $lead_id; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
+                                          <a href="<?php echo BASE_URL; ?>tasks/view?id=<?php echo $task['id']; ?>&lead_id=<?php echo $lead_id; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
                                       <?php else :?>
-                                       <a href="<?php echo BASE_URL; ?>tasks/viewtask?id=<?php echo $task['id']; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
+                                       <a href="<?php echo BASE_URL; ?>tasks/view?id=<?php echo $task['id']; ?>" class="text-gray-800 hover:underline"> <?php echo htmlspecialchars($task['task_name']); ?></a>
                                   <?php endif; ?>
                                </td>
                              <td class="px-4 py-3"><?php echo htmlspecialchars($task['task_type']); ?></td>

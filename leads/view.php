@@ -1,15 +1,6 @@
 <?php
-
-
-
-session_start();
-
-require 'db.php';
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: " . BASE_URL . "auth/login");
-    exit();
-}
+require_once ROOT_PATH . 'helper/core.php';
+redirectIfUnauthorized(true); // Requires user to be logged in
 
 $lead_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
@@ -67,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['convert_to_customer'])
             if ($employee) {
                 $attributed_employee = $employee['id'];
             } else {
-                 echo "<script>alert('Employee with this name does not exists.'); window.location.href='leads/view?id=$lead_id';</script>";
+                 echo "<script>alert('Employee with this name does not exists.'); window.location.href='<?php echo BASE_URL; ?>leads/view?id=$lead_id';</script>";
                 exit();
             }
         }
@@ -84,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['convert_to_customer'])
                $stmt->bindParam(':customer_id', $customer_id);
                 $stmt->bindParam(':converted_by', $attributed_employee);
             if ($stmt->execute()) {
-                 echo "<script>alert('Lead converted successfully!'); window.location.href='leads/view?id=$lead_id';</script>";
+                 echo "<script>alert('Lead converted successfully!'); window.location.href='<?php echo BASE_URL; ?>leads/view?id=$lead_id';</script>";
             } else {
                 echo "<script>alert('Error converting lead.');</script>";
             }

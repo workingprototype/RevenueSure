@@ -38,11 +38,11 @@ $lead_id = $task ? $task['lead_id'] : null;
                 if ($dependent_task_status !== 'Completed') {
                    echo "<script>alert('Cannot start this task. Required task #{$dependency_id} is not completed.');";
                          if($lead_id){
-                            echo"window.location.href='tasks/viewtasks?lead_id=$lead_id';";
+                            echo"window.location.href='<?php echo BASE_URL; ?>tasks/viewtasks?lead_id=$lead_id';";
                          } else if ($project_id){
-                            echo "window.location.href='tasks/viewtasks?project_id=$project_id';";
+                            echo "window.location.href='<?php echo BASE_URL; ?>tasks/viewtasks?project_id=$project_id';";
                           } else {
-                            echo"window.location.href='tasks/viewtasks';";
+                            echo"window.location.href='<?php echo BASE_URL; ?>tasks/viewtasks';";
                        }
                    echo"</script>";
                     exit;

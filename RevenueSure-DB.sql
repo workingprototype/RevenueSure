@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 14, 2025 at 07:35 AM
+-- Generation Time: Feb 14, 2025 at 09:31 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -260,7 +260,9 @@ CREATE TABLE `customers` (
 INSERT INTO `customers` (`id`, `name`, `email`, `phone`, `created_at`, `company`, `last_interaction`, `address`, `social_media_profiles`, `age`, `gender`, `location`, `job_title`, `industry`, `profile_picture`) VALUES
 (1, 'Jabbar2', 'jabbar@demo.com', '12312312', '2025-01-28 08:56:01', 'Jabbar Corporations', '2025-01-28 09:13:46', 'NYC', 'https://instagram.com', 44, 'Male', 'NYC', 'Chairman', 'IT', 'uploads/profile/6798a5f924b68_pexels-photo-771742.jpeg'),
 (2, 'POP', 'pop@pop.com', '123123', '2025-01-29 11:57:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(3, 'test', 'test@demo.com', '12345', '2025-02-06 04:01:23', 'test', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(3, 'test', 'test@demo.com', '12345', '2025-02-06 04:01:23', 'test', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 'TESTConvert2', 'asdt@demo.com', '1231231', '2025-02-14 15:44:11', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 'testconvert4', 'asdasd@asdasdasd.com', '2312312313', '2025-02-14 15:46:40', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -434,6 +436,34 @@ INSERT INTO `discussion_participants` (`id`, `discussion_id`, `participant_id`, 
 (7, 3, 4, 'user', NULL, '2025-01-31 21:10:19'),
 (8, 3, 2, 'employee', '2025-02-10 21:24:24', '2025-01-31 21:10:19'),
 (9, 3, 1, 'customer', NULL, '2025-01-31 21:10:19');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `emails`
+--
+
+CREATE TABLE `emails` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `message_id` varchar(255) DEFAULT NULL,
+  `sender` varchar(255) NOT NULL,
+  `recipient` varchar(255) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `body` text NOT NULL,
+  `sent_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `has_attachment` tinyint(1) NOT NULL DEFAULT 0,
+  `mailbox` enum('inbox','sent','drafts','trash','spam') NOT NULL DEFAULT 'inbox',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `emails`
+--
+
+INSERT INTO `emails` (`id`, `user_id`, `message_id`, `sender`, `recipient`, `subject`, `body`, `sent_date`, `is_read`, `has_attachment`, `mailbox`, `created_at`) VALUES
+(1, 2, '<JlpfohaTVXTyLAnU9lMJTg@notifications.google.com>', 'Google <privacy-noreply@google.com>', '@', 'An update to your Google Account', '[image: Google] support@milddreams.com Hi Mild, We wanted to let you know that we\'re changing the country associated with your Google Account. We associate your Google Account with a region so that we can better provide our services to you. Your region association will change within 30 days. Current: *India* New: *Greece* If you disagree with this update, you can submit a request to change your region . If the region associated with your account doesn\'t match your place of residence, it could be because you\'ve moved within the last year, live and work in different regions or live near a territorial border. This also means that the Google company responsible for your information and for complying with applicable privacy laws is changing from *Google LLC* to *Google Ireland Ltd*. This may affect your use of our products and services, depending on your region\'s laws and regulations. - Some features may no longer be available to you, or you may need to verify your age - Depending on the laws in your region, your account may need to be supervised by a parent - If you use Family Link to manage a supervised account , a change of region to your account will also change the region for the supervised account You can find more information about your region association by reviewing the Google Terms of Service or checking out our FAQs page . Thanks, The Google Support team This email was sent to support@milddreams.com to provide an update about your Google Account. © 2025 Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA .awl a {color: #FFFFFF; text-decoration: none;} .abml a {color: #000000; font-family: Roboto-Medium,Helvetica,Arial,sans-serif; font-weight: bold; text-decoration: none;} .adgl a {color: rgba(0, 0, 0, 0.87); text-decoration: none;} .afal a {color: #b0b0b0; text-decoration: none;} @media screen and (min-width: 600px) {.v2sp {padding: 6px 30px 0px;} .v2rsp {padding: 0px 10px;}} @media screen and (min-width: 600px) {.mdv2rw {padding: 40px 40px;}} support@milddreams.com Hi Mild,We wanted to let you know that we\'re changing the country associated with your Google Account.We associate your Google Account with a region so that we can better provide our services to you. Your region association will change within 30 days.Current: IndiaNew: GreeceIf you disagree with this update, you can submit a request to change your region. If the region associated with your account doesn\'t match your place of residence, it could be because you\'ve moved within the last year, live and work in different regions or live near a territorial border. This also means that the Google company responsible for your information and for complying with applicable privacy laws is changing from Google LLC to Google Ireland Ltd.This may affect your use of our products and services, depending on your region\'s laws and regulations.Some features may no longer be available to you, or you may need to verify your ageDepending on the laws in your region, your account may need to be supervised by a parentIf you use Family Link to manage a supervised account, a change of region to your account will also change the region for the supervised accountYou can find more information about your region association by reviewing the Google Terms of Service or checking out our FAQs page.Thanks,The Google Support teamThis email was sent to support@milddreams.com to provide an update about your Google Account.&copy; 2025 Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA', '2025-01-11 09:13:08', 0, 0, 'inbox', '2025-02-14 13:46:58');
 
 -- --------------------------------------------------------
 
@@ -966,7 +996,8 @@ INSERT INTO `leads` (`id`, `name`, `phone`, `email`, `category_id`, `created_at`
 (7, 'PowerLead', '1231823918', 'power@demo.com', 1, '2025-01-28 04:05:31', 'Converted', NULL, 1, NULL, NULL, NULL, 'Website', 2),
 (8, 'Jabbar2', '12312312', 'jabbar@demo.com', 1, '2025-01-28 08:55:40', 'Converted', 1, 2, NULL, NULL, NULL, 'Website', 2),
 (9, 'POP', '123123', 'pop@pop.com', 1, '2025-01-29 11:56:29', 'Converted', 2, 2, NULL, NULL, NULL, 'Website', 1),
-(10, 'test2', '191919', 'asd@demo.com', 2, '2025-02-10 05:36:10', 'New', NULL, NULL, NULL, NULL, NULL, 'Website', 2);
+(10, 'test2', '191919', 'asd@demo.com', 2, '2025-02-10 05:36:10', 'New', NULL, NULL, NULL, NULL, NULL, 'Website', 2),
+(12, 'testconvert4', '2312312313', 'asdasd@asdasdasd.com', 2, '2025-02-14 15:46:40', 'Converted', 5, 2, NULL, NULL, NULL, 'Website', 1);
 
 -- --------------------------------------------------------
 
@@ -1094,7 +1125,10 @@ CREATE TABLE `note_categories` (
 
 INSERT INTO `note_categories` (`id`, `name`, `created_at`) VALUES
 (1, 'Remember', '2025-02-13 07:17:11'),
-(2, 'Meeting', '2025-02-13 10:23:35');
+(2, 'Meeting', '2025-02-13 10:23:35'),
+(3, 'test', '2025-02-14 06:37:15'),
+(4, 'test123', '2025-02-14 06:40:08'),
+(5, 'personal life', '2025-02-14 07:36:16');
 
 -- --------------------------------------------------------
 
@@ -1659,18 +1693,27 @@ CREATE TABLE `users` (
   `role` enum('admin','user') DEFAULT 'user',
   `profile_picture` varchar(255) DEFAULT NULL,
   `role_id` int(11) DEFAULT NULL,
-  `department_id` int(11) DEFAULT NULL
+  `department_id` int(11) DEFAULT NULL,
+  `imap_server` varchar(255) DEFAULT NULL,
+  `imap_port` int(11) DEFAULT NULL,
+  `imap_username` varchar(255) DEFAULT NULL,
+  `imap_password` varchar(255) DEFAULT NULL,
+  `smtp_server` varchar(255) DEFAULT NULL,
+  `smtp_port` int(11) DEFAULT NULL,
+  `smtp_username` varchar(255) DEFAULT NULL,
+  `smtp_password` varchar(255) DEFAULT NULL,
+  `smtp_security` enum('tls','ssl','none') DEFAULT 'tls'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `credits`, `created_at`, `role`, `profile_picture`, `role_id`, `department_id`) VALUES
-(1, 'Peel Hullin', 'user@demo.com', '$2y$10$8z2JpAs7QU3aMkHL59SC.O4rjZevbePDApd7947XYt.LfdOVlvA7.', 100, '2025-01-26 05:53:17', 'user', NULL, 5, NULL),
-(2, 'GGBOAI', 'admin@demo.com', '$2y$10$qtyaY8G3jceTluy42gCT.ey.SYmGAUcj5Oi3bnDxOxnCL.7w4nbJq', 0, '2025-01-26 06:17:01', 'admin', NULL, NULL, NULL),
-(4, 'John The Support Man', 'john@support.com', '$2y$10$6mZ3cSv8FM7fxg3Ui6JwquHyYnTtHsx1H9ZxtaFYqHG/anoV0C1o.', 0, '2025-01-30 14:46:28', 'user', NULL, 1, NULL),
-(5, 'admin2', 'admin2@demo.com', '$2y$10$xhjAQ4eMVDwSaP5gB2x0sus4lk/9uU7MJZF9NHcQ0o9cyZifO6.b6', 0, '2025-01-31 21:26:14', 'admin', 'public/uploads/profile/679d4030dfe71_M0ekXd9R_400x400.jpg', NULL, NULL);
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `credits`, `created_at`, `role`, `profile_picture`, `role_id`, `department_id`, `imap_server`, `imap_port`, `imap_username`, `imap_password`, `smtp_server`, `smtp_port`, `smtp_username`, `smtp_password`, `smtp_security`) VALUES
+(1, 'Peel Hullin', 'user@demo.com', '$2y$10$8z2JpAs7QU3aMkHL59SC.O4rjZevbePDApd7947XYt.LfdOVlvA7.', 100, '2025-01-26 05:53:17', 'user', NULL, 5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'tls'),
+(2, 'GGBOAI', 'admin@demo.com', '$2y$10$qtyaY8G3jceTluy42gCT.ey.SYmGAUcj5Oi3bnDxOxnCL.7w4nbJq', 0, '2025-01-26 06:17:01', 'admin', NULL, NULL, NULL, 'imap.hostinger.com', 993, 'support@milddreams.com', 'WDhxb3Qzci8yMktrVnFzVjNTNXZlUT09OjpMM66cNwmRZOa/gFsJRawd', 'smtp.hostinger.com', 465, 'support@milddreams.com', 'N0gyQ2FQNnhaSmV2L0JaOTR4TFMvZz09Ojp7h/Xxialq5pmPSjggg5+6', 'ssl'),
+(4, 'John The Support Man', 'john@support.com', '$2y$10$6mZ3cSv8FM7fxg3Ui6JwquHyYnTtHsx1H9ZxtaFYqHG/anoV0C1o.', 0, '2025-01-30 14:46:28', 'user', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'tls'),
+(5, 'admin2', 'admin2@demo.com', '$2y$10$xhjAQ4eMVDwSaP5gB2x0sus4lk/9uU7MJZF9NHcQ0o9cyZifO6.b6', 0, '2025-01-31 21:26:14', 'admin', 'public/uploads/profile/679d4030dfe71_M0ekXd9R_400x400.jpg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'tls');
 
 -- --------------------------------------------------------
 
@@ -1811,6 +1854,14 @@ ALTER TABLE `discussion_participants`
   ADD PRIMARY KEY (`id`),
   ADD KEY `discussion_id` (`discussion_id`),
   ADD KEY `participant_id` (`participant_id`);
+
+--
+-- Indexes for table `emails`
+--
+ALTER TABLE `emails`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `message_id` (`message_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `employees`
@@ -2310,7 +2361,7 @@ ALTER TABLE `contract_types`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `customer_custom_fields`
@@ -2359,6 +2410,12 @@ ALTER TABLE `discussion_messages`
 --
 ALTER TABLE `discussion_participants`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `emails`
+--
+ALTER TABLE `emails`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `employees`
@@ -2502,13 +2559,13 @@ ALTER TABLE `knowledge_base_categories`
 -- AUTO_INCREMENT for table `leads`
 --
 ALTER TABLE `leads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `lead_scores`
 --
 ALTER TABLE `lead_scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `ledger_entries`
@@ -2520,7 +2577,7 @@ ALTER TABLE `ledger_entries`
 -- AUTO_INCREMENT for table `notes`
 --
 ALTER TABLE `notes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `note_access`
@@ -2538,7 +2595,7 @@ ALTER TABLE `note_attachments`
 -- AUTO_INCREMENT for table `note_categories`
 --
 ALTER TABLE `note_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `note_comments`
@@ -2788,6 +2845,12 @@ ALTER TABLE `discussion_messages`
 --
 ALTER TABLE `discussion_participants`
   ADD CONSTRAINT `discussion_participants_ibfk_1` FOREIGN KEY (`discussion_id`) REFERENCES `discussions` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `emails`
+--
+ALTER TABLE `emails`
+  ADD CONSTRAINT `emails_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `expenses`

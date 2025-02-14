@@ -154,7 +154,7 @@ $contracts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <script>
     function confirmDelete(contractId) {
         if (confirm('Are you sure you want to delete this contract?')) {
-            window.location.href = 'contracts/delete?id=' + contractId;
+            window.location.href = '<?php echo BASE_URL; ?>contracts/delete?id=' + contractId;
         }
     }
 </script>

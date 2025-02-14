@@ -19,7 +19,7 @@ $stmt->execute();
 $invoice = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$invoice) {
-     echo "<script>alert('Invoice not found.'); window.location.href='invoices/manage';</script>";
+     echo "<script>alert('Invoice not found.'); window.location.href='<?php echo BASE_URL; ?>invoices/manage';</script>";
     exit;
 }
 // Fetch Invoice Items

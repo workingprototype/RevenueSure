@@ -46,7 +46,7 @@ if ($lead_id && $action) {
     $stmt->bindParam(':lead_id', $lead_id);
     $stmt->execute();
 
-    echo "<script>alert('Behavior tracked successfully!'); window.location.href='leads/view?id=$lead_id';</script>";
+    echo "<script>alert('Behavior tracked successfully!'); window.location.href='<?php echo BASE_URL; ?>leads/view?id=$lead_id';</script>";
 } else {
     echo "<script>alert('Invalid request.');</script>";
 }

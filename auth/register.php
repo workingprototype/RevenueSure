@@ -1,5 +1,6 @@
 <?php
 require_once ROOT_PATH . 'helper/core.php';
+require_once ROOT_PATH . 'mail/includes/email_functions.php';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -26,6 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':role', $role, PDO::PARAM_STR);
 
             if ($stmt->execute()) {
+                $user_id = $conn->lastInsertId();
+        
+                // Create Maildir for this new user
+                 if (!createMaildir($user_id)) {
+                   error_log("Failed to create Maildir for user " . $user_id); // Log the error, but don't halt execution.
+                    }
+
                   header("Location: " . BASE_URL . "auth/login");
                   exit();
             } else {

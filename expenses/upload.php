@@ -21,18 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['receipt']) && $_FILES
         $stmt->bindParam(':expense_id', $expense_id);
 
         if ($stmt->execute()) {
-            echo "<script>alert('Receipt uploaded successfully!'); window.location.href='expenses/view?id=$expense_id';</script>";
+            echo "<script>alert('Receipt uploaded successfully!'); window.location.href='<?php echo BASE_URL; ?>expenses/view?id=$expense_id';</script>";
             exit();
         } else {
-            echo "<script>alert('Error updating receipt path.'); window.location.href='expenses/view?id=$expense_id';</script>";
+            echo "<script>alert('Error updating receipt path.'); window.location.href='<?php echo BASE_URL; ?>expenses/view?id=$expense_id';</script>";
             exit();
         }
     } else {
-        echo "<script>alert('Error moving receipt file.'); window.location.href='expenses/view?id=$expense_id';</script>";
+        echo "<script>alert('Error moving receipt file.'); window.location.href='<?php echo BASE_URL; ?>expenses/view?id=$expense_id';</script>";
         exit();
     }
 } else {
-      echo "<script>alert('Error uploading receipt, please try again!'); window.location.href='expenses/view?id=$expense_id';</script>";
+      echo "<script>alert('Error uploading receipt, please try again!'); window.location.href='<?php echo BASE_URL; ?>expenses/view?id=$expense_id';</script>";
        exit();
 }
 ?>

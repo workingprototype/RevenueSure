@@ -17,7 +17,7 @@
                               title: task.task_name,
                               start: task.due_date,
                               end:  task.due_date,
-                             url:  `tasks/viewtask?id=${task.id}<?php if($project_id) echo "&project_id=" . $project_id ; ?><?php if($lead_id) echo "&lead_id=" . $lead_id ; ?>`,
+                             url:  `tasks/view?id=${task.id}<?php if($project_id) echo "&project_id=" . $project_id ; ?><?php if($lead_id) echo "&lead_id=" . $lead_id ; ?>`,
                                 backgroundColor:  task.priority === 'High' ? '#ef4444' : ( task.priority === 'Medium' ? '#facc15' : '#22c55e'),
                               borderColor:  task.priority === 'High' ? '#ef4444' : ( task.priority === 'Medium' ? '#facc15' : '#22c55e')
                          })) ,

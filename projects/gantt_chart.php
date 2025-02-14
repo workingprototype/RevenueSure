@@ -72,7 +72,7 @@ $dependencies = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             new Gantt("#gantt", ganttTasks, {
                 on_click: function (task) {
-                    window.location.href = 'tasks/viewtasks?project_id=<?php echo $project_id; ?>&task_id='+task.id;
+                    window.location.href = '<?php echo BASE_URL; ?>tasks/viewtasks?project_id=<?php echo $project_id; ?>&task_id='+task.id;
                    console.log(task);
                  },
                   on_date_change: (task, start, end) => {
