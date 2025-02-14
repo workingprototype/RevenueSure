@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 12, 2025 at 10:55 PM
+-- Generation Time: Feb 14, 2025 at 07:35 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -1026,6 +1026,105 @@ INSERT INTO `ledger_entries` (`id`, `transaction_date`, `transaction_id`, `descr
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notes`
+--
+
+CREATE TABLE `notes` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `content` text DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `is_shared` tinyint(1) NOT NULL DEFAULT 0,
+  `related_type` enum('lead','customer','project','user') DEFAULT NULL,
+  `related_id` int(11) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notes`
+--
+
+INSERT INTO `notes` (`id`, `title`, `content`, `category_id`, `is_shared`, `related_type`, `related_id`, `created_by`, `created_at`, `updated_at`) VALUES
+(2, 'Meeting Notes - Project Kickoff', '<p><strong>Meeting Summary:</strong><br>&nbsp;</p><ul><li><strong>Project Overview:</strong><br>John presented the project\'s objectives, focusing on improving customer experience through new software features. The main goal is to launch by Q3 2025.</li><li><strong>Team Roles:</strong><ul><li>John will lead the technical team.</li><li>Jane will manage the UX/UI design.</li><li>Alice will be the product owner, and Mark will handle project management.</li></ul></li><li><strong>Timeline:</strong><br>The key milestones were discussed. The first prototype is expected by March 2025, with the first round of testing planned for late May 2025.</li><li><strong>Tools &amp; Resources:</strong><br>The team agreed to use Asana for project management, GitHub for version control, and Figma for design collaboration.</li><li><strong>Action Items:</strong><ul><li>John to finalize the tech stack by Friday, February 16, 2025.</li><li>Jane to begin wireframing initial designs by February 20, 2025.</li><li>Mark to schedule a follow-up meeting next week for progress updates.</li></ul></li></ul><p><strong>Next Meeting:</strong></p><ul><li>Scheduled for February 20, 2025, at 10:00 AM.</li></ul>', 2, 0, 'project', NULL, 2, '2025-02-13 10:29:26', '2025-02-13 12:08:05');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `note_access`
+--
+
+CREATE TABLE `note_access` (
+  `id` int(11) NOT NULL,
+  `note_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `has_access` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `note_attachments`
+--
+
+CREATE TABLE `note_attachments` (
+  `id` int(11) NOT NULL,
+  `note_id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `note_categories`
+--
+
+CREATE TABLE `note_categories` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `note_categories`
+--
+
+INSERT INTO `note_categories` (`id`, `name`, `created_at`) VALUES
+(1, 'Remember', '2025-02-13 07:17:11'),
+(2, 'Meeting', '2025-02-13 10:23:35');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `note_comments`
+--
+
+CREATE TABLE `note_comments` (
+  `id` int(11) NOT NULL,
+  `note_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `note_tags`
+--
+
+CREATE TABLE `note_tags` (
+  `id` int(11) NOT NULL,
+  `note_id` int(11) NOT NULL,
+  `tag` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `notifications`
 --
 
@@ -1912,6 +2011,52 @@ ALTER TABLE `ledger_entries`
   ADD KEY `expense_id` (`expense_id`);
 
 --
+-- Indexes for table `notes`
+--
+ALTER TABLE `notes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `category_id` (`category_id`),
+  ADD KEY `related_type` (`related_type`,`related_id`),
+  ADD KEY `created_by` (`created_by`);
+
+--
+-- Indexes for table `note_access`
+--
+ALTER TABLE `note_access`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `note_id` (`note_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `note_attachments`
+--
+ALTER TABLE `note_attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `note_id` (`note_id`);
+
+--
+-- Indexes for table `note_categories`
+--
+ALTER TABLE `note_categories`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `note_comments`
+--
+ALTER TABLE `note_comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `note_id` (`note_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `note_tags`
+--
+ALTER TABLE `note_tags`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `note_id` (`note_id`);
+
+--
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -2372,6 +2517,42 @@ ALTER TABLE `ledger_entries`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `notes`
+--
+ALTER TABLE `notes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `note_access`
+--
+ALTER TABLE `note_access`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `note_attachments`
+--
+ALTER TABLE `note_attachments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `note_categories`
+--
+ALTER TABLE `note_categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `note_comments`
+--
+ALTER TABLE `note_comments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `note_tags`
+--
+ALTER TABLE `note_tags`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -2768,6 +2949,38 @@ ALTER TABLE `ledger_entries`
   ADD CONSTRAINT `ledger_entries_ibfk_2` FOREIGN KEY (`expense_id`) REFERENCES `expenses` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `ledger_entries_ibfk_3` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `ledger_entries_ibfk_4` FOREIGN KEY (`expense_id`) REFERENCES `expenses` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `notes`
+--
+ALTER TABLE `notes`
+  ADD CONSTRAINT `notes_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `note_access`
+--
+ALTER TABLE `note_access`
+  ADD CONSTRAINT `note_access_ibfk_1` FOREIGN KEY (`note_id`) REFERENCES `notes` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `note_access_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `note_attachments`
+--
+ALTER TABLE `note_attachments`
+  ADD CONSTRAINT `note_attachments_ibfk_1` FOREIGN KEY (`note_id`) REFERENCES `notes` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `note_comments`
+--
+ALTER TABLE `note_comments`
+  ADD CONSTRAINT `note_comments_ibfk_1` FOREIGN KEY (`note_id`) REFERENCES `notes` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `note_comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `note_tags`
+--
+ALTER TABLE `note_tags`
+  ADD CONSTRAINT `note_tags_ibfk_1` FOREIGN KEY (`note_id`) REFERENCES `notes` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `notifications`

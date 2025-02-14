@@ -79,3 +79,14 @@ function redirectIfUnauthorized(bool $admin_only = false) {
         exit();
     }
 }
+
+function createNoteCard(array $note): string {
+    // Construct the path to the note view page
+    $noteViewUrl = BASE_URL . "notes/view?id=" . urlencode($note['id']);
+
+    return '<div class="bg-white rounded-lg shadow-md p-4">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2"><a href="' . $noteViewUrl . '">' . htmlspecialchars($note['title']) . '</a></h2>
+               <p class="text-gray-600 text-sm">Category: ' . htmlspecialchars($note['category_name'] ?: 'Uncategorized') . '</p>
+               <p class="text-gray-600 text-sm mt-2">Created: ' . htmlspecialchars($note['created_at']) . '</p>
+           </div>';
+}

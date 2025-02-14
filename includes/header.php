@@ -15,6 +15,7 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
       <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.1/marked.min.js"></script>
       <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> To be used later for charts in dashboard -->
     <style>
         :root {
@@ -263,6 +264,7 @@
                     ?>
                     <a href="<?php echo BASE_URL; ?>dashboard" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('dashboard') ? 'active' : ''; ?>"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
                     <a href="<?php echo BASE_URL; ?>credits/manage" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('credits/manage') ? 'active' : ''; ?>"><i class="fas fa-credit-card mr-2"></i>Manage Credits</a>
+                    <a href="<?php echo BASE_URL; ?>notes/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('notes/manage') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Note Taking</a>
 
                     <!-- Admin Menu -->
                     <?php if ($_SESSION['role'] === 'admin'): ?>
@@ -310,11 +312,12 @@
                             <div class="menu-item <?php if (isParentActive('projects/manage') || isParentActive('projects/add') || isParentActive('projects/view') || isParentActive('projects/categories/manage') || isParentActive('discussions/manage') || isParentActive('tasks/viewtasks')) echo 'active'; ?>">
                                <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Manage Projects & Tasks</a>
                             <div class="submenu">
-                                <a href="<?php echo BASE_URL; ?>projects/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('projects/manage') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>View Projects</a>
+                                <a href="<?php echo BASE_URL; ?>projects/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('projects/manage') ? 'active' : ''; ?>"><i class="fas fa-list-ul mr-2"></i>Projects</a>
 
-                                    <a href="<?php echo BASE_URL; ?>tasks/viewtasks" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('tasks/viewtasks') ? 'active' : ''; ?>"><i class="fas fa-tasks mr-2"></i>View Tasks</a>
+                                    <a href="<?php echo BASE_URL; ?>tasks/viewtasks" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 <?php echo isActive('tasks/viewtasks') ? 'active' : ''; ?>"><i class="fas fa-tasks mr-2"></i>Tasks</a>
                                     <a href="<?php echo BASE_URL; ?>discussions/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('discussions/manage') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Discussions</a>
-                                 <a href="<?php echo BASE_URL; ?>projects/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('projects/add') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Add Project</a>
+                                 <a href="<?php echo BASE_URL; ?>projects/features/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('projects/features/manage') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Features Tracker</a>
+                                 <a href="<?php echo BASE_URL; ?>projects/issues/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('projects/issues/manage') ? 'active' : ''; ?>"><i class="fas fa-plus mr-2"></i>Issue Tracker</a>
                                       <a href="<?php echo BASE_URL; ?>projects/categories/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg <?php echo isActive('projects/categories/manage') ? 'active' : ''; ?>"><i class="fas fa-list-alt mr-2"></i>Project Categories</a>
                             </div>
                         </div>
