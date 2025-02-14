@@ -202,6 +202,7 @@ $routes = [
     'notes/add' => 'notes/add.php',
     'notes/edit' => 'notes/edit.php',
     'notes/view' => 'notes/view.php',
+    'notes/delete' => 'notes/delete.php',
 ];
 
 // Define routes that should not include header and footer
