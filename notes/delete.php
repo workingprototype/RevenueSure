@@ -2,9 +2,6 @@
 require_once ROOT_PATH . 'helper/core.php';
 redirectIfUnauthorized(true);
 
-$error = '';
-$success = '';
-
 if (!isset($_GET['id'])) {
     header("Location: " . BASE_URL . "notes/manage");
     exit();
@@ -17,11 +14,10 @@ $stmt = $conn->prepare("DELETE FROM notes WHERE id = :id");
 $stmt->bindParam(':id', $note_id);
 
 if ($stmt->execute()) {
-    header("Location: " . BASE_URL . "notes/manage");
+    header("Location: " . BASE_URL . "notes/manage?deleted=true");
     exit();
 } else {
-    echo "<script>alert('Error deleting note.');</script>";
-      header("Location: " . BASE_URL . "notes/manage");
+    header("Location: " . BASE_URL . "notes/manage?error=Error+deleting+note");
     exit();
 }
 ?>

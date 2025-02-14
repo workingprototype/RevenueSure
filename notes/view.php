@@ -51,6 +51,36 @@ if (!$note) {
 $stmt = $conn->prepare("SELECT * FROM note_categories ORDER BY name ASC");
 $stmt->execute();
 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// If the note has a related entity, fetch its name and build a clickable link
+$related_display = "";
+if ($note['related_type'] && $note['related_id']) {
+    if ($note['related_type'] === 'lead') {
+        $stmt = $conn->prepare("SELECT name FROM leads WHERE id = :id");
+        $stmt->bindParam(':id', $note['related_id']);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $related_display = '<a href="' . BASE_URL . 'leads/view?id=' . $note['related_id'] . '">' . htmlspecialchars($row['name']) . '</a>';
+        }
+    } elseif ($note['related_type'] === 'customer') {
+        $stmt = $conn->prepare("SELECT name FROM customers WHERE id = :id");
+        $stmt->bindParam(':id', $note['related_id']);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $related_display = '<a href="' . BASE_URL . 'customers/view?id=' . $note['related_id'] . '">' . htmlspecialchars($row['name']) . '</a>';
+        }
+    } elseif ($note['related_type'] === 'project') {
+        $stmt = $conn->prepare("SELECT name FROM projects WHERE id = :id");
+        $stmt->bindParam(':id', $note['related_id']);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $related_display = '<a href="' . BASE_URL . 'projects/view?id=' . $note['related_id'] . '">' . htmlspecialchars($row['name']) . '</a>';
+        }
+    }
+}
 ?>
 
 <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-8">
@@ -104,8 +134,8 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <?php echo $note['content']; ?>
         </p>
         <p><strong>Is Shared:</strong> <?php echo $note['is_shared'] ? 'Yes' : 'No'; ?></p>
-        <?php if ($note['related_type'] && $note['related_id']): ?>
-          <p><strong>Related to:</strong> <?php echo htmlspecialchars($note['related_type']); ?> with ID <?php echo htmlspecialchars($note['related_id']); ?></p>
+        <?php if ($related_display): ?>
+          <p><strong>Related to:</strong> <?php echo $related_display; ?></p>
         <?php endif; ?>
       </div>
     </div>
@@ -181,15 +211,19 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // Initialize ClassicEditor for inline edit mode if not already created
     if (!editMode.classList.contains('hidden') && !inlineEditor) {
       ClassicEditor
-        .create(document.querySelector('#edit_content'), {
-          toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'insertTable', 'undo', 'redo'],
-        })
-        .then(editor => {
-          inlineEditor = editor;
-        })
-        .catch(error => {
-          console.error(error);
-        });
+    .create(document.querySelector('#content'), {
+        toolbar: [
+            'heading', '|',
+            'bold', 'italic', 'link', 'codeBlock', 'bulletedList', 'numberedList', 'blockQuote', 'undo', 'redo'
+        ]
+    })
+    .then(editor => {
+        console.log('Editor initialized', editor);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
     }
   }
 </script>
