@@ -53,3 +53,13 @@ Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 
 Options -Indexes
+
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|svg|woff2?)$">
+  <IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 week"
+  </IfModule>
+  <IfModule mod_headers.c>
+    Header append Cache-Control "public"
+  </IfModule>
+</FilesMatch>
