@@ -1,0 +1,538 @@
+s:24629:"<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RevenueSure</title>
+  <meta name="description" content="A platform to manage leads and businesses efficiently." />
+  <meta name="keywords" content="leads, businesses, management, platform" />
+  <meta name="author" content="Your Name" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
+
+  <!-- Include FontAwesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.1/marked.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> To be used later for charts in dashboard -->
+  <style>
+    :root {
+      --primary-color: #007aff; /* Apple Blue */
+      --secondary-color: #4cd964; /* Apple Green */
+      --background-light: #f9fafb;
+      --background-dark: #1f2937;
+      --error-color: #ff3b30;
+      --nav-item-height: 48px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: var(--background-light);
+      color: #1f2937;
+    }
+    aside {
+      min-width: 280px;
+      transition: all 0.3s ease-in-out;
+      border-right: 1px solid rgba(0,0,0,0.1);
+      background: #e2e8f0;
+    }
+    aside nav {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .menu-item a {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      margin: 0 10px;
+      transition: color 0.4s ease, background-color 0.4s ease, border-left-color 0.4s ease;
+      border-left: 4px solid transparent;
+      color: #4a5568;
+      font-size: 0.9rem;
+    }
+    .menu-item .submenu a:hover {
+      background-color: rgba(0,0,0,0.03);
+      color: #000;
+    }
+    .menu-item .submenu a {
+      padding: 12px 30px;
+      font-size: 0.85rem;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+    /* Only style the direct child for active parent items */
+    .menu-item.active > a {
+      color: #000;
+      background-color: rgba(0,0,0,0.04);
+      border-left-color: var(--primary-color);
+    }
+    /* Highlight active submenu links */
+    .submenu a.active {
+      color: #000;
+      background-color: rgba(0,0,0,0.04);
+      border-left: 4px solid var(--primary-color);
+    }
+    .submenu {
+      padding-left: 10px;
+      transition: max-height 0.4s ease;
+      margin-top: 5px;
+      border-left: 2px solid #94a3b8;
+      overflow: hidden;
+      max-height: 0;
+    }
+    /* Keep submenu open when hovering OR when the parent menu item is active */
+    .menu-item:hover .submenu,
+    .menu-item.active .submenu {
+      max-height: 1000px;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    .fade-in-up {
+      animation: fadeInUp 0.3s ease-in-out;
+    }
+    .fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    button {
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+    .bg-white {
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    input, select, textarea {
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+    .top-nav-button {
+      transition: all 0.3s ease-in-out;
+    }
+    .top-nav-button:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .top-nav-dropdown {
+      z-index: 50;
+      border: 1px solid rgba(0,0,0,0.07);
+      border-radius: 12px;
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+    .top-nav-dropdown a {
+      padding: 10px;
+      display: block;
+      transition: all 0.2s ease;
+    }
+    .top-nav-dropdown a:hover {
+      background: #f2f2f2;
+    }
+    .paper-doc {
+      font-family: 'Georgia', serif;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 40px 60px;
+      background-color: #fdfdfd;
+      border: 1px solid #e2e2e2;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+      border-radius: 15px;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+    .paper-doc h1, .paper-doc h2, .paper-doc h3, .paper-doc h4, .paper-doc h5, .paper-doc h6 {
+      font-family: 'Roboto Slab', serif;
+      margin-bottom: 15px;
+      line-height: 1.4;
+      color: #333;
+      font-weight: 700;
+    }
+    .paper-doc h1 {
+      font-size: 2.5rem;
+    }
+    .paper-doc h2 {
+      font-size: 2rem;
+      border-bottom: 2px solid #f2f2f2;
+      padding-bottom: 6px;
+    }
+    .paper-doc h3 {
+      font-size: 1.75rem;
+    }
+    .paper-doc h4 {
+      font-size: 1.5rem;
+    }
+    .paper-doc h5 {
+      font-size: 1.25rem;
+    }
+    .paper-doc h6 {
+      font-size: 1.1rem;
+    }
+    .paper-doc a {
+      color: #0056b3;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-bottom 0.3s ease;
+    }
+    .paper-doc a:hover {
+      border-bottom: 1px solid #0056b3;
+    }
+    .paper-doc p {
+      margin-bottom: 15px;
+    }
+    .paper-doc ol, .paper-doc ul {
+      padding-left: 25px;
+      margin-bottom: 15px;
+    }
+    .paper-doc ul li {
+      list-style-type: disc;
+      margin-bottom: 10px;
+    }
+    .paper-doc ol li {
+      list-style-type: decimal;
+      margin-bottom: 10px;
+    }
+    .paper-doc blockquote {
+      margin: 20px 0;
+      padding: 15px 20px;
+      border-left: 4px solid #c0c0c0;
+      font-style: italic;
+      color: #555;
+      background-color: #fafafa;
+    }
+    .paper-doc .rating-bookmark-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+      border-top: 1px solid #f2f2f2;
+      padding-top: 15px;
+    }
+    .paper-doc .rating-bookmark-container button {
+      transition: all 0.3s ease;
+    }
+    .paper-doc .rating-bookmark-container button:hover {
+      color: #0056b3;
+    }
+    .paper-doc .rating-bookmark-container textarea {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <!-- Mobile Top Navigation (shows hamburger) -->
+  <nav class="bg-blue-600 p-4 text-white md:hidden flex justify-between items-center">
+    <a href="/revenuesure/" class="text-xl font-bold">RevenueSure</a>
+    <button id="mobileMenuButton" class="p-2 focus:outline-none">
+      <i class="fa-solid fa-bars fa-lg"></i>
+    </button>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="flex h-screen fade-in-up">
+    <!-- Sidebar: hidden on mobile, shown on md+ -->
+    <aside id="sidebar" class="bg-gray-100 text-gray-700 w-64 p-4 hidden md:block">
+      <a href="/revenuesure/" class="text-2xl font-bold block mb-6 pl-4 text-gray-800">RevenueSure</a>
+      <nav>
+                  <!-- User Menu -->
+                    <a href="/revenuesure/dashboard" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 ">
+            <i class="fa-solid fa-house mr-2"></i>Dashboard
+          </a>
+          <a href="/revenuesure/credits/manage" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 ">
+            <i class="fa-solid fa-wallet mr-2"></i>Manage Credits
+          </a>
+          <a href="/revenuesure/notes/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+            <i class="fa-solid fa-sticky-note mr-2"></i>Note Taking
+          </a>
+
+          <!-- Admin Menu -->
+                      <h6 class="text-gray-500 uppercase mt-4 mb-2 px-4">Admin</h6>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-address-book mr-2"></i>Manage Leads
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/leads/manage" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 ">
+                  <i class="fa-solid fa-user-circle mr-2"></i>Manage Leads
+                </a>
+                <a href="/revenuesure/leads/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i>Add Lead
+                </a>
+                <a href="/revenuesure/leads/yourleads" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 ">
+                  <i class="fa-solid fa-user-circle mr-2"></i>Your Leads
+                </a>
+                <a href="/revenuesure/leads/search" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 ">
+                  <i class="fa-solid fa-search mr-2"></i>Search Leads
+                </a>
+                <a href="/revenuesure/leads/import" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-file-import mr-2"></i>Import Leads
+                </a>
+              </div>
+            </div>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-user-friends mr-2"></i>Manage Customers
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/customers/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i> Add Customer
+                </a>
+                <a href="/revenuesure/customers/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-ul mr-2"></i>View Customers
+                </a>
+                <a href="/revenuesure/customers/view" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-eye mr-2"></i>Customer Profile
+                </a>
+              </div>
+            </div>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-user-tie mr-2"></i>Manage Employees
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/employees/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-user-plus mr-2"></i>Add Employee
+                </a>
+                <a href="/revenuesure/employees/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-users-cog mr-2"></i>View Employees
+                </a>
+              </div>
+            </div>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-th-large mr-2"></i>Manage Categories
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/categories/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-alt mr-2"></i>View Categories
+                </a>
+                <a href="/revenuesure/categories/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i>Add Category
+                </a>
+              </div>
+            </div>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-file-invoice mr-2"></i>Manage Invoices
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/invoices/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-ul mr-2"></i>View Invoices
+                </a>
+                <a href="/revenuesure/invoices/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i>Add Invoice
+                </a>
+                <a href="/revenuesure/invoices/view" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-eye mr-2"></i>Invoice Details
+                </a>
+              </div>
+            </div>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-clipboard-check mr-2"></i>Manage Projects & Tasks
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/projects/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-ul mr-2"></i>Projects
+                </a>
+                <a href="/revenuesure/tasks/viewtasks" class="menu-item block hover:bg-gray-200 rounded-lg px-4 py-3 ">
+                  <i class="fa-solid fa-tasks mr-2"></i>Tasks
+                </a>
+                <a href="/revenuesure/discussions/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i>Discussions
+                </a>
+                <a href="/revenuesure/projects/features/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i>Features Tracker
+                </a>
+                <a href="/revenuesure/projects/issues/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i>Issue Tracker
+                </a>
+                <a href="/revenuesure/projects/categories/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-alt mr-2"></i>Project Categories
+                </a>
+              </div>
+            </div>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-file-signature mr-2"></i>Manage Contracts
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/contracts/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-ul mr-2"></i>View Contracts
+                </a>
+                <a href="/revenuesure/contracts/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i> Create Contract
+                </a>
+              </div>
+            </div>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-headset mr-2"></i>Support Tickets
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/support_tickets/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-ul mr-2"></i>Manage Tickets
+                </a>
+                <a href="/revenuesure/support_tickets/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i>Add Ticket
+                </a>
+              </div>
+            </div>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-user-friends mr-2"></i>Manage Team
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/team/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-ul mr-2"></i>View Team
+                </a>
+                <a href="/revenuesure/team/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-user-plus mr-2"></i>Add Team Member
+                </a>
+                <a href="/revenuesure/team/roles/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-user-tag mr-2"></i>Manage Roles
+                </a>
+                <a href="/revenuesure/team/departments/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-alt mr-2"></i>Manage Departments
+                </a>
+              </div>
+            </div>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-book-open mr-2"></i>Knowledge Base ( KB )
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/knowledge_base/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-ul mr-2"></i> View Articles
+                </a>
+                <a href="/revenuesure/knowledge_base/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i> Add Article
+                </a>
+                <a href="/revenuesure/knowledge_base/categories/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-alt mr-2"></i>Manage KB Categories
+                </a>
+                <a href="/revenuesure/knowledge_base/request/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-alt mr-2"></i>Knowledge Base Requests
+                </a>
+              </div>
+            </div>
+            <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-receipt mr-2"></i>Manage Expenses
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/expenses/manage" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-ul mr-2"></i>View Expenses
+                </a>
+                <a href="/revenuesure/expenses/add" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i>Record Expense
+                </a>
+              </div>
+            </div>
+            <!-- User Mailbox-->
+
+           <div class="menu-item ">
+              <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+                <i class="fa-solid fa-file-signature mr-2"></i>Mailbox
+              </a>
+              <div class="submenu">
+                <a href="/revenuesure/mail/index" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-list-ul mr-2"></i>Inbox
+                </a>
+                <a href="/revenuesure/mail/compose" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i> Compose
+                </a>
+                </a>
+                <a href="/revenuesure/mail/settings" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                  <i class="fa-solid fa-plus mr-2"></i> E-mail Settings
+                </a>
+              </div>
+            </div>
+
+            <!-- Accounting Menu -->
+          <div class="menu-item ">
+            <a class="block py-2 px-4 hover:bg-gray-200 rounded-lg flex items-center">
+              <i class="fa-solid fa-calculator mr-2"></i>Accounting
+            </a>
+            <div class="submenu">
+              <a href="/revenuesure/accounting/dashboard" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                <i class="fa-solid fa-chart-line mr-2"></i>Dashboard
+              </a>
+              <a href="/revenuesure/accounting/ledger" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                <i class="fa-solid fa-book-open mr-2"></i>Ledger
+              </a>
+              <a href="/revenuesure/accounting/reconciliation" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                <i class="fa-solid fa-check-double mr-2"></i>Reconciliation
+              </a>
+              <a href="/revenuesure/accounting/manage_accountants" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+                <i class="fa-solid fa-user-cog mr-2"></i>Manage Accountants
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <a href="/revenuesure/reports/leads/dashboard" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+              <i class="fa-solid fa-chart-pie mr-2"></i>Reporting
+            </a>
+            <a href="/revenuesure/settings" class="block py-2 px-4 hover:bg-gray-200 rounded-lg ">
+              <i class="fa-solid fa-gear mr-2"></i>Settings
+            </a>
+          </div>
+                     
+          
+
+          <a href="/revenuesure/auth/logout" class="block py-2 px-4 hover:bg-gray-200 rounded-lg mt-4">
+            <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
+          </a>
+              </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-4 fade-in">
+      <!-- Top Navigation (for Notifications) -->
+      <nav class="bg-blue-600 p-4 text-white mb-6 rounded-md">
+        <div class="container mx-auto flex justify-end items-center">
+                      <div class="relative top-nav-button mr-4 hover:bg-white/10 p-1.5 rounded-full transition-colors">
+              <button id="profileButton" class="relative flex items-center">
+                                  <i class="fa-solid fa-user-circle fa-lg"></i>
+                              </button>
+              <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg top-nav-dropdown">
+                <a href="/revenuesure/profile/view" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
+                <a href="/revenuesure/auth/logout" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</a>
+              </div>
+            </div>
+            <div class="relative top-nav-button hover:bg-white/10 p-1.5 rounded-full transition-colors">
+              <button id="notificationButton" class="hover:underline relative">
+                <!-- Bell Icon -->
+                <i class="fa-solid fa-bell"></i>
+                                  <!-- Notification Count -->
+                  <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full absolute -top-2 -right-2">8</span>
+                              </button>
+              <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border rounded-xl shadow-lg top-nav-dropdown">
+                                                                      <a href="notifications/view?id=5" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      Reminder: Task &#039;Buy steel for the bridge&#039; is due on 2025-02-03 03:23:00.                                          </a>
+                                      <a href="notifications/view?id=9" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      Reminder: Task &#039;Buy steel for the bridge&#039; is due on 2025-02-03 03:23:00.                                          </a>
+                                      <a href="notifications/view?id=15" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      Reminder: Task &#039;Make transparent dashboard&#039; is due on 2025-01-31 16:25:00.                                          </a>
+                                      <a href="notifications/view?id=7" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      Reminder: Task &#039;test&#039; is due on 2025-01-31 04:23:00.                                          </a>
+                                      <a href="notifications/view?id=8" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      Reminder: Task &#039;Buy water for the plant&#039; is due on 2025-01-31 03:42:00.                                          </a>
+                                                </div>
+            </div>
+                  </div>
+      </nav>
+
+      ";

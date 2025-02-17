@@ -1,7 +1,7 @@
 <?php
     require_once __DIR__ . '/../helper/cache.php'; // Include cache functions
 
-    $cacheKey = 'footer_' . (isset($_SESSION['user_id']) ? 'logged_in' : 'anonymous');
+    $cacheKey = 'footer_' . (isset($_SESSION['user_id']) ? 'user_' . $_SESSION['user_id'] : 'anonymous');
     $cacheExpiration = 3600; // Cache for 1 hour
 
     if (ENABLE_CACHE && isCacheValid($cacheKey, $cacheExpiration)) {
