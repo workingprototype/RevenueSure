@@ -113,7 +113,7 @@ $routes = [
     'profile/upload_profile_picture' => 'profile/upload_profile_picture.php',
     'leads' => 'leads/search.php',
 
-    'reminders/add' => 'reminders/add.php',
+    'reminders/notify' => 'reminders/notify.php',
 
     'settings' => 'settings/index.php',
     'settings/index' => 'settings/index.php',
@@ -243,17 +243,40 @@ if (array_key_exists($uri, $routes)) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
 
-
-    
-
     // Determine if we should include the header and footer
     $includeHeaderFooter = !in_array($uri, $excludeHeaderFooter);
 
-    // Capture the start of the output buffer if needed
-    if ($includeHeaderFooter) {
-        ob_start();
-        require 'includes/header.php';
-    }
+// Capture the start of the output buffer if needed
+if ($includeHeaderFooter) {
+    ob_start();
+    echo '<div id="content-container">';
+    echo '<div id="skeleton-ui">
+            <h1 class="skeleton skeleton-title"></h1>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+            <button class="skeleton skeleton-button"></button>
+             <table class="w-full">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 skeleton skeleton-text"></th>
+                        <th class="px-4 py-2 skeleton skeleton-text"></th>
+                        <th class="px-4 py-2 skeleton skeleton-text"></th>
+                        <th class="px-4 py-2 skeleton skeleton-text"></th>
+                    </tr>
+                </thead>
+                 <tbody>
+                   <tr>
+                        <td class="px-4 py-2 skeleton skeleton-text"></td>
+                          <td class="px-4 py-2 skeleton skeleton-text"></td>
+                          <td class="px-4 py-2 skeleton skeleton-text"></td>
+                          <td class="px-4 py-2 skeleton skeleton-text"></td>
+                    </tr>
+               </tbody>
+             </table>
+          </div>';
+    require 'includes/header.php';
+}
 
     // Fetch the content from the requested view
     $viewPath = $routes[$uri];
@@ -267,12 +290,14 @@ if (array_key_exists($uri, $routes)) {
         exit;
     }
 
-    // Get the content from the buffer
-    if ($includeHeaderFooter) {
-        require 'includes/footer.php';
-        $page_content = ob_get_clean();
-        echo $page_content;
-    }
+   // Get the content from the buffer
+   if ($includeHeaderFooter) {
+    require 'includes/footer.php';
+    echo '</div>'; //Close actual-content
+    echo '</div>'; //Close content-container
+    $page_content = ob_get_clean();
+    echo $page_content;
+}
 } else {
     header("HTTP/1.0 404 Not Found");
     echo "<h1>404 Not Found</h1>";

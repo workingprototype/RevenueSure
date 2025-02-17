@@ -10,5 +10,6 @@ try {
     // Handle .env loading error if needed.
     error_log("Error loading .env file: " . $e->getMessage());
 }
+ob_start();
 require 'routes.php';
 ?>

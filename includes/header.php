@@ -1,3 +1,15 @@
+<?php
+require_once __DIR__ . '/../helper/core.php'; // Include core functions
+require_once __DIR__ . '/../helper/cache.php'; // Include cache functions
+
+$cacheKey = 'header';
+$cacheExpiration = 3600; // Cache for 1 hour
+
+if (ENABLE_CACHE && isCacheValid($cacheKey, $cacheExpiration)) {
+    echo getCache($cacheKey);
+} else {
+    ob_start(); // Start output buffering
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -583,6 +595,15 @@
           <?php endif; ?>
         </div>
       </nav>
+
+      <?php
+   $headerContent = ob_get_clean(); // Get the buffered content
+     if (ENABLE_CACHE){
+        setCache($cacheKey, $headerContent); // Save to cache
+     }
+    echo $headerContent; // Output the content
+}
+?>
       <script>
         // Toggle mobile sidebar
         document.getElementById('mobileMenuButton').addEventListener('click', function() {

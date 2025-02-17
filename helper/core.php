@@ -5,6 +5,10 @@ define('ROOT_PATH', __DIR__ . '/../'); // Absolute path to project root (one lev
 define('IS_DEVELOPMENT', ($_ENV['APP_ENV'] ?? 'production') === 'development');
 define('MAILDIR_BASE', ROOT_PATH . 'maildir/');  // Adjust path if needed
 
+// Load caching flag from .env
+$enableCache = filter_var($_ENV['ENABLE_CACHE'] ?? 'false', FILTER_VALIDATE_BOOLEAN);
+define('ENABLE_CACHE', $enableCache);
+
 try {
     $host = $_ENV['DB_HOST'] ?? 'localhost';
     $dbname = $_ENV['DB_NAME'] ?? 'lead_platform';
