@@ -2,7 +2,8 @@
 require_once __DIR__ . '/../helper/core.php'; // Include core functions
 require_once __DIR__ . '/../helper/cache.php'; // Include cache functions
 
-$cacheKey = 'header';
+$cacheKey = 'header_' . (isset($_SESSION['user_id']) ? 'logged_in' : 'anonymous');
+
 $cacheExpiration = 3600; // Cache for 1 hour
 
 if (ENABLE_CACHE && isCacheValid($cacheKey, $cacheExpiration)) {

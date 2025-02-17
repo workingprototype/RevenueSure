@@ -16,6 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             session_start();
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role'] = $user['role'];
+            
+            // Clear anonymous cache on login
+            clearCache('header_anonymous');
+            clearCache('footer_anonymous');
+
             header("Location: " . BASE_URL . "dashboard/index");
             exit();
         } else {
