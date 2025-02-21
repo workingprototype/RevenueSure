@@ -195,6 +195,8 @@ $contract_types = $stmt->fetchAll(PDO::FETCH_ASSOC);
          </div>
     </div>
 </div>
+</div>
+
 <script>
       function openCategoryModal() {
         document.getElementById('categoryModal').classList.remove('hidden');

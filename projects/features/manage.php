@@ -34,12 +34,12 @@ $features = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <table class="w-full text-left">
         <thead>
             <tr>
-                <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Feature Title</th>
-                <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Priority</th>
-                 <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Owner</th>
-                <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Status</th>
-                <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Estimated Completion Date</th>
-                <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Actions</th>
+                <th class="px-4 py-3">Feature Title</th>
+                <th class="px-4 py-3">Priority</th>
+                 <th class="px-4 py-3">Owner</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Estimated Completion Date</th>
+                <th class="px-4 py-3">Actions</th>
             </tr>
         </thead>
         <tbody>

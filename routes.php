@@ -2,11 +2,20 @@
 
 $uri = $_GET['route'] ?? '';
 
+// Check if the request is for a file in the assets directory [skip routing for asset/cdn files]
+if (strpos($uri, 'assets/') === 0 && file_exists($uri)) {
+    // Serve the asset directly
+    return false; // Let the web server handle the request
+}
+
 $routes = [
     '' => 'views/home.php',
+    'views/global_dashboard' => 'views/global_dashboard.php',
+
     'auth/login' => 'auth/login.php',
     'auth/logout' => 'auth/logout.php',
     'auth/register' => 'auth/register.php',
+
     'dashboard/index' => 'dashboard/index.php',
     'dashboard' => 'dashboard/index.php',
 
@@ -41,7 +50,8 @@ $routes = [
     'projects/categories/manage' => 'projects/categories/manage.php',
     'projects/categories/add' => 'projects/categories/add.php',
     'projects/categories/edit' => 'projects/categories/edit.php',
-    'projects/categories/delete' => 'projects/categories/delete.php',
+    'projects/categories/delete' => 'projects/categories/delete.php',    
+    'projects/categories/view' => 'projects/categories/view.php',
 
     'projects/manage' => 'projects/manage.php',
     'projects/add' => 'projects/add.php',
@@ -110,6 +120,7 @@ $routes = [
     'leads/fetch' => 'leads/fetch.php', // Add fetch route
     'profile' => 'profile/view.php',
     'profile/view' => 'profile/view.php',
+    'profile/unified_view' => 'profile/unified_view.php',
     'profile/upload_profile_picture' => 'profile/upload_profile_picture.php',
     'leads' => 'leads/search.php',
 
@@ -214,7 +225,8 @@ $routes = [
     'mail/actions/mark_read' => 'mail/actions/mark_read.php',
     'mail/actions/fetch_emails' => 'mail/actions/fetch_emails.php',
 
-    'admin/create_maildirs' => 'admin/create_maildirs.php'
+    'admin/create_maildirs' => 'admin/create_maildirs.php',
+
 ];
 
 // Define routes that should not include header and footer
@@ -246,36 +258,70 @@ if (array_key_exists($uri, $routes)) {
     // Determine if we should include the header and footer
     $includeHeaderFooter = !in_array($uri, $excludeHeaderFooter);
 
+    // Get the user's theme
+    $theme = $_SESSION['theme'] ?? 'default';
+    $headerPath = 'includes/header.php'; // Default header path
+
+    // Check if the user has a selected theme, and load it
+    if (isset($_SESSION['user_id'])) {
+        $stmt = $conn->prepare("SELECT theme FROM users WHERE id = :user_id");
+        $stmt->bindParam(':user_id', $_SESSION['user_id']);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($user && isset($user['theme'])) {
+            $theme = $user['theme'];
+        }
+    }
+
+    // Choose the correct header file
+    if ($theme === 'material3') {
+        $headerPath = 'includes/header-style-material-3.php';
+    } elseif ($theme === 'retro') {
+        $headerPath = 'includes/header-style-retro.php';
+    } elseif ($theme === 'office') {
+        $headerPath = 'includes/header-blue.php';
+    } elseif ($theme === 'light') {
+        $headerPath = 'includes/header-light.php';
+    } elseif ($theme === 'nature') {
+        $headerPath = 'includes/header-nature.php';
+    } elseif ($theme === 'dark-mode') {
+        $headerPath = 'includes/header-dark-mode.php';
+    } elseif ($theme === 'playful') {
+        $headerPath = 'includes/header-playful.php';
+    }elseif ($theme === 'cute') {
+        $headerPath = 'includes/header-cute.php';
+    }
+
 // Capture the start of the output buffer if needed
 if ($includeHeaderFooter) {
     ob_start();
     echo '<div id="content-container">';
-    echo '<div id="skeleton-ui">
-            <h1 class="skeleton skeleton-title"></h1>
-            <div class="skeleton skeleton-text"></div>
-            <div class="skeleton skeleton-text"></div>
-            <div class="skeleton skeleton-text"></div>
-            <button class="skeleton skeleton-button"></button>
-             <table class="w-full">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-2 skeleton skeleton-text"></th>
-                        <th class="px-4 py-2 skeleton skeleton-text"></th>
-                        <th class="px-4 py-2 skeleton skeleton-text"></th>
-                        <th class="px-4 py-2 skeleton skeleton-text"></th>
-                    </tr>
-                </thead>
-                 <tbody>
-                   <tr>
-                        <td class="px-4 py-2 skeleton skeleton-text"></td>
-                          <td class="px-4 py-2 skeleton skeleton-text"></td>
-                          <td class="px-4 py-2 skeleton skeleton-text"></td>
-                          <td class="px-4 py-2 skeleton skeleton-text"></td>
-                    </tr>
-               </tbody>
-             </table>
-          </div>';
-    require 'includes/header.php';
+    // echo '<div id="skeleton-ui">
+    //         <h1 class="skeleton skeleton-title"></h1>
+    //         <div class="skeleton skeleton-text"></div>
+    //         <div class="skeleton skeleton-text"></div>
+    //         <div class="skeleton skeleton-text"></div>
+    //         <button class="skeleton skeleton-button"></button>
+    //          <table class="w-full">
+    //             <thead>
+    //                 <tr>
+    //                     <th class="px-4 py-2 skeleton skeleton-text"></th>
+    //                     <th class="px-4 py-2 skeleton skeleton-text"></th>
+    //                     <th class="px-4 py-2 skeleton skeleton-text"></th>
+    //                     <th class="px-4 py-2 skeleton skeleton-text"></th>
+    //                 </tr>
+    //             </thead>
+    //              <tbody>
+    //                <tr>
+    //                     <td class="px-4 py-2 skeleton skeleton-text"></td>
+    //                       <td class="px-4 py-2 skeleton skeleton-text"></td>
+    //                       <td class="px-4 py-2 skeleton skeleton-text"></td>
+    //                       <td class="px-4 py-2 skeleton skeleton-text"></td>
+    //                 </tr>
+    //            </tbody>
+    //          </table>
+    //       </div>';
+    require $headerPath;
 }
 
     // Fetch the content from the requested view
@@ -293,8 +339,8 @@ if ($includeHeaderFooter) {
    // Get the content from the buffer
    if ($includeHeaderFooter) {
     require 'includes/footer.php';
-    echo '</div>'; //Close actual-content
-    echo '</div>'; //Close content-container
+    // echo '</div>'; //Close actual-content
+    // echo '</div>'; //Close content-container
     $page_content = ob_get_clean();
     echo $page_content;
 }

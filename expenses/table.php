@@ -2,14 +2,14 @@
         <table class="w-full text-left">
              <thead class="bg-gray-50">
                  <tr>
-                      <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Name</th>
-                      <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Category</th>
-                     <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Date</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">User</th>
-                      <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Payment Mode</th>
-                       <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Nature</th>
-                       <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Amount</th>
-                      <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Actions</th>
+                      <th class="px-4 py-3">Name</th>
+                      <th class="px-4 py-3">Category</th>
+                     <th class="px-4 py-3">Date</th>
+                        <th class="px-4 py-3">User</th>
+                      <th class="px-4 py-3">Payment Mode</th>
+                       <th class="px-4 py-3">Nature</th>
+                       <th class="px-4 py-3">Amount</th>
+                      <th class="px-4 py-3">Actions</th>
                   </tr>
               </thead>
             <tbody>

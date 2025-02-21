@@ -48,710 +48,686 @@ if (ENABLE_CACHE && isCacheValid($cacheKey, $cacheExpiration)) {
 
 
   <style>
-    /* Brutalist Reset and Variables */
-    :root {
-      --bg-color: #f0f0f0;
-      --text-color: #222;
-      --primary-color: #000;
-      --secondary-color: #333;
-      --accent-color: #f00;
-      --border-color: #222;
-    }
-
-    body {
-      font-family: monospace, sans-serif; /* Fixed font */
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      line-height: 1.4;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;  /* Ensure the body takes up at least the full viewport height */
-      display: flex;
-      flex-direction: column;
-      flex: 1;
+   :root {
+  --bg-color: #f0f8f5;
+  --text-color: #2c4933;
+  --primary-color: #38b2ac;
+  --secondary-color: #8cc63f;
+  --accent-color: #e63946;
+  --border-color: #cce2cb;
 }
 
-    h1, h2, h3, h4, h5, h6 {
-      font-family: monospace, sans-serif;
-      font-weight: bold;
-      margin-bottom: 0.5em;
-      line-height: 1.2;
-    }
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-    a {
-      color: var(--primary-color);
-      text-decoration: none;
-      border-bottom: 2px solid var(--primary-color);
-      transition: all 0.2s ease-in-out;
-    }
-
-    a:hover {
-      background-color: var(--primary-color);
-      color: var(--bg-color);
-      border-bottom: 2px solid black; /* Keep the border, but change color */
-      box-shadow: 6px 6px 0px black; /* Retain or slightly reduce shadow */
-    }
-
-    /* Layout and Structure */
-    .container {
-      width: 90%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1em;
-    }
-
-    /* Navigation */
-    nav {
-      background-color: #fff;
-      color: var(--bg-color);
-      padding: 1em 0;
-      border-bottom: 4px solid var(--primary-color);
-    }
-
-    nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: space-around;
-    }
-
-    nav li a {
-      color: var(--bg-color);
-      border: none; /* Remove underline from nav links */
-      padding: 0.5em 1em;
-      display: block;
-      transition: all 0.2s ease-in-out;
-    }
-
-    nav li a:hover {
-      background-color: var(--primary-color);
-      color: var(--bg-color);
-    }
-
-    /* Sidebar */
-    aside {
-      width: 100%;
-  padding: 15px;
-  font-size: 18px;
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto', sans-serif;
   font-weight: bold;
-  color: #000;
-  background-color: #fff;
-  border: 4px solid #000;
-  position: relative;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+  color: var(--primary-color);
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  border-bottom: 2px solid var(--primary-color);
+  transition: all 0.2s ease-in-out;
+}
+
+a:hover {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  border-bottom: 2px solid var(--bg-color);
+  box-shadow: 6px 6px 0px var(--secondary-color);
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+nav {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 1em 0;
+  border-bottom: 4px solid var(--primary-color);
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+nav li a {
+  color: var(--text-color);
+  border: none;
+  padding: 0.5em 1em;
+  display: block;
+  transition: all 0.2s ease-in-out;
+}
+
+nav li a:hover {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+}
+
+aside {
+  width: 250px;
+  background-color: var(--border-color);
+  padding: 1em;
+  border-right: 4px solid var(--primary-color);
+}
+
+p {
+  margin-bottom: 1em;
+  color: var(--text-color);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 2px solid var(--border-color);
+  padding: 0.5em;
+  text-align: left;
+}
+
+th {
+  background-color: var(--secondary-color);
+  color: var(--bg-color);
+}
+
+.brutalist-header {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  padding: 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  border-bottom: 4px solid var(--secondary-color);
+}
+
+aside {
+  min-width: 280px;
+  transition: all 0.3s ease-in-out;
+  border-right: 4px solid var(--primary-color);
+  background: var(--border-color);
+}
+
+aside nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.menu-item a {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  margin: 0;
+  transition: background-color 0.2s ease;
+  border-bottom: 2px solid var(--primary-color);
+  color: var(--text-color);
+  font-size: 1rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.menu-item .submenu a:hover {
+  background-color: var(--secondary-color);
+  color: var(--bg-color);
+}
+
+.menu-item .submenu a {
+  padding: 12px 30px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--primary-color);
+  transition: background-color 0.2s ease;
+  text-transform: uppercase;
+}
+
+.menu-item.active > a {
+  color: var(--bg-color);
+  background-color: var(--primary-color);
+}
+
+.submenu a.active {
+  color: var(--bg-color);
+  background-color: var(--primary-color);
+  border-left: none;
+}
+
+.submenu {
+  padding-left: 10px;
+  transition: max-height 0.4s ease;
+  margin-top: 0px;
+  border-left: none;
   overflow: hidden;
+  max-height: 0;
+}
+
+.menu-item:hover .submenu,
+.menu-item.active .submenu {
+  max-height: 1000px;
+}
+
+.fade-in-up, .fade-in {
+  animation: none;
+}
+
+button {
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
+  border: 2px solid var(--primary-color);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: none;
+}
+
+.bg-white {
+  background-color: var(--bg-color);
+  border: 2px solid var(--primary-color);
+  box-shadow: none;
+  transition: none;
+}
+
+input, select, textarea {
+  border: 2px solid var(--primary-color);
+  box-shadow: none;
+  border-radius: 0px;
+  transition: none;
+}
+
+.top-nav-button #profileButton img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid var(--bg-color);
+  object-fit: cover;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.top-nav-button:hover #profileButton img {
+  transform: scale(1.1);
+  box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.4);
+}
+
+.top-nav-dropdown {
+  z-index: 50;
+  border: 4px solid var(--primary-color);
+  border-radius: 0px;
+  box-shadow: none;
+  background-color: var(--bg-color);
+}
+
+.top-nav-dropdown a {
+  padding: 10px;
+  display: block;
+  transition: background-color 0.2s ease;
+  border-bottom: 2px solid var(--primary-color);
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.top-nav-dropdown a:hover {
+  background: var(--secondary-color);
+}
+
+.paper-doc {
+  font-family: 'Roboto', sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 40px 60px;
+  background-color: var(--bg-color);
+  border: 4px solid var(--primary-color);
+  box-shadow: none;
+  border-radius: 0px;
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+.paper-doc h1, .paper-doc h2, .paper-doc h3, .paper-doc h4, .paper-doc h5, .paper-doc h6 {
+  font-family: 'Roboto', sans-serif;
+  margin-bottom: 15px;
+  line-height: 1.3;
+  color: var(--primary-color);
+  font-weight: bold;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 5px;
+}
+
+.paper-doc h1 {
+  font-size: 2.2rem;
+}
+
+.paper-doc h2 {
+  font-size: 1.8rem;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 6px;
+}
+
+.paper-doc h3 {
+  font-size: 1.6rem;
+}
+
+.paper-doc h4 {
+  font-size: 1.4rem;
+}
+
+.paper-doc h5 {
+  font-size: 1.2rem;
+}
+
+.paper-doc h6 {
+  font-size: 1.1rem;
+}
+
+.paper-doc a {
+  color: var(--primary-color);
+  text-decoration: none;
+  border-bottom: 2px solid var(--primary-color);
+  transition: background-color 0.2s ease;
+}
+
+.paper-doc a:hover {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+}
+
+.paper-doc p {
+  margin-bottom: 15px;
+}
+
+.paper-doc ol, .paper-doc ul {
+  padding-left: 25px;
+  margin-bottom: 15px;
+}
+
+.paper-doc ul li {
+  list-style-type: square;
+  margin-bottom: 10px;
+}
+
+.paper-doc ol li {
+  list-style-type: decimal;
+  margin-bottom: 10px;
+}
+
+.paper-doc blockquote {
+  margin: 20px 0;
+  padding: 15px 20px;
+  border-left: 6px solid var(--primary-color);
+  font-style: italic;
+  color: var(--text-color);
+  background-color: var(--secondary-color);
+}
+
+.paper-doc .rating-bookmark-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  border-top: 2px solid var(--primary-color);
+  padding-top: 15px;
+}
+
+.paper-doc .rating-bookmark-container button {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  padding: 10px 15px;
+  border: 2px solid var(--primary-color);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+
+.paper-doc .rating-bookmark-container button:hover {
+  background-color: var(--bg-color);
+  color: var(--primary-color);
+}
+
+.paper-doc .rating-bookmark-container textarea {
+  margin-top: 5px;
+  border: 2px solid var(--primary-color);
   border-radius: 0;
-  outline: none;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 5px 5px 0 #000, 10px 10px 0 #4a90e2;
-    }
+  padding: 5px;
+  width: 100%;
+}
 
-    /* Typography adjustments (simplified) */
-    p {
-      margin-bottom: 1em;
-    }
+.fa-solid {
+  font-weight: 900;
+}
 
-    /* Table styling (optional, simplified) */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+th .text-gray-700 {
+  color: var(--bg-color) !important;
+}
 
-    th, td {
-      border: 2px solid var(--border-color);
-      padding: 0.5em;
-      text-align: left;
-    }
+div.bg-white {
+  border: 3px solid var(--primary-color);
+  box-shadow: 6px 6px 0px var(--primary-color);
+}
 
-    th {
-      background-color: var(--secondary-color);
-      color: var(--bg-color);
-    }
-    
+div.bg-gray-100 text-gray-700 w-64 p-4 hidden md:block border-r-4 border-black {
+  border: 3px solid var(--primary-color);
+  box-shadow: 6px 6px 0px var(--primary-color);
+}
 
-    /* Example specific styles - Replace with your actual styles */
-    .brutalist-header {
-      background-color: #333;
-      color: #fff;
-      padding: 1rem;
-      text-align: center;
-      margin-bottom: 1rem;
-      border-bottom: 4px solid black;
-    }
-    /* Brutalist menu styling */
-    aside {
-      min-width: 280px;
-      transition: all 0.3s ease-in-out;
-      border-right: 4px solid #000; /* Thick black border */
-      background: #ddd;
-    }
-    aside nav {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-    .menu-item a {
-      display: flex;
-      align-items: center;
-      padding: 12px 20px;
-      margin: 0; /* No margin */
-      transition: background-color 0.2s ease; /* Just background color */
-      border-bottom: 2px solid #000; /* Bottom border for each */
-      color: #222;
-      font-size: 1rem;
-      text-decoration: none; /* No underline */
-      text-transform: uppercase;
-      font-weight: bold;
-    }
-    .menu-item .submenu a:hover {
-      background-color: #bbb;
-      color: #000;
-    }
-    .menu-item .submenu a {
-      padding: 12px 30px;
-      font-size: 0.9rem;
-      border-bottom: 1px solid #000; /* Lighter border */
-      transition: background-color 0.2s ease; /* Just background color */
-      text-transform: uppercase;
-    }
-    /* Only style the direct child for active parent items */
-    .menu-item.active > a {
-      color: #fff;
-      background-color: #000;
-    }
-    /* Highlight active submenu links */
-    .submenu a.active {
-      color: #fff;
-      background-color: #000;
-      border-left: none; /* Remove left border */
-    }
-    .submenu {
-      padding-left: 10px;
-      transition: max-height 0.4s ease;
-      margin-top: 0px; /* Reduced margin */
-      border-left: none; /* Removed nested borders */
-      overflow: hidden;
-      max-height: 0;
-    }
-    /* Keep submenu open when hovering OR when the parent menu item is active */
-    .menu-item:hover .submenu,
-    .menu-item.active .submenu {
-      max-height: 1000px;
-    }
-    /* Remove animations */
-    .fade-in-up {
-      /* No animation */
-    }
-    .fade-in {
-      /* No animation */
-    }
-    button {
-      transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
-      border: 2px solid #000; /* Black border */
-    }
-    button:active {
-      transform: scale(0.98);
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: #000; /* Black border */
-      box-shadow: none; /* Remove box-shadow */
-    }
-    .bg-white {
-      background-color: #fff;
-      border: 2px solid #000; /* Black border */
-      box-shadow: none; /* Remove box-shadow */
-      transition: none; /* Remove transitions */
-    }
-    input, select, textarea {
-      border: 2px solid #000; /* Black border */
-      box-shadow: none; /* Remove box-shadow */
-      border-radius: 0px; /* Square corners */
-      transition: none; /* Remove transitions */
-    }
-    
-    /* Top Navigation Profile Picture */
-    .top-nav-button #profileButton img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 3px solid #fff;
-      object-fit: cover;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Add a subtle shadow */
-      transition: all 0.3s ease;
-    }
+div.text-2xl font-bold block mb-4 pt-4 pl-4 text-gray-800 uppercase {
+  border: 3px solid var(--primary-color);
+  box-shadow: 6px 6px 0px var(--primary-color);
+}
 
-    /* On Hover  - Scale up image*/
-    .top-nav-button:hover #profileButton img {
-      transform: scale(1.1); /* Enlarge on hover */
-      box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.4); /* Shadow effect */
-    }
-    .top-nav-dropdown {
-      z-index: 50;
-      border: 4px solid #000; /* Thick black border */
-      border-radius: 0px; /* Square corners */
-      box-shadow: none; /* Remove box-shadow */
-      background-color: #fff;
-    }
-    .top-nav-dropdown a {
-      padding: 10px;
-      display: block;
-      transition: background-color 0.2s ease; /* Just background color */
-      border-bottom: 2px solid #000;
-      color: #222;
-      text-decoration: none;
-    }
-    .top-nav-dropdown a:hover {
-      background: #ddd; /* Light gray */
-    }
-    /* "Paper" Document Style */
-    .paper-doc {
-      font-family: monospace, sans-serif;
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 40px 60px;
-      background-color: #fff;
-      border: 4px solid #000;
-      box-shadow: none; /* Remove box-shadow */
-      border-radius: 0px;
-      line-height: 1.5;
-      font-size: 16px;
-    }
-    .paper-doc h1, .paper-doc h2, .paper-doc h3, .paper-doc h4, .paper-doc h5, .paper-doc h6 {
-      font-family: monospace, sans-serif;
-      margin-bottom: 15px;
-      line-height: 1.3;
-      color: #000;
-      font-weight: bold;
-      border-bottom: 2px solid #000;
-      padding-bottom: 5px;
-    }
-    .paper-doc h1 {
-      font-size: 2.2rem;
-    }
-    .paper-doc h2 {
-      font-size: 1.8rem;
-      border-bottom: 2px solid #000;
-      padding-bottom: 6px;
-    }
-    .paper-doc h3 {
-      font-size: 1.6rem;
-    }
-    .paper-doc h4 {
-      font-size: 1.4rem;
-    }
-    .paper-doc h5 {
-      font-size: 1.2rem;
-    }
-    .paper-doc h6 {
-      font-size: 1.1rem;
-    }
-    .paper-doc a {
-      color: #000;
-      text-decoration: none;
-      border-bottom: 2px solid #000;
-      transition: background-color 0.2s ease;
-    }
-    .paper-doc a:hover {
-      background-color: #000;
-      color: #fff;
-    }
-    .paper-doc p {
-      margin-bottom: 15px;
-    }
-    .paper-doc ol, .paper-doc ul {
-      padding-left: 25px;
-      margin-bottom: 15px;
-    }
-    .paper-doc ul li {
-      list-style-type: square;
-      margin-bottom: 10px;
-    }
-    .paper-doc ol li {
-      list-style-type: decimal;
-      margin-bottom: 10px;
-    }
-    .paper-doc blockquote {
-      margin: 20px 0;
-      padding: 15px 20px;
-      border-left: 6px solid #000;
-      font-style: italic;
-      color: #333;
-      background-color: #eee;
-    }
-    .paper-doc .rating-bookmark-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 30px;
-      border-top: 2px solid #000;
-      padding-top: 15px;
-    }
-    .paper-doc .rating-bookmark-container button {
-      background-color: #000;
-      color: #fff;
-      padding: 10px 15px;
-      border: 2px solid #000;
-      transition: background-color 0.2s ease, color 0.2s ease;
-      cursor: pointer;
-    }
-    .paper-doc .rating-bookmark-container button:hover {
-      background-color: #fff;
-      color: #000;
-    }
-    .paper-doc .rating-bookmark-container textarea {
-      margin-top: 5px;
-      border: 2px solid #000;
-      border-radius: 0;
-      padding: 5px;
-      width: 100%;
-    }
-    /* Global overrides for FontAwesome */
-    .fa-solid {
-      font-weight: 900;
-    }
-
-
-
-    /* Table Heading Color Override */
-    th .text-gray-700 {
-      color: white !important;
-    }
-    div.bg-white {
-      border: 3px solid black;
-      box-shadow: 6px 6px 0px black;
-    }
-    div.bg-gray-100 text-gray-700 w-64 p-4 hidden md:block border-r-4 border-black {
-      border: 3px solid black;
-      box-shadow: 6px 6px 0px black;
-    }
-    div.text-2xl font-bold block mb-4 pt-4 pl-4 text-gray-800 uppercase{
-      border: 3px solid black;
-      box-shadow: 6px 6px 0px black;
-    }
-    /* General footer styling */
 footer {
-  font-family: monospace, sans-serif;
+  font-family: 'Roboto', sans-serif;
   background: var(--bg-color);
   color: var(--text-color);
   padding: 1em;
   text-align: center;
-  border-top: 4px solid #000; /* Brutalist border */
+  border-top: 4px solid var(--primary-color);
   position: sticky;
   bottom: 0;
   width: 100%;
-  z-index: 100; /* Ensure it stays on top of other elements */
-/* Neumorphism */
-  box-shadow:  7px 7px 14px #bebebe,
-              -7px -7px 14px #ffffff;
+  z-index: 100;
+  box-shadow: 7px 7px 14px var(--secondary-color), -7px -7px 14px var(--bg-color);
 }
-/* Reusable Button Style */
+
 .brutalist-button {
-    background-color: var(--bg-color) !important;
-    color: var(--primary-color) !important;
-    border: 2px solid var(--primary-color) !important;
-    padding: 0.5em 1em !important;
-    text-decoration: none !important;
-    display: inline-block !important;
-    transition: all 0.3s ease !important;
+  background-color: var(--bg-color) !important;
+  color: var(--primary-color) !important;
+  border: 2px solid var(--primary-color) !important;
+  padding: 0.5em 1em !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  transition: all 0.3s ease !important;
 }
 
 .brutalist-button:hover {
-    background-color: var(--primary-color) !important;
-    color: var(--bg-color) !important;
-    transform: translateY(-2px) !important; /* Lift the button slightly */
-    box-shadow: 3px 3px 0 var(--secondary-color) !important;
+  background-color: var(--primary-color) !important;
+  color: var(--bg-color) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 3px 3px 0 var(--secondary-color) !important;
 }
 
-/* Brutalist Card Style */
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden > div.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden {
-    border: 4px solid var(--primary-color);
-    box-shadow: 5px 5px 0 var(--secondary-color);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 4px solid var(--primary-color);
+  box-shadow: 5px 5px 0 var(--secondary-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden:hover {
-    transform: translateY(-5px); /* Card moves up a bit */
-    box-shadow: 8px 8px 0 var(--accent-color); /* Adjusted to accent color */
+  transform: translateY(-5px);
+  box-shadow: 8px 8px 0 var(--accent-color);
 }
 
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden a {
-    background-color: var(--bg-color) !important;
-    color: var(--primary-color) !important;
-    border: 2px solid var(--primary-color) !important;
-    padding: 0.5em 1em !important;
-    text-decoration: none !important;
-    display: inline-block !important;
-    transition: all 0.3s ease !important;
+  background-color: var(--bg-color) !important;
+  color: var(--primary-color) !important;
+  border: 2px solid var(--primary-color) !important;
+  padding: 0.5em 1em !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  transition: all 0.3s ease !important;
 }
 
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden a:hover {
-    background-color: var(--primary-color) !important;
-    color: var(--bg-color) !important;
-    transform: translateY(-2px) !important; /* Lift the button slightly */
-    box-shadow: 3px 3px 0 var(--secondary-color) !important;
+  background-color: var(--primary-color) !important;
+  color: var(--bg-color) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 3px 3px 0 var(--secondary-color) !important;
 }
 
-/* Target the container div */
 .bg-white.p-4.rounded-lg.shadow {
   border: 4px solid var(--primary-color) !important;
   box-shadow: 5px 5px 0 var(--secondary-color) !important;
   transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-  background-color: var(--bg-color) !important; /* Set the background */
-  overflow-x: auto !important; /* Enable horizontal scrolling for table */
-  overflow-y: hidden !important; /* Disable the horizontal scrolling for table */
+  background-color: var(--bg-color) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
 }
 
-/* Container Hover Effects*/
 .bg-white.p-4.rounded-lg.shadow:hover {
   transform: translateY(-5px) !important;
   box-shadow: 8px 8px 0 var(--accent-color) !important;
 }
 
-/* Style Table Headers */
 .bg-white.p-4.rounded-lg.shadow table thead th {
   background-color: var(--secondary-color) !important;
   color: var(--bg-color) !important;
   font-weight: bold !important;
-  white-space: nowrap !important; /* Prevent header text from wrapping */
+  white-space: nowrap !important;
 }
 
-/* Style Table Data Cells */
 .bg-white.p-4.rounded-lg.shadow table td {
   border: 2px solid var(--border-color) !important;
   padding: 0.5em !important;
   text-align: left !important;
-  white-space: nowrap !important; /* Prevent cell content from wrapping */
+  white-space: nowrap !important;
 }
 
-/* Style No Ledger Entries */
 .bg-white.p-4.rounded-lg.shadow table td[colspan="6"] {
   text-align: center !important;
   font-style: italic !important;
   color: var(--secondary-color) !important;
 }
 
-/* Table width adjustements to ensure 100% */
 .bg-white.p-4.rounded-lg.shadow table {
   width: 100% !important;
 }
 
-/* Target table container */
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden > table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    font-family: monospace, sans-serif !important;
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-family: 'Roboto', sans-serif;
 }
 
-/* Target table header */
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden > table thead {
-    background-color: var(--secondary-color) !important;
-    color: var(--bg-color) !important;
+  background-color: var(--secondary-color) !important;
+  color: var(--bg-color) !important;
 }
 
-/* Target table header cells */
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden > table th {
-    padding: 0.75em !important;
-    text-align: left !important;
-    border-bottom: 3px solid var(--primary-color) !important; /* Highlight the border */
-    font-weight: bold !important;
-    text-transform: uppercase !important;
+  padding: 0.75em !important;
+  text-align: left !important;
+  border-bottom: 3px solid var(--primary-color) !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
 }
 
-/* Target table body rows */
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden > table tbody tr {
-    border-bottom: 2px solid var(--border-color) !important;
-    transition: background-color 0.3s ease !important; /* Smooth transition */
+  border-bottom: 2px solid var(--border-color) !important;
+  transition: background-color 0.3s ease !important;
 }
 
-/* Target table body cells */
-.bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden > table td {
-    padding: 0.75em !important;
+.bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden > table tbody td {
+  padding: 0.75em !important;
 }
 
-/* Target table body rows on hover */
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden > table tbody tr:hover {
-    background-color: #ddd !important; /* Lighter gray for hover */
+  background-color: var(--secondary-color) !important;
 }
 
-/* Remove underline on links and set the color of the link to the desired values */
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden > table tbody a {
-    text-decoration: none;
-    border-bottom: 2px solid var(--primary-color);
-    transition: color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
-    color: var(--primary-color) !important; /* Keep the color consistent */
+  text-decoration: none;
+  border-bottom: 2px solid var(--primary-color);
+  transition: color 0.3s ease, border-color 0.3s ease;
+  color: var(--primary-color) !important;
 }
 
-/* Hover styles to the a links */
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden > table tbody a:hover {
-    color: var(--bg-color) !important;
-    background-color: var(--primary-color) !important;
-    border-bottom-color: var(--primary-color) !important;
+  color: var(--bg-color) !important;
+  background-color: var(--primary-color) !important;
+  border-bottom-color: var(--primary-color) !important;
 }
 
-/* General scrollbar styling */
 ::-webkit-scrollbar {
-    width: 20px; /* Increased width for bolder appearance */
-    height: 20px; /* Increased height for bolder appearance (especially for horizontal scrollbars) */
+  width: 20px;
+  height: 20px;
 }
 
-/* Scrollbar track */
 ::-webkit-scrollbar-track {
-    background-color: #ddd; /* Neutral background color */
-    border: 4px solid var(--primary-color); /* Colored border */
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle inner shadow */
+  background-color: var(--secondary-color);
+  border: 4px solid var(--primary-color);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Scrollbar thumb */
 ::-webkit-scrollbar-thumb {
-    background-color: var(--secondary-color); /* Darker thumb color */
-    border: 4px solid var(--primary-color); /* Colored border */
-    border-radius: 0px; /* Square edges */
-    box-shadow: 4px 4px 0 var(--primary-color); /* Offset shadow */
+  background-color: var(--primary-color);
+  border: 4px solid var(--primary-color);
+  border-radius: 0px;
+  box-shadow: 4px 4px 0 var(--primary-color);
 }
 
-/* Scrollbar thumb on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #555; /* Even darker thumb on hover */
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5); /* Inner shadow on hover */
+  background-color: var(--secondary-color);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
-/* Scrollbar corner (optional) */
 ::-webkit-scrollbar-corner {
-    background-color: var(--primary-color); /* Match a dominant color */
+  background-color: var(--primary-color);
 }
 
-/* Styling the scrollbar buttons (arrows) */
 ::-webkit-scrollbar-button {
-    background-color: var(--secondary-color);
-    display: block;
-    height: 24px;  /* Adjust to your needs */
-    width: 24px;   /* Adjust to your needs */
-    border: 2px solid var(--primary-color);
-    cursor: pointer;
+  background-color: var(--secondary-color);
+  display: block;
+  height: 24px;
+  width: 24px;
+  border: 2px solid var(--primary-color);
+  cursor: pointer;
 }
 
-/* Styling the up/left arrow */
 ::-webkit-scrollbar-button:vertical:start:decrement,
 ::-webkit-scrollbar-button:horizontal:start:decrement {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23f0f0f0" viewBox="0 0 16 16"><path d="M8 11.354l-5.757-5.757.707-.707L8 10.293l5.05-5.05.707.707z"/></svg>'); /* Increased resolution, SVG fill */
-    background-repeat: no-repeat;
-    background-position: center;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23f0f0f0" viewBox="0 0 16 16"><path d="M8 11.354l-5.757-5.757.707-.707L8 10.293l5.05-5.05.707.707z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-/* Styling the down/right arrow */
 ::-webkit-scrollbar-button:vertical:end:increment,
 ::-webkit-scrollbar-button:horizontal:end:increment {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23f0f0f0" viewBox="0 0 16 16"><path d="M8 4.646l5.757 5.757-.707.707L8 5.707l-5.05 5.05-.707-.707z"/></svg>'); /* Increased resolution, SVG fill */
-    background-repeat: no-repeat;
-    background-position: center;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23f0f0f0" viewBox="0 0 16 16"><path d="M8 4.646l5.757 5.757-.707.707L8 5.707l-5.05 5.05-.707-.707z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
- /* The style for the whole chart content */
- .mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 {
-    border: 4px solid black !important; /* Define the border for the card */
-    box-shadow: 6px 6px 0 black !important;  /* Set a shadow for a bold appearance */
-    border-radius: 0 !important;              /* Ensure the design is without rounded corners */
-    background-color: #f0f0f0 !important;        /* Use an off-white for the background */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions for the look */
+.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 {
+  border: 4px solid var(--primary-color);
+  box-shadow: 6px 6px 0 var(--primary-color);
+  border-radius: 0;
+  background-color: var(--bg-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Adjust to a more brutalist effect */
 .mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6:hover {
-     transform: translateY(-5px) !important;
-     box-shadow: 8px 8px 0 black !important;
+  transform: translateY(-5px);
+  box-shadow: 8px 8px 0 var(--secondary-color);
 }
 
-/* The cards */
 .mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table tbody tr {
-    display: block !important;            /* Set the structure */
-    border: 4px solid black !important;  /* Set the style */
-    padding: 1rem !important;       /* Set padding for the elements*/
-    border-radius: 0px !important; /* No card border */
-    background-color: var(--bg-color) !important;
-    margin-bottom: 0.5rem !important;  /* Block any additional margin */
+  display: block;
+  border: 4px solid var(--primary-color);
+  padding: 1rem;
+  border-radius: 0px;
+  background-color: var(--bg-color);
+  margin-bottom: 0.5rem;
 }
 
-/* The rows to the table */
 .mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table tbody {
-  display: grid !important; /* Set a grid layout */
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));   /* Columns layout */
-    gap: 1rem !important;      /* Spacing */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
 }
 
-/* The head */
 .mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table thead {
-     display: none !important;  /* Block the table */
+  display: none;
 }
 
-/* This has the goal to make it take the whole elements */
 .mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table th,
 .mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table td {
-   display: block !important;
-   border: none !important;
-   padding: 0.5rem !important; /* Reduce the spacing between the tables */
+  display: block;
+  border: none;
+  padding: 0.5rem;
 }
-/* Set the colour */
+
 .mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table tbody tr td a {
-  color: var(--bg-color); /* Set the font color*/
-   background-color: var(--primary-color) !important;     /* Set to a colour with a good effect */
-   box-shadow: 3px 3px 0 var(--secondary-color);   /* Makes the component popping out */
+  color: var(--bg-color);
+  background-color: var(--primary-color);
+  box-shadow: 3px 3px 0 var(--secondary-color);
 }
 
-/* This will take action in all elements when hovered */
 .mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table tbody tr td a:hover {
-   text-decoration: underline; /* Make the text visible */
-   background-color: var(--secondary-color); /* Change to the new colour */
+  text-decoration: underline;
+  background-color: var(--secondary-color);
 }
 
-/* Applied Brutalist styling to elements of the header to keep consistence */
 .flex.justify-between.items-center.mb-8 > .flex.flex-wrap.gap-2 > form {
-        border: 4px solid black;
-        box-shadow: 6px 6px 0 black;
-        padding: 10px;
-        border-radius: 0;
-        transition: all 0.3s ease;
-    }
-    input[type="file"] {
-    font-family: monospace, sans-serif;
-    padding: 0.5em;
-    margin-bottom: 1em;
-    border: 3px solid var(--border-color);
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    width: 100%;
-    box-sizing: border-box; /* Important for width consistency */
-    outline: none;
-    border-radius: 0px;
-    box-shadow: 6px 6px 0px var(--border-color); /* Add the brutalist shadow */
-    transition: box-shadow 0.2s ease; /* Smooth transition for hover */
+  border: 4px solid var(--primary-color);
+  box-shadow: 6px 6px 0 var(--primary-color);
+  padding: 10px;
+  border-radius: 0;
+  transition: all 0.3s ease;
 }
 
-/* Style the "Browse" button inside the file picker */
+input[type="file"] {
+  font-family: 'Roboto', sans-serif;
+  padding: 0.5em;
+  margin-bottom: 1em;
+  border: 3px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  border-radius: 0px;
+  box-shadow: 6px 6px 0px var(--border-color);
+  transition: box-shadow 0.2s ease;
+}
+
 input[type="file"]::-webkit-file-upload-button {
-    font-family: monospace, sans-serif;
-    padding: 0.5em 1em;
-    background-color: var(--primary-color);
-    color: var(--bg-color);
-    border: 3px solid var(--border-color);
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    border-radius: 0px;
+  font-family: 'Roboto', sans-serif;
+  padding: 0.5em 1em;
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  border: 3px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border-radius: 0px;
 }
 
 input[type="file"]::-webkit-file-upload-button:hover {
-    background-color: var(--bg-color);
-    color: var(--primary-color);
+  background-color: var(--bg-color);
+  color: var(--primary-color);
 }
 
-/* Style file name display (optional) */
 input[type="file"]:focus {
-   box-shadow: none; /* Remove the box-shadow */
+  box-shadow: none;
 }
 
 .mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 {
@@ -760,197 +736,187 @@ input[type="file"]:focus {
   gap: 1.5rem;
 }
 
-.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6>table {
+.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6>table,
-.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6>table tr,
-.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6>table td,
-.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6>table th {
+.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table,
+.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table tr,
+.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table td,
+.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table th {
   border: none !important;
 }
 
-.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6>table tbody tr {
+.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table tbody tr {
   display: flex;
   flex-direction: column;
-  border: 4px solid black;
+  border: 4px solid var(--primary-color);
   padding: 1rem;
   background-color: var(--bg-color);
 }
 
-.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6>table thead {
+.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table thead {
   display: none;
 }
 
-.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6>table tbody td {
+.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table tbody td {
   display: block;
   padding: 0.5rem;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6>table tbody td:last-child {
+.mb-8.border.border-gray-400.bg-gray-100.rounded-lg.p-6 > table tbody td:last-child {
   border-bottom: none;
 }
+
 .flex.flex-wrap.gap-2 {
-    gap: 0.5rem !important;
-    justify-content: space-evenly;
+  gap: 0.5rem !important;
+  justify-content: space-evenly;
 }
 
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden {
-    overflow-x: auto !important; /* Allow horizontal scrolling */
-    overflow-y: hidden !important;  /*Keep current state */
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
 }
+
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden table {
-    min-width: 100% !important; /* Ensure table takes full container width initially */
+  min-width: 100% !important;
 }
 
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden table thead th,
 .bg-white.p-6.rounded-2xl.shadow-xl.overflow-hidden table td {
-   white-space: nowrap !important;
+  white-space: nowrap !important;
 }
 
-        .remember-me {
-            margin-bottom: 1.5em;
-        }
+.remember-me {
+  margin-bottom: 1.5em;
+}
 
-        .remember-me input[type="checkbox"] {
-            margin-right: 0.5em;
-            vertical-align: middle;
-        }
+.remember-me input[type="checkbox"] {
+  margin-right: 0.5em;
+  vertical-align: middle;
+}
 
-        .recover-password {
-            text-align: right;
-        }
+.recover-password {
+  text-align: right;
+}
 
-        .recover-password a {
-            color: var(--primary-color);
-            text-decoration: none;
-            border-bottom: 2px solid var(--primary-color);
-        }
+.recover-password a {
+  color: var(--primary-color);
+  text-decoration: none;
+  border-bottom: 2px solid var(--primary-color);
+}
 
-        .separator {
-            text-align: center;
-            margin: 1.5em 0;
-            font-weight: bold;
-        }
+.separator {
+  text-align: center;
+  margin: 1.5em 0;
+  font-weight: bold;
+}
 
-        .qr-code-login {
-            text-align: center;
-        }
+.qr-code-login {
+  text-align: center;
+}
 
-        .qr-code-login button {
-            background-color: #fff;
-            color: var(--primary-color);
-            border: 3px solid var(--border-color);
-            box-shadow: 6px 6px 0 var(--border-color);
-            width: 100%;
-        }
+.qr-code-login button {
+  background-color: var(--bg-color);
+  color: var(--primary-color);
+  border: 3px solid var(--border-color);
+  box-shadow: 6px 6px 0 var(--border-color);
+  width: 100%;
+}
 
-        .create-account {
-            text-align: center;
-            margin-top: 2em;
-        }
+.create-account {
+  text-align: center;
+  margin-top: 2em;
+}
 
-        /* Style adjustments to match the image */
-        .login-container {
-            width: 400px;
-            padding: 2em;
-            background-color: #fff;
-            border: 4px solid #000;
-            box-shadow: 8px 8px 0 #000;
-            border-radius: 0;
-        }
+.login-container {
+  width: 400px;
+  padding: 2em;
+  background-color: var(--bg-color);
+  border: 4px solid var(--primary-color);
+  box-shadow: 8px 8px 0 var(--primary-color);
+  border-radius: 0;
+}
 
-        /* Additional styles for checkbox */
-        input[type="checkbox"] {
-            appearance: none;
-            background-color: #fff;
-            border: 2px solid #000;
-            width: 16px;
-            height: 16px;
-            border-radius: 0;
-            cursor: pointer;
-            position: relative;
-            margin-right: 0.5em;
-            vertical-align: middle;
-        }
+input[type="checkbox"] {
+  appearance: none;
+  background-color: var(--bg-color);
+  border: 2px solid var(--primary-color);
+  width: 16px;
+  height: 16px;
+  border-radius: 0;
+  cursor: pointer;
+  position: relative;
+  margin-right: 0.5em;
+  vertical-align: middle;
+}
 
-        input[type="checkbox"]:checked {
-    background-color: #000; /* Dark background for checked state */
-    border-color: #fff; /* Inverted border color */
+input[type="checkbox"]:checked {
+  background-color: var(--primary-color);
+  border-color: var(--bg-color);
 }
 
 input[type="checkbox"]:checked::after {
-    content: '✓'; /* Checkmark symbol */
-    color: #fff; /* White checkmark */
-    font-size: 16px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  content: '✓';
+  color: var(--bg-color);
+  font-size: 16px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 input[type="checkbox"]:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px #000; /* Strong focus outline */
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-color);
 }
 
 input[type="checkbox"]:hover {
-    transform: scale(1.1); /* Slightly enlarge on hover */
+  transform: scale(1.1);
 }
-        
-/* Highlighted Notes Section */
+
 .highlighted-notes {
-    border: 2px solid #007bff; /* Add a blue border */
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Add a blue glow */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 10px rgba(var(--primary-color), 0.5);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-   
 
-    
-  </style>
-
-  <style>
-    /* Media Queries */
 @media (max-width: 768px) {
-    .flex.h-screen {
-        flex-direction: column; /* Stack sidebar and content */
-    }
+  .flex.h-screen {
+    flex-direction: column;
+  }
 
-    aside {
-        width: 100%; /* Full width */
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.8);
-        color: white;
-        transform: translateX(-100%); /* Hide off-screen */
-        transition: transform 0.3s ease-in-out;
-        z-index: 50;
-        padding: 0.1rem;
-        overflow-y: auto;
-        box-shadow: 5px 0 10px rgba(0, 0, 0, 0.3);
-        display: block !important; /* Override Tailwind's hidden class */
-    }
+  aside {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: var(--bg-color);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 50;
+    padding: 0.1rem;
+    overflow-y: auto;
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.3);
+    display: block !important;
+  }
 
-    aside.open {
-        transform: translateX(0); /* Slide in when open */
-    }
+  aside.open {
+    transform: translateX(0);
+  }
 
-    .flex-1 {
-        padding: 1rem;
-    }
+  .flex-1 {
+    padding: 1rem;
+  }
 
-    .mobile-menu-button {
-        display: block; /* Show the button */
-    }
+  .mobile-menu-button {
+    display: block;
+  }
 }
-
-
-/* Apply a Brutalist design to forms, buttons, and fields */
 
 input,
 textarea,
@@ -984,52 +950,52 @@ textarea,
 button[type="submit"],
 button[type="reset"],
 button[type="button"] {
-   font-family: monospace, sans-serif !important; /* Monospace font */
-   border: 0.1px solid var(--border-color) !important; /* Set default for all */
-   box-shadow: 6px 6px 0 var(--border-color) !important; /* 3px shadow for more effect */
-   border-radius: 0 !important;          /* To remove curve corners */
-   padding: 0.5em !important;          /* Some whitespace */
-    margin-bottom: 1em !important;
-    box-sizing: border-box !important; /* Important for width consistency */
-   outline: none !important;
-   transition: all 0.2s ease-in-out !important;
+  font-family: 'Roboto', sans-serif !important;
+  border: 0.1px solid var(--border-color) !important;
+  box-shadow: 6px 6px 0 var(--border-color) !important;
+  border-radius: 0 !important;
+  padding: 0.5em !important;
+  margin-bottom: 1em !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  transition: all 0.2s ease-in-out !important;
 }
 
-/* Special cases */
 input[type="checkbox"],
 input[type="radio"] {
-    appearance: none !important;   /* Better control */
-    width: 1.2em !important;
-    height: 1.2em !important;
-    border: 3px solid var(--border-color) !important;
-    background-color: var(--bg-color) !important;
-    box-shadow: none !important;   /* Remove default shadow */
-    cursor: pointer !important;
-    vertical-align: middle !important;
+  appearance: none !important;
+  width: 1.2em !important;
+  height: 1.2em !important;
+  border: 3px solid var(--border-color) !important;
+  background-color: var(--bg-color) !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  vertical-align: middle !important;
 }
 
 input[type="checkbox"]:checked,
 input[type="radio"]:checked {
-    background-color: var(--secondary-color) !important;
-    border-color: var(--border-color) !important;
+  background-color: var(--secondary-color) !important;
+  border-color: var(--border-color) !important;
 }
+
 input[type="file"] {
   box-shadow: none !important;
 }
-/* Make the layout more interactive */
+
 textarea {
-    resize: vertical !important;
+  resize: vertical !important;
 }
 
 select {
-    appearance: none !important;  /* No default */
-    background-image: url('data:image/svg+xml;utf8,<svg fill="%23222" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') !important;
-    background-repeat: no-repeat !important;
-    background-position: right 0.5em top 50%, 0 0 !important;
-    background-size: 1em auto !important;
-    padding-right: 2.5em !important;
+  appearance: none !important;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23222" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.5em top 50%, 0 0 !important;
+  background-size: 1em auto !important;
+  padding-right: 2.5em !important;
 }
-/* Specific for each hover effects */
+
 input[type="submit"]:hover,
 input[type="reset"]:hover,
 input[type="button"]:hover,
@@ -1037,29 +1003,29 @@ button[type="submit"]:hover,
 button[type="reset"]:hover,
 button[type="button"]:hover,
 select:hover {
-    background-color: var(--primary-color) !important;
-    color: var(--bg-color) !important;
-    box-shadow: none !important;
-    transform: translate(3px, 3px) !important;
+  background-color: var(--primary-color) !important;
+  color: var(--bg-color) !important;
+  box-shadow: none !important;
+  transform: translate(3px, 3px) !important;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-    border-color: var(--accent-color) !important;
-    box-shadow: none !important;
+  border-color: var(--accent-color) !important;
+  box-shadow: none !important;
 }
 
 fieldset {
- border: 2px solid var(--border-color) !important; /* Ensure border exists */
- padding: 1em !important;
- margin-bottom: 1em !important;
+  border: 2px solid var(--border-color) !important;
+  padding: 1em !important;
+  margin-bottom: 1em !important;
 }
 
 
   </style>
 </head>
-<body class="100">
+<body class="bg-gray-100">
   <!-- Mobile Top Navigation (shows hamburger) -->
   <nav class="bg-black p-4 text-white md:hidden flex justify-between items-center border-b-4 border-white">
     <a href="<?php echo BASE_URL; ?>" class="text-xl font-bold uppercase py-2">RevenueSure</a>

@@ -5,9 +5,25 @@ redirectIfUnauthorized(true);
 $error = '';
 $success = '';
 
-// Handle project status update
+// Mapping for status to colors and icons
+$statusData = [
+    'Not Started' => ['color' => 'gray',   'icon' => 'fas fa-hourglass-start'],
+    'In Progress' => ['color' => 'blue',   'icon' => 'fas fa-spinner'],
+    'Completed'   => ['color' => 'green',  'icon' => 'fas fa-check-circle'],
+    'On Hold'     => ['color' => 'yellow', 'icon' => 'fas fa-pause-circle'],
+    'Canceled'    => ['color' => 'red',    'icon' => 'fas fa-times-circle'],
+];
+
+// Mapping for priority to colors and icons
+$priorityData = [
+    'High'   => ['color' => 'red',    'icon' => 'fas fa-arrow-up'],
+    'Medium' => ['color' => 'yellow', 'icon' => 'fas fa-arrow-right'],
+    'Low'    => ['color' => 'green',  'icon' => 'fas fa-arrow-down'],
+];
+
+// Handle project update actions (status and/or priority)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['project_id']) && isset($_POST['new_status'])) {
-    $project_id = (int)$_POST['project_id'];
+    $project_id = (int) $_POST['project_id'];
     $new_status = $_POST['new_status'];
 
     // Validate status
@@ -34,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['project_id']) && isset
     }
 }
 
-// Fetch all projects
+// Fetch all projects along with category and manager details
 $stmt = $conn->prepare("SELECT projects.*, project_categories.name as category_name, users.username as manager_name
                         FROM projects
                         LEFT JOIN project_categories ON projects.project_category_id = project_categories.id
@@ -42,101 +58,159 @@ $stmt = $conn->prepare("SELECT projects.*, project_categories.name as category_n
                         ORDER BY created_at DESC");
 $stmt->execute();
 $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$totalProjects = count($projects);
+
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Dashboard</title>
-   <script src="https://cdn.tailwindcss.com"></script>
-   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-</head>
-<body class="bg-gray-100">
-  <div class="container mx-auto p-6 fade-in">
-    <h1 class="text-4xl font-bold text-gray-900 mb-6">All Projects and Overview</h1>
-
-    <?php if ($success): ?>
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
-        <?php echo $success; ?>
-      </div>
-    <?php endif; ?>
-    <?php if ($error): ?>
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-        <?php echo $error; ?>
-      </div>
-    <?php endif; ?>
-
-    <div class="flex flex-wrap justify-between items-center mb-8">
-         <a href="<?php echo BASE_URL; ?>projects/add" class="bg-blue-700 text-white px-6 py-3 rounded-xl hover:bg-blue-900 transition duration-300 shadow-md flex items-center">
-            <i class="fas fa-plus-circle mr-2"></i> Add Project
-         </a>
+<div class="container mx-auto p-6 fade-in">
+  <!-- Header with Dashboard Title and Total Projects Badge -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+    <div>
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">All Projects and Overview</h1>
+      <span class="inline-block bg-indigo-100 text-indigo-800 text-xs px-3 py-1 rounded-full font-semibold">
+        Total Projects: <?php echo $totalProjects; ?>
+      </span>
     </div>
-     <!-- Projects Table -->
-    <div class="bg-white p-6 rounded-2xl shadow-xl overflow-hidden">
-         <table class="w-full text-left">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Project ID</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Name</th>
-                         <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Manager</th>
-                         <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Category</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Start Date</th>
-                         <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Status</th>
-                           <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Priority</th>
-                           <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Actions</th>
-                    </tr>
-                </thead>
-                 <tbody class="text-gray-600">
-                        <?php if ($projects): ?>
-                            <?php foreach ($projects as $project): ?>
-                                <tr class="border-b transition hover:bg-gray-100">
-                                    <td class="px-4 py-3"><?php echo htmlspecialchars($project['project_id']); ?></td>
-                                   <td class="px-4 py-3"><?php echo htmlspecialchars($project['name']); ?></td>
-                                    <td class="px-4 py-3"><?php echo htmlspecialchars($project['manager_name']); ?></td>
-                                   <td class="px-4 py-3"><?php echo htmlspecialchars($project['category_name']); ?></td>
-                                    <td class="px-4 py-3"><?php echo htmlspecialchars($project['start_date']); ?></td>
-                                   <td class="px-4 py-3">
-                                        <form method="POST" action="">
-                                           <?php echo csrfTokenInput(); ?>
-                                                <input type="hidden" name="project_id" value="<?php echo htmlspecialchars($project['id']); ?>">
-                                                  <select name="new_status" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" onchange="this.form.submit()">
-                                                       <option value="Not Started" <?php echo ($project['status'] == 'Not Started') ? 'selected' : ''; ?>>Not Started</option>
-                                                        <option value="In Progress" <?php echo ($project['status'] == 'In Progress') ? 'selected' : ''; ?>>In Progress</option>
-                                                       <option value="Completed" <?php echo ($project['status'] == 'Completed') ? 'selected' : ''; ?>>Completed</option>
-                                                        <option value="On Hold" <?php echo ($project['status'] == 'On Hold') ? 'selected' : ''; ?>>On Hold</option>
-                                                        <option value="Canceled" <?php echo ($project['status'] == 'Canceled') ? 'selected' : ''; ?>>Canceled</option>
-                                                  </select>
-                                        </form>
-                                   </td>
-                                    <td class="px-4 py-3"><?php echo htmlspecialchars($project['priority']); ?></td>
-                                    <td class="px-4 py-3 flex gap-2">
-                                          <a href="<?php echo BASE_URL; ?>projects/view?id=<?php echo $project['id']; ?>" class="text-purple-600 hover:underline"><i class="fas fa-eye"></i> View</a>
-                                         <a href="<?php echo BASE_URL; ?>projects/gantt_chart?project_id=<?php echo $project['id']; ?>" class="text-blue-600 hover:underline">
-                                          <i class="fas fa-chart-bar"></i> Gantt</a>
-                                           <a href="<?php echo BASE_URL; ?>projects/kanban_board?project_id=<?php echo $project['id']; ?>" class="text-green-600 hover:underline">
-                                        <i class="fas fa-columns"></i> Kanban</a>
-                                           <a href="<?php echo BASE_URL; ?>projects/edit?id=<?php echo $project['id']; ?>" class="text-blue-600 hover:underline"> <i class="fas fa-edit"></i>Edit</a>
-                                              <a href="<?php echo BASE_URL; ?>projects/delete?id=<?php echo $project['id']; ?>" class="text-red-600 hover:underline ml-2"><i class="fas fa-trash-alt"></i> Delete</a>
-                                 </td>
-                            </tr>
-                       <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                         <td colspan="8" class="px-4 py-2 text-center text-gray-600">No projects found.</td>
-                         </tr>
-                     <?php endif; ?>
-                </tbody>
-          </table>
-     </div>
-</div>
+    <a href="<?php echo BASE_URL; ?>projects/add" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-md flex items-center transition">
+      <i class="fas fa-plus-circle mr-2"></i> Add Project
+    </a>
+  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    function confirmDelete(invoiceId) {
-      if (confirm('Are you sure you want to delete this invoice?')) {
-        window.location.href = '<?php echo BASE_URL; ?>invoices/delete?id=' + invoiceId;
-      }
-    }
-  </script>
+  <!-- Alert Messages -->
+  <?php if ($success): ?>
+    <div class="feedback-message feedback-success">
+      <?php echo $success; ?>
+    </div>
+  <?php endif; ?>
+  <?php if ($error): ?>
+    <div class="feedback-message feedback-error">
+      <?php echo $error; ?>
+    </div>
+  <?php endif; ?>
+
+  <!-- Projects Grid -->
+  <?php if ($projects): ?>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <?php foreach ($projects as $project): ?>
+        <?php 
+          $currentStatus = $project['status'];
+          $badge = isset($statusData[$currentStatus]) ? $statusData[$currentStatus] : ['color' => 'gray', 'icon' => 'fas fa-info-circle'];
+          $currentPriority = $project['priority'];
+          $pBadge = isset($priorityData[$currentPriority]) ? $priorityData[$currentPriority] : null;
+
+          // Check if there are any related notes
+          $stmt = $conn->prepare("SELECT COUNT(*) FROM notes WHERE related_type = 'project' AND related_id = :project_id");
+           $stmt->bindParam(':project_id', $project['id'], PDO::PARAM_INT);
+            $stmt->execute();
+            $note_count = $stmt->fetchColumn();
+        ?>
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition duration-300">
+          <!-- Card Header: Project Name & Status Badge -->
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+            <h2 class="text-xl font-bold text-gray-800">
+              <?php echo htmlspecialchars($project['name']); ?>
+            </h2>
+            <span class="mt-2 sm:mt-0 inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-<?php echo $badge['color']; ?>-100 text-<?php echo $badge['color']; ?>-800 ring-2 ring-<?php echo $badge['color']; ?>-300">
+              <i class="<?php echo $badge['icon']; ?> mr-1"></i>
+              <?php echo htmlspecialchars($currentStatus); ?>
+            </span>
+          </div>
+          <!-- Project Details with Icons and Clickable Manager & Category -->
+          <div class="space-y-1 text-gray-600 mb-4">
+            <p>
+              <span class="font-semibold">
+                <i class="fas fa-user mr-1"></i> Manager:
+              </span>
+              <a href="<?php echo BASE_URL; ?>profile/unified_view?id=<?php echo $project['project_manager_id']; ?>" class="text-blue-600 hover:underline">
+                <?php echo htmlspecialchars($project['manager_name']); ?>
+              </a>
+            </p>
+            <p>
+              <span class="font-semibold">
+                <i class="fas fa-tag mr-1"></i> Category:
+              </span>
+              <a href="<?php echo BASE_URL; ?>projects/categories/view?id=<?php echo $project['project_category_id']; ?>" class="text-blue-600 hover:underline">
+                <?php echo htmlspecialchars($project['category_name']); ?>
+              </a>
+            </p>
+            <p>
+              <span class="font-semibold">
+                <i class="fas fa-calendar-alt mr-1"></i> Start Date:
+              </span>
+              <?php echo htmlspecialchars($project['start_date']); ?>
+            </p>
+            <p>
+              <span class="font-semibold">
+                <i class="fas fa-star mr-1"></i> Priority:
+              </span>
+              <?php 
+                if ($pBadge) {
+                  echo '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-' . $pBadge['color'] . '-100 text-' . $pBadge['color'] . '-800 ring-2 ring-' . $pBadge['color'] . '-300">';
+                  echo '<i class="' . $pBadge['icon'] . ' mr-1"></i>' . htmlspecialchars($currentPriority);
+                  echo '</span>';
+                } else {
+                  echo htmlspecialchars($project['priority']);
+                }
+              ?>
+            </p>
+          </div>
+          <!-- Status Update Form -->
+          <div class="mb-4">
+            <form method="POST" action="">
+              <?php echo csrfTokenInput(); ?>
+              <input type="hidden" name="project_id" value="<?php echo htmlspecialchars($project['id']); ?>">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Change Status</label>
+              <select name="new_status" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" onchange="this.form.submit()">
+                <option value="Not Started" <?php echo ($project['status'] == 'Not Started') ? 'selected' : ''; ?>>Not Started</option>
+                <option value="In Progress" <?php echo ($project['status'] == 'In Progress') ? 'selected' : ''; ?>>In Progress</option>
+                <option value="Completed" <?php echo ($project['status'] == 'Completed') ? 'selected' : ''; ?>>Completed</option>
+                <option value="On Hold" <?php echo ($project['status'] == 'On Hold') ? 'selected' : ''; ?>>On Hold</option>
+                <option value="Canceled" <?php echo ($project['status'] == 'Canceled') ? 'selected' : ''; ?>>Canceled</option>
+              </select>
+            </form>
+          </div>
+          <!-- Priority Update Form -->
+          <div class="mb-4">
+            <form method="POST" action="">
+              <?php echo csrfTokenInput(); ?>
+              <input type="hidden" name="project_id" value="<?php echo htmlspecialchars($project['id']); ?>">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Change Priority</label>
+              <select name="new_priority" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-<?php echo ($pBadge ? $pBadge['color'] : 'blue'); ?>-500 focus:border-<?php echo ($pBadge ? $pBadge['color'] : 'blue'); ?>-500" onchange="this.form.submit()">
+                <option value="Low" <?php echo ($project['priority'] == 'Low') ? 'selected' : ''; ?>>Low</option>
+                <option value="Medium" <?php echo ($project['priority'] == 'Medium') ? 'selected' : ''; ?>>Medium</option>
+                <option value="High" <?php echo ($project['priority'] == 'High') ? 'selected' : ''; ?>>High</option>
+              </select>
+            </form>
+          </div>
+          <!-- Action Links -->
+          <div class="flex flex-wrap gap-3">
+            <a href="<?php echo BASE_URL; ?>projects/view?id=<?php echo $project['id']; ?>" class="text-purple-600 text-sm flex items-center">
+              <i class="fas fa-eye mr-1"></i> View
+            </a>
+            <a href="<?php echo BASE_URL; ?>projects/gantt_chart?project_id=<?php echo $project['id']; ?>" class="text-blue-600 text-sm flex items-center">
+              <i class="fas fa-chart-bar mr-1"></i> Gantt
+            </a>
+            <a href="<?php echo BASE_URL; ?>projects/kanban_board?project_id=<?php echo $project['id']; ?>" class="text-green-600 text-sm flex items-center">
+              <i class="fas fa-columns mr-1"></i> Kanban
+            </a>
+            <a href="<?php echo BASE_URL; ?>projects/edit?id=<?php echo $project['id']; ?>" class="text-blue-600 text-sm flex items-center">
+              <i class="fas fa-edit mr-1"></i> Edit
+            </a>
+            <a href="<?php echo BASE_URL; ?>projects/delete?id=<?php echo $project['id']; ?>" class="text-red-600 text-sm flex items-center" onclick="return confirm('Are you sure you want to delete this project?');">
+              <i class="fas fa-trash-alt mr-1"></i> Delete
+            </a>
+             <?php if ($note_count > 0): ?>
+                 <a href="<?php echo BASE_URL; ?>projects/view?id=<?php echo $project['id']; ?>&tab=notes" class="text-gray-600 text-sm flex items-center">
+                    <i class="fas fa-sticky-note mr-1"></i> View Linked Notes (<?php echo $note_count ?>)
+                  </a>
+            <?php endif; ?>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  <?php else: ?>
+    <div class="text-center text-gray-600 py-10">
+      No projects found.
+    </div>
+  <?php endif; ?>
+</div>

@@ -34,9 +34,6 @@ $dependencies = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 ?>
-<script src="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.umd.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.css">
-
 
 <h1 class="text-3xl font-bold text-gray-800 mb-6">Gantt Chart: <?php echo htmlspecialchars($project['name']); ?></h1>
 <div class="bg-white p-6 rounded-lg shadow-md mb-8">

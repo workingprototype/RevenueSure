@@ -237,13 +237,13 @@ $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <table class="w-full text-left">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Invoice Number</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Bill To</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Issue Date</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Due Date</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Status</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Total</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Actions</th>
+                        <th class="px-4 py-3">Invoice Number</th>
+                        <th class="px-4 py-3">Bill To</th>
+                        <th class="px-4 py-3">Issue Date</th>
+                        <th class="px-4 py-3">Due Date</th>
+                        <th class="px-4 py-3">Status</th>
+                        <th class="px-4 py-3">Total</th>
+                        <th class="px-4 py-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -346,12 +346,12 @@ $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <table class="w-full text-left">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Invoice Number</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Bill To</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Payment Date</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Payment Method</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Transaction ID</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Amount</th>
+                        <th class="px-4 py-3">Invoice Number</th>
+                        <th class="px-4 py-3">Bill To</th>
+                        <th class="px-4 py-3">Payment Date</th>
+                        <th class="px-4 py-3">Payment Method</th>
+                        <th class="px-4 py-3">Transaction ID</th>
+                        <th class="px-4 py-3">Amount</th>
                     </tr>
                 </thead>
                 <tbody>

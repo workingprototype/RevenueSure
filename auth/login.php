@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             session_start();
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role'] = $user['role'];
-            
+
             // Clear anonymous cache on login
             clearCache('header_anonymous');
             clearCache('footer_anonymous');
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: " . BASE_URL . "dashboard/index");
             exit();
         } else {
-            $error =  "Invalid credentials.";
+            $error = "Invalid credentials.";
         }
     } catch (PDOException $e) {
         error_log("Database error: " . $e->getMessage());
@@ -33,37 +33,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - RevenueSure</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
     <div class="min-h-screen flex items-center justify-center">
-        <div class="bg-white p-8 rounded-lg shadow-md w-96">
-            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
-             <?php if ($error): ?>
+        <div class="login-container">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">Sign in</h1>
+            <p>Enter your account details or use QR code</p>
+            <?php if ($error): ?>
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
                     <?php echo htmlspecialchars($error); ?>
                 </div>
             <?php endif; ?>
             <form method="POST" action="">
-            <?php echo csrfTokenInput(); ?>
-                <div class="mb-4">
+                <?php echo csrfTokenInput(); ?>
+                <div>
                     <label for="email" class="block text-gray-700">Email</label>
-                    <input type="email" name="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                    <input type="email" name="email" id="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                 </div>
-                <div class="mb-6">
+                <div>
                     <label for="password" class="block text-gray-700">Password</label>
-                    <input type="password" name="password" id="password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                    <input type="password" name="password" id="password" required>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300">Login</button>
+
+                <div class="remember-me flex items-center justify-between">
+                    <label>
+                        <input type="checkbox" name="remember"> Remember me
+                    </label>
+                    <div class="recover-password">
+                        <a href="#">Recover password</a>
+                    </div>
+                </div>
+                <button type="submit">Sign in</button>
             </form>
-            <p class="text-center mt-4 text-gray-600">Don't have an account? <a href="<?php echo BASE_URL; ?>auth/register" class="text-blue-600 hover:underline">Register</a></p>
+
+            <div class="separator">
+                or
+            </div>
+
+            <div class="qr-code-login">
+                <button>
+                    <i class="fa-solid fa-qrcode mr-2"></i> Log in with QR code
+                </button>
+            </div>
+
+            <div class="create-account">
+                You don't have an account? <a href="<?php echo BASE_URL; ?>auth/register">Create an account</a>
+            </div>
         </div>
     </div>
-</body>
-</html>

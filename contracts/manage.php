@@ -151,6 +151,9 @@ $contracts = $stmt->fetchAll(PDO::FETCH_ASSOC);
           </table>
       </div>
 </div>
+</div>
+</div>
+
 <script>
     function confirmDelete(contractId) {
         if (confirm('Are you sure you want to delete this contract?')) {

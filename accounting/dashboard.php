@@ -245,7 +245,6 @@ $monthly_expense_trend = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const monthlyChartCtx = document.getElementById('monthlyChart').getContext('2d');
@@ -339,9 +338,3 @@ $monthly_expense_trend = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
    });
 </script>
-<?php
- /*
-  -Chart,js chart data for the Monthly Chart.
-- Display the top 5 expense categories.
- */
-?>

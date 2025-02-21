@@ -231,11 +231,11 @@ $tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <p class="text-gray-700 mb-2"> <span class="font-semibold text-gray-800">Phone:</span> <?php echo htmlspecialchars($customer['phone']); ?></p>
          <div class="mb-4 flex justify-center relative mt-4">
                      <?php if($customer['profile_picture']): ?>
-                          <img src="<?php echo $customer['profile_picture']; ?>" alt="Profile Picture" class="rounded-full w-32 h-32 object-cover">
+                          <img src="<?php echo BASE_URL . $customer['profile_picture']; ?>" alt="Profile Picture" class="rounded-full w-32 h-32 object-cover">
                            <form method="post" action="" class="absolute top-0 right-0">
                            <?php echo csrfTokenInput(); ?>
-                                 <button type="submit" name="remove_profile_picture" class="bg-red-500 text-white p-1 rounded-full hover:bg-red-700 transition duration-300">
-                                      <i class="fas fa-trash-alt fa-xs"></i>
+                                 <button type="submit" name="remove_profile_picture" class="remove_item bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-700 transition duration-300">
+                                      <i class="fas fa-trash-alt"></i>
                                   </button>
                            </form>
                       <?php else: ?>
@@ -403,7 +403,3 @@ $tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <a href="<?php echo BASE_URL; ?>customers/manage"  class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Back To Customers</a>
    </div>
 </div>
-
-<?php
-
-?>

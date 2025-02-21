@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_inline'])) {
     $category_id = $_POST['category_id'];
     $is_shared   = isset($_POST['is_shared']) ? 1 : 0;
     $related_type = (isset($_POST['related_type']) && $_POST['related_type'] !== '') ? $_POST['related_type'] : null;
-    $related_id   = (isset($_POST['related_id']) && $_POST['related_id'] !== '') ? $_POST['related_id'] : null;
-    
+    $related_id   = (isset($_POST['related_id']) && $_POST['related_id'] !== '') ? $_POST['related_type'] : null;
+
     if(empty($title) || empty($content)){
         $error = "Title and content are required.";
     } else {
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_inline'])) {
         $stmt->bindParam(':related_type', $related_type);
         $stmt->bindParam(':related_id', $related_id);
         $stmt->bindParam(':id', $note_id);
-    
+
         if ($stmt->execute()) {
             $success = "Note updated successfully!";
         } else {
@@ -81,149 +81,237 @@ if ($note['related_type'] && $note['related_id']) {
         }
     }
 }
+
+// Default notebook style
+$default_style = 'style4';
+$selected_style = $_GET['style'] ?? $default_style;
+
 ?>
+<link href="<?= BASE_URL; ?>assets/css/notebook-styles.css" rel="stylesheet" />
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+            <div>
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Digital Notebook
+                </h1>
+                <p class="text-gray-600 mt-2">Your thoughts, organized beautifully</p>
+                <h2 class="text-2xl font-semibold text-gray-800 mt-4">View Note</h2>
+            </div>
+            <div class="flex space-x-4">
+                <!-- Edit Inline Button with Pencil Icon -->
+                <button onclick="toggleEditMode()" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                    </svg>
+                    <span>Edit Inline</span>
+                </button>
+                <!-- Back to Manage Button with Left Arrow Icon -->
+                <a href="<?= BASE_URL; ?>notes/manage" class="flex items-center bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7M21 12H3"></path>
+                    </svg>
+                    <span>Back To Your Notes</span>
+                </a>
+            </div>
+        </div>
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-8">
-  <div class="max-w-6xl mx-auto">
-    <!-- Header Section -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-      <div>
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          Digital Notebook
-        </h1>
-        <p class="text-gray-600 mt-2">Your thoughts, organized beautifully</p>
-        <h2 class="text-2xl font-semibold text-gray-800 mt-4">View Note</h2>
-      </div>
-      <div class="flex space-x-4">
-        <!-- Edit Inline Button with Pencil Icon -->
-        <button onclick="toggleEditMode()" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-          </svg>
-          <span>Edit Inline</span>
-        </button>
-        <!-- Back to Manage Button with Left Arrow Icon -->
-        <a href="<?= BASE_URL; ?>notes/manage" class="flex items-center bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7M21 12H3"></path>
-          </svg>
-          <span>Back To Your Notes</span>
-        </a>
-      </div>
-    </div>
+        <!-- Style Selector -->
+        <div class="notebook-style-selector">
+            <label>
+                <input type="radio" name="notebook_style" value="style1" <?= $selected_style === 'style1' ? 'checked' : '' ?> onclick="changeStyle('style1')">
+                Original
+            </label>
+            <label>
+                <input type="radio" name="notebook_style" value="style2" <?= $selected_style === 'style2' ? 'checked' : '' ?> onclick="changeStyle('style2')">
+                Leather Bound
+            </label>
+            <label>
+                <input type="radio" name="notebook_style" value="style4" <?= $selected_style === 'style4' ? 'checked' : '' ?> onclick="changeStyle('style4')">
+                Lined Paper
+            </label>
+            <label>
+                <input type="radio" name="notebook_style" value="style5" <?= $selected_style === 'style5' ? 'checked' : '' ?> onclick="changeStyle('style5')">
+                Dark Mode
+            </label>
+            <label>
+                <input type="radio" name="notebook_style" value="style6" <?= $selected_style === 'style6' ? 'checked' : '' ?> onclick="changeStyle('style6')">
+                Composition
+            </label>
+            <label>
+                <input type="radio" name="notebook_style" value="style7" <?= $selected_style === 'style7' ? 'checked' : '' ?> onclick="changeStyle('style7')">
+                Sketchbook
+            </label>
+            <label>
+                <input type="radio" name="notebook_style" value="style8" <?= $selected_style === 'style8' ? 'checked' : '' ?> onclick="changeStyle('style8')">
+                Modern
+            </label>
+             <label>
+                <input type="radio" name="notebook_style" value="style9" <?= $selected_style === 'style9' ? 'checked' : '' ?> onclick="changeStyle('style9')">
+                Refined Paper
+            </label>
+            <label>
+                <input type="radio" name="notebook_style" value="style10" <?= $selected_style === 'style10' ? 'checked' : '' ?> onclick="changeStyle('style10')">
+                Tranquil Blue
+            </label>
+            <label>
+                <input type="radio" name="notebook_style" value="style11" <?= $selected_style === 'style11' ? 'checked' : '' ?> onclick="changeStyle('style11')">
+                Elegant Cream
+            </label>
+            <label>
+                <input type="radio" name="notebook_style" value="style12" <?= $selected_style === 'style12' ? 'checked' : '' ?> onclick="changeStyle('style12')">
+                Kindle
+            </label>
+             <label>
+                <input type="radio" name="notebook_style" value="style13" <?= $selected_style === 'style13' ? 'checked' : '' ?> onclick="changeStyle('style13')">
+                Ink Paper
+            </label>
+             <label>
+                <input type="radio" name="notebook_style" value="style14" <?= $selected_style === 'style14' ? 'checked' : '' ?> onclick="changeStyle('style14')">
+                Handwriting
+            </label>
+        </div>
 
-    <!-- Alerts -->
-    <?php if ($error): ?>
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-        <?= $error; ?>
-      </div>
-    <?php endif; ?>
-    <?php if ($success): ?>
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
-        <?= $success; ?>
-      </div>
-    <?php endif; ?>
-
-    <!-- View Mode: Display note details -->
-    <div id="viewMode" class="bg-white p-6 rounded-2xl shadow-sm transition-shadow duration-300 border border-gray-100">
-      <div class="space-y-3">
-        <p><strong>Title:</strong> <?php echo htmlspecialchars($note['title']); ?></p>
-        <p><strong>Category:</strong> <?php echo htmlspecialchars($note['category_name']); ?></p>
-        <p><strong>Content:</strong><br>
-          <!-- Render the rich text as HTML -->
-          <?php echo $note['content']; ?>
-        </p>
-        <p><strong>Is Shared:</strong> <?php echo $note['is_shared'] ? 'Yes' : 'No'; ?></p>
-        <?php if ($related_display): ?>
-          <p><strong>Related to:</strong> <?php echo $related_display; ?></p>
+        <!-- Alerts -->
+        <?php if ($error): ?>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <?= $error; ?>
+            </div>
         <?php endif; ?>
-      </div>
-    </div>
+        <?php if ($success): ?>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
+                <?= $success; ?>
+            </div>
+        <?php endif; ?>
 
-    <!-- Edit Mode: Inline editing form (hidden by default) -->
-    <div id="editMode" class="hidden bg-white p-6 rounded-2xl shadow-sm transition-shadow duration-300 border border-gray-100 mt-6">
-      <form method="POST" action="">
-        <?= csrfTokenInput(); ?>
-        <input type="hidden" name="update_inline" value="1">
-        <div class="mb-4">
-          <label for="edit_title" class="block text-gray-700">Title</label>
-          <input type="text" name="title" id="edit_title" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required value="<?= htmlspecialchars($note['title']); ?>">
+        <!-- View Mode: Display note details -->
+        <div id="viewMode" class="notebook-page">
+            <div class="notebook-binding <?= $selected_style ?>">
+                <!-- Spiral Binding Details -->
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 10px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 30px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 50px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 70px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 90px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 110px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 130px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 150px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 170px;"></div>
+            </div>
+            <div class="notebook-bg <?= $selected_style ?>">
+                <div class="notebook-title"><?php echo htmlspecialchars($note['title']); ?></div>
+                <div><strong>Category:</strong> <?php echo htmlspecialchars($note['category_name']); ?></div>
+                <div class="notebook-content">
+                    <?php echo $note['content']; ?>
+                </div>
+                <div><strong>Is Shared:</strong> <?php echo $note['is_shared'] ? 'Yes' : 'No'; ?></div>
+                <?php if ($related_display): ?>
+                    <div><strong>Related to:</strong> <?php echo $related_display; ?></div>
+                <?php endif; ?>
+            </div>
         </div>
-        <div class="mb-4">
-          <label for="edit_content" class="block text-gray-700">Content</label>
-          <!-- The textarea will be replaced by ClassicEditor -->
-          <textarea name="content" id="edit_content" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required><?= $note['content']; ?></textarea>
+
+        <!-- Edit Mode: Inline editing form (hidden by default) -->
+        <div id="editMode" class="hidden notebook-page">
+            <div class="notebook-binding <?= $selected_style ?>">
+                <!-- Spiral Binding Details -->
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 10px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 30px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 50px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 70px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 90px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 110px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 130px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 150px;"></div>
+                <div class="notebook-spiral <?= $selected_style ?>" style="top: 170px;"></div>
+            </div>
+            <div class="notebook-bg <?= $selected_style ?>">
+                <form method="POST" action="" class="notebook-edit-form">
+                    <?= csrfTokenInput(); ?>
+                    <input type="hidden" name="update_inline" value="1">
+                    <div class="mb-4">
+                        <label for="edit_title" class="block text-gray-700">Title</label>
+                        <input type="text" name="title" id="edit_title" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required value="<?= htmlspecialchars($note['title']); ?>">
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit_content" class="block text-gray-700">Content</label>
+                        <!-- The textarea will be replaced by ClassicEditor -->
+                        <textarea name="content" id="edit_content" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required><?= $note['content']; ?></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit_category_id" class="block text-gray-700">Category</label>
+                        <select name="category_id" id="edit_category_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                            <option value="">Select Category</option>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?= $category['id']; ?>" <?= ($category['id'] == $note['category_id']) ? 'selected' : ''; ?>>
+                                    <?= htmlspecialchars($category['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit_related_type" class="block text-gray-700">Related To</label>
+                        <select name="related_type" id="edit_related_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                            <option value="">None</option>
+                            <option value="lead" <?= ($note['related_type'] === 'lead') ? 'selected' : ''; ?>>Lead</option>
+                            <option value="customer" <?= ($note['related_type'] === 'customer') ? 'selected' : ''; ?>>Customer</option>
+                            <option value="project" <?= ($note['related_type'] === 'project') ? 'selected' : ''; ?>>Project</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="is_shared" id="edit_is_shared" class="mr-2" <?= ($note['is_shared']) ? 'checked' : ''; ?>>
+                            <span class="text-gray-700">Share with Team</span>
+                        </label>
+                    </div>
+                    <div class="flex space-x-4">
+                        <!-- Save Changes Button with Check Mark Icon -->
+                        <button type="submit" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Save Changes</span>
+                        </button>
+                        <!-- Cancel Button with Cross Icon -->
+                        <button type="button" onclick="toggleEditMode()" class="flex items-center bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300 cancel-button">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            <span>Cancel</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="mb-4">
-          <label for="edit_category_id" class="block text-gray-700">Category</label>
-          <select name="category_id" id="edit_category_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-            <option value="">Select Category</option>
-            <?php foreach ($categories as $category): ?>
-              <option value="<?= $category['id']; ?>" <?= ($category['id'] == $note['category_id']) ? 'selected' : ''; ?>>
-                <?= htmlspecialchars($category['name']); ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div class="mb-4">
-          <label for="edit_related_type" class="block text-gray-700">Related To</label>
-          <select name="related_type" id="edit_related_type" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-            <option value="">None</option>
-            <option value="lead" <?= ($note['related_type'] === 'lead') ? 'selected' : ''; ?>>Lead</option>
-            <option value="customer" <?= ($note['related_type'] === 'customer') ? 'selected' : ''; ?>>Customer</option>
-            <option value="project" <?= ($note['related_type'] === 'project') ? 'selected' : ''; ?>>Project</option>
-          </select>
-        </div>
-        <div class="mb-4">
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="is_shared" id="edit_is_shared" class="mr-2" <?= ($note['is_shared']) ? 'checked' : ''; ?>>
-            <span class="text-gray-700">Share with Team</span>
-          </label>
-        </div>
-        <div class="flex space-x-4">
-          <!-- Save Changes Button with Check Mark Icon -->
-          <button type="submit" class="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            <span>Save Changes</span>
-          </button>
-          <!-- Cancel Button with Cross Icon -->
-          <button type="button" onclick="toggleEditMode()" class="flex items-center bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-            <span>Cancel</span>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
 </div>
 
 <script>
-  let inlineEditor = null;
-  function toggleEditMode() {
-    const viewMode = document.getElementById('viewMode');
-    const editMode = document.getElementById('editMode');
-    viewMode.classList.toggle('hidden');
-    editMode.classList.toggle('hidden');
-    // Initialize ClassicEditor for inline edit mode if not already created
-    if (!editMode.classList.contains('hidden') && !inlineEditor) {
-      ClassicEditor
-    .create(document.querySelector('#content'), {
-        toolbar: [
-            'heading', '|',
-            'bold', 'italic', 'link', 'codeBlock', 'bulletedList', 'numberedList', 'blockQuote', 'undo', 'redo'
-        ]
-    })
-    .then(editor => {
-        console.log('Editor initialized', editor);
-    })
-    .catch(error => {
-        console.error(error);
-    });
+    let inlineEditor = null;
+    function toggleEditMode() {
+        const viewMode = document.getElementById('viewMode');
+        const editMode = document.getElementById('editMode');
+        viewMode.classList.toggle('hidden');
+        editMode.classList.toggle('hidden');
+        // Initialize ClassicEditor for inline edit mode if not already created
+        if (!editMode.classList.contains('hidden') && !inlineEditor) {
+            ClassicEditor
+                .create(document.querySelector('#edit_content'), {
+                    toolbar: [
+                        'heading', '|',
+                        'bold', 'italic', 'link', 'codeBlock', 'bulletedList', 'numberedList', 'blockQuote', 'undo', 'redo'
+                    ]
+                })
+                .then(editor => {
+                    console.log('Editor initialized', editor);
+                    inlineEditor = editor; // Save editor instance
+                })
+                .catch(error => {
+                    console.error(error);
+                });
 
+        }
     }
-  }
+    function changeStyle(style) {
+        window.location.href = '?id=<?= $note_id ?>&style=' + style;
+    }
 </script>

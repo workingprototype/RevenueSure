@@ -59,11 +59,11 @@ try {
         <table class="w-full text-left">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Name</th>
-                     <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Category</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Email</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Phone</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Actions</th>
+                    <th class="px-4 py-3">Name</th>
+                     <th class="px-4 py-3">Category</th>
+                    <th class="px-4 py-3">Email</th>
+                    <th class="px-4 py-3">Phone</th>
+                    <th class="px-4 py-3">Actions</th>
                 </tr>
             </thead>
             <tbody>

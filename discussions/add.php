@@ -111,7 +111,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
           <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Create Discussion</button>
     </form>
-</div>
+</div></div>
+
       <script>
  document.addEventListener('DOMContentLoaded', function () {
         const userInput = document.querySelector('input[data-autocomplete-id="user-autocomplete"]');

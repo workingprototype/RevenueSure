@@ -16,14 +16,14 @@ $stmt->execute();
 $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-8">
+
   <div class="max-w-6xl mx-auto">
-  
+
     <!-- Toast Message (for deletion) -->
     <?php if ($success): ?>
       <div
         id="toast"
-        class="fixed top-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4"
+        class="fixed top-12 left-1/2 transform -translate-x-1/2 z-50 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4 opacity-0 transition-opacity duration-500"
         role="alert"
       >
         <div class="flex items-center">
@@ -47,9 +47,12 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         // Auto-close toast after 3 seconds and remove query parameters
         document.addEventListener('DOMContentLoaded', function() {
           setTimeout(() => {
-            closeToast();
-            window.history.replaceState({}, document.title, window.location.pathname);
-          }, 3000);
+            document.getElementById('toast').classList.add('opacity-100');
+            setTimeout(() => {
+              closeToast();
+              window.history.replaceState({}, document.title, window.location.pathname);
+            }, 3000);
+          }, 500);
         });
       </script>
     <?php endif; ?>
@@ -62,24 +65,31 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </h1>
         <p class="text-gray-600 mt-2">Your thoughts, organized beautifully</p>
       </div>
-      <a href="<?php echo BASE_URL; ?>notes/add" 
-         class="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-purple-600 hover:to-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-        </svg>
-        <span>New Note</span>
-      </a>
+      <div class="flex space-x-4">
+        <a href="<?php echo BASE_URL; ?>notes/add"
+           class="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-purple-600 hover:to-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          <span>New Note</span>
+        </a>
+        <button id="toggleView" class="p-2 hover:bg-gray-100 rounded-full">
+          <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <!-- Notes Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Notes Grid/List -->
+    <div id="notesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300">
       <?php if ($notes): ?>
         <?php foreach ($notes as $note): ?>
-          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-2xl transition-shadow duration-300 border border-gray-100">
+          <div class="bg-white rounded-2xl p-6 shadow-md transition-transform transform hover:scale-105">
             <div class="flex justify-between items-start">
               <div class="w-full">
                 <h3 class="text-xl font-semibold text-gray-800">
-                  <a href="<?php echo BASE_URL; ?>notes/view?id=<?php echo $note['id']; ?>" class="hover:underline">
+                  <a href="<?php echo BASE_URL; ?>notes/view?id=<?php echo $note['id']; ?>" class="hover">
                     <?php
                       $max_title_length = 50;
                       $truncated_title = strlen($note['title']) > $max_title_length
@@ -102,7 +112,7 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <?php echo date('M j, Y', strtotime($note['created_at'])); ?>
                 </span>
               </div>
-              <span class="ml-4 px-3 py-1 rounded-full text-sm 
+              <span class="ml-4 px-3 py-1 rounded-full text-sm
                           <?php echo $note['category_name'] ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800' ?>">
                 <?php echo htmlspecialchars($note['category_name'] ?: 'Uncategorized'); ?>
               </span>
@@ -145,4 +155,17 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <?php endif; ?>
     </div>
   </div>
-</div>
+
+
+<script>
+  document.getElementById('toggleView').addEventListener('click', function() {
+    const notesContainer = document.getElementById('notesContainer');
+    if (notesContainer.classList.contains('grid')) {
+      notesContainer.classList.remove('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+      notesContainer.classList.add('flex', 'flex-col');
+    } else {
+      notesContainer.classList.add('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+      notesContainer.classList.remove('flex', 'flex-col');
+    }
+  });
+</script>

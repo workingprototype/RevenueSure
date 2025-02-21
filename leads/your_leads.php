@@ -66,7 +66,7 @@ function categorize_lead($score) {
            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
                 <?php if ($leads): ?>
                     <?php foreach ($leads as $lead): ?>
-                         <div class="bg-white rounded-2xl shadow-xl p-6 flex flex-col justify-between transition hover:shadow-2xl border-l-4"
+                         <div class="bg-white rounded-2xl shadow-xl p-6 flex flex-col justify-between transition border-l-4"
                               style="border-left-color:<?php
                                         switch ($lead['status']) {
                                             case 'New':

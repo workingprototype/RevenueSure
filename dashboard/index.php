@@ -98,6 +98,14 @@ try {
                 </p>
                 <a href="<?php echo BASE_URL; ?>invoices/manage" class="mt-4 inline-block bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-300">View Outstanding Invoices</a>
             </div>
+            <!-- Unified View Card -->
+        <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-indigo-500">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Explore All Entities</h3>
+            <p class="text-gray-600 mt-2">View and manage all users, employees, leads, and customers in one place.</p>
+            <a href="<?php echo BASE_URL; ?>views/global_dashboard" class="bg-indigo-700 text-white px-4 py-2 rounded-xl hover:bg-indigo-900 transition duration-300 inline-block mt-4">
+                <i class="fas fa-users mr-2"></i> View All Entities
+            </a>
+        </div>
         <?php endif; ?>
     </div>
     
@@ -116,10 +124,11 @@ try {
                     <label for="due_date" class="block text-gray-700">Due Date</label>
                     <input type="datetime-local" name="due_date" id="due_date" class="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600">
                 </div>
-                <div class="mb-4">
-                    <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition duration-300">Add To Do</button>
-                </div>
+                
+            <div class="mb-4 flex items-center">
+            <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition duration-300">Add To Do</button>
             </div>
+        </div>
             <div class="mb-4">
                 <label for="description" class="block text-gray-700">Description</label>
                 <textarea name="description" id="description" class="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>

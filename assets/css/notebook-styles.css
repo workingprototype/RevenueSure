@@ -1,0 +1,515 @@
+ /* Notebook Styling */
+ .notebook-page {
+    position: relative; /* Needed for absolute positioning of binding */
+    margin: 20px auto; /* Center the paper horizontally */
+    padding: 30px;
+    width: 80%;
+    max-width: 6xl;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+.notebook-edit-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.notebook-edit-form input[type="text"],
+.notebook-edit-form select,
+.notebook-edit-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.notebook-edit-form button {
+    background-color: #5cb85c;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.notebook-edit-form button:hover {
+    background-color: #449d44;
+}
+
+.notebook-edit-form .cancel-button {
+    background-color: #d9534f;
+}
+
+.notebook-edit-form .cancel-button:hover {
+    background-color: #c9302c;
+}
+
+.notebook-edit-form input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.notebook-edit-form .inline-flex {
+    display: flex;
+    align-items: center;
+}
+
+.notebook-edit-form .space-x-4 > * + * {
+    margin-left: 1rem;
+}
+
+/* Style 1: Original Notebook */
+.notebook-bg.style1 {
+    background-color: white;
+    padding: 20px;
+    border-radius: 4xl;
+    transition-shadow: duration-300;
+    border: 3px solid black;
+box-shadow: 6px 6px 0px black;
+}
+
+.notebook-bg.style1 .notebook-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.notebook-bg.style1 .notebook-content {
+    white-space: pre-wrap; /* Important to preserve formatting */
+    color: #444;
+}
+
+.notebook-binding.style1 {
+   display: none;
+}
+
+.notebook-spiral.style1 {
+    display: none;
+}
+
+/* Style 2: Leather Bound */
+.notebook-bg.style2 {
+    background-color: #f8f0e3;
+    padding: 20px;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #555;
+    border: 2px solid #a38262;
+}
+
+.notebook-bg.style2 .notebook-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.notebook-bg.style2 .notebook-content {
+    white-space: pre-wrap;
+}
+
+.notebook-binding.style2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 100%;
+    background-color: #a38262;
+    border-radius: 5px 0 0 5px;
+    box-shadow: inset -3px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.notebook-spiral.style2 {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #d4b18e;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Style 4: Horizontal Ruled Paper with Binding */
+.notebook-bg.style4 {
+background-color: #fdfdfd; /* Off-white paper color */
+background-image: linear-gradient(to bottom, #ddd 1px, transparent 1px); /* Horizontal lines */
+background-size: 100% 25px; /* Adjust for horizontal ruling */
+padding: 20px;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+border-radius: 8px;
+font-family: 'Courier New', monospace;
+line-height: 25px;
+position: relative; /* Make sure the binding stays aligned */
+}
+
+.notebook-bg.style4 .notebook-title {
+font-size: 1.5em;
+font-weight: bold;
+margin-bottom: 10px;
+color: #333;
+}
+
+.notebook-bg.style4 .notebook-content {
+white-space: pre-wrap; /* Important to preserve formatting */
+color: #444;
+}
+
+/* Keep the binding on the left side */
+.notebook-binding.style4 {
+position: absolute;
+top: 0;
+left: 0;
+width: 20px; /* Adjust as needed */
+height: 100%;
+background-color: #aaa; /* Grey binding */
+border-radius: 5px 0 0 5px;
+box-shadow: inset -3px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Add the spiral to the binding */
+.notebook-spiral.style4 {
+position: absolute;
+top: 10px;
+left: 5px;
+width: 10px;
+height: 10px;
+border-radius: 50%;
+background-color: #eee;
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.notebook-spiral.style4:nth-child(2) {
+top: 50px;
+}
+
+.notebook-spiral.style4:nth-child(3) {
+top: 90px;
+}
+
+.notebook-spiral.style4:nth-child(4) {
+top: 130px;
+}
+
+.notebook-spiral.style4:nth-child(5) {
+top: 170px;
+}
+
+
+/* Style 5: Dark Mode */
+.notebook-bg.style5 {
+    background-color: #222;
+    color: #eee;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.notebook-bg.style5 .notebook-title {
+    font-size: 1.7em;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #fff;
+}
+
+.notebook-bg.style5 .notebook-content {
+    white-space: pre-wrap;
+    color: #ddd;
+}
+
+.notebook-binding.style5 {
+    display: none;
+}
+
+.notebook-spiral.style5 {
+    display: none;
+}
+
+/* Style 6: Composition Notebook */
+.notebook-bg.style6 {
+    background-color: #fff;
+    padding: 20px;
+    border: 3px solid black;
+    border-radius: 5px;
+}
+
+.notebook-bg.style6 .notebook-title {
+    font-size: 1.6em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.notebook-bg.style6 .notebook-content {
+    white-space: pre-wrap;
+}
+
+.notebook-binding.style6 {
+    display: none;
+}
+
+.notebook-spiral.style6 {
+    display: none;
+}
+
+ /* Style 7: Sketchbook */
+.notebook-bg.style7 {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 5px;
+    font-family: cursive;
+    line-height: 1.4;
+    color: #666;
+    border: 1px dashed #999;
+}
+
+.notebook-bg.style7 .notebook-title {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #444;
+}
+
+.notebook-bg.style7 .notebook-content {
+    white-space: pre-wrap;
+}
+
+.notebook-binding.style7 {
+    display: none;
+}
+
+.notebook-spiral.style7 {
+    display: none;
+}
+
+/* Style 8: Modern Minimal */
+.notebook-bg.style8 {
+    background-color: #e8f0fe;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+.notebook-bg.style8 .notebook-title {
+    font-size: 1.7em;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #222;
+}
+
+.notebook-bg.style8 .notebook-content {
+    white-space: pre-wrap;
+}
+
+.notebook-binding.style8 {
+    display: none;
+}
+
+.notebook-spiral.style8 {
+    display: none;
+}
+/* Style 9: Refined Paper */
+.notebook-bg.style9 {
+    background-color: #fafafa;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: 'Times New Roman', serif;
+    line-height: 1.7;
+    color: #444;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notebook-bg.style9 .notebook-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.notebook-bg.style9 .notebook-content {
+    white-space: pre-wrap;
+}
+
+.notebook-binding.style9 {
+    display: none;
+}
+
+.notebook-spiral.style9 {
+    display: none;
+}
+
+/* Style 10: Tranquil Blue */
+.notebook-bg.style10 {
+    background-color: #e0f2f7;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: 'Georgia', serif;
+    line-height: 1.6;
+    color: #4a6572;
+}
+
+.notebook-bg.style10 .notebook-title {
+    font-size: 1.7em;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #37474f;
+}
+
+.notebook-bg.style10 .notebook-content {
+    white-space: pre-wrap;
+}
+
+.notebook-binding.style10 {
+    display: none;
+}
+
+.notebook-spiral.style10 {
+    display: none;
+}
+
+/* Style 11: Elegant Cream */
+.notebook-bg.style11 {
+    background-color: #f9f5f1;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: 'Palatino Linotype', serif;
+    line-height: 1.7;
+    color: #52423d;
+}
+
+.notebook-bg.style11 .notebook-title {
+    font-size: 1.9em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #41332e;
+}
+
+.notebook-bg.style11 .notebook-content {
+    white-space: pre-wrap;
+}
+
+.notebook-binding.style11 {
+    display: none;
+}
+
+.notebook-spiral.style11 {
+    display: none;
+}
+
+ /* Style 12: Kindle */
+.notebook-bg.style12 {
+    background-color: #f2f1ed; /* E-Ink-like color */
+    color: #222; /* Dark text */
+    padding: 20px;
+    border-radius: 0;
+    font-family: sans-serif;
+    line-height: 1.6;
+    max-width: 600px; /* Adjust as needed for readability */
+    margin: 0 auto;
+}
+
+.notebook-bg.style12 .notebook-title {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.notebook-bg.style12 .notebook-content {
+    white-space: pre-wrap;
+}
+
+.notebook-binding.style12 {
+    display: none;
+}
+
+.notebook-spiral.style12 {
+    display: none;
+}
+/* Style 13: Ink Paper */
+.notebook-bg.style13 {
+    background-color: #e8e8e8; /* Light gray for paper */
+    color: #1a237e; /* Dark blue for ink */
+    padding: 20px;
+    border-radius: 0;
+    font-family: 'Segoe Script', cursive;
+    line-height: 1.7;
+}
+
+.notebook-bg.style13 .notebook-title {
+    font-size: 1.7em;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #0d47a1;
+}
+
+.notebook-bg.style13 .notebook-content {
+    white-space: pre-wrap;
+    font-size: 1.1em; /* Slightly larger for readability */
+}
+
+.notebook-binding.style13 {
+    display: none;
+}
+
+.notebook-spiral.style13 {
+    display: none;
+}
+/* Style 14: Handwriting */
+@font-face {
+    font-family: 'Permanent Marker';
+    src: url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+    font-display: swap;
+}
+
+.notebook-bg.style14 {
+    background-color: #fff8e1; /* Light yellowish background */
+    color: #212121; /* Dark gray text */
+    padding: 20px;
+    border-radius: 4px;
+    font-family: 'Permanent Marker', cursive;
+    line-height: 1.8;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.notebook-bg.style14 .notebook-title {
+    font-size: 2.2em;
+    font-weight: normal;
+    margin-bottom: 15px;
+    color: #333;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.notebook-bg.style14 .notebook-content {
+    white-space: pre-wrap;
+    font-size: 1.3em;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.notebook-binding.style14 {
+    display: none;
+}
+
+.notebook-spiral.style14 {
+    display: none;
+}
+
+.notebook-style-selector {
+    margin-bottom: 20px;
+}
+
+.notebook-style-selector label {
+    margin-right: 15px;
+}
+/* End of Notebook styles */

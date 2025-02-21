@@ -5,15 +5,15 @@
         <table class="w-full text-left">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Title</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Assigned To</th>
-                     <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Category</th>
-                      <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Created By</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Status</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Priority</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Expected Resolution</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Created At</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Actions</th>
+                    <th class="px-4 py-3">Title</th>
+                    <th class="px-4 py-3">Assigned To</th>
+                     <th class="px-4 py-3">Category</th>
+                      <th class="px-4 py-3">Created By</th>
+                    <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3">Priority</th>
+                    <th class="px-4 py-3">Expected Resolution</th>
+                    <th class="px-4 py-3">Created At</th>
+                    <th class="px-4 py-3">Actions</th>
                 </tr>
             </thead>
             <tbody>

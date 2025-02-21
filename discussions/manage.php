@@ -106,7 +106,7 @@ function categorize_discussion($discussion, $all_participants, $unread_counts, $
 <div class="container mx-auto p-6 fade-in">
  <h1 class="text-3xl font-bold text-gray-800 mb-6 uppercase tracking-wide border-b-2 border-gray-400 pb-2">Manage Discussions</h1>
     <div class="flex justify-between items-center mb-8">
-         <a href="<?php echo BASE_URL; ?>discussions/manage" class="bg-blue-700 text-white px-6 py-3 rounded-xl hover:bg-blue-900 transition duration-300 shadow-md uppercase tracking-wide">
+         <a href="<?php echo BASE_URL; ?>discussions/add" class="bg-blue-700 text-white px-6 py-3 rounded-xl hover:bg-blue-900 transition duration-300 shadow-md uppercase tracking-wide">
              <i class="fas fa-plus-circle mr-2"></i> Create New Discussion
         </a>
     </div>
@@ -247,4 +247,6 @@ function categorize_discussion($discussion, $all_participants, $unread_counts, $
                     <?php endif; ?>
             </div>
     </div>
+</div>
+</div>
 </div>

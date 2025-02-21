@@ -5,14 +5,14 @@
         <table class="w-full text-left ">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Task Name</th>
-                     <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Type</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Description</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Due Date</th>
-                     <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Assigned To</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Status</th>
-                        <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Priority</th>
-                    <th class="px-4 py-3 font-semibold text-gray-700 text-sm">Actions</th>
+                    <th class="px-4 py-3">Task Name</th>
+                     <th class="px-4 py-3">Type</th>
+                    <th class="px-4 py-3">Description</th>
+                    <th class="px-4 py-3">Due Date</th>
+                     <th class="px-4 py-3">Assigned To</th>
+                    <th class="px-4 py-3">Status</th>
+                        <th class="px-4 py-3">Priority</th>
+                    <th class="px-4 py-3">Actions</th>
                 </tr>
             </thead>
             <tbody>

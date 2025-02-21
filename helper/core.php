@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/functions.php'; // Use absolute path
-define('ROOT_PATH', __DIR__ . '/../'); // Absolute path to project root (one level up from helper)
+// define('ROOT_PATH', __DIR__ . '/../'); // Absolute path to project root (one level up from helper)
 define('IS_DEVELOPMENT', ($_ENV['APP_ENV'] ?? 'production') === 'development');
 define('MAILDIR_BASE', ROOT_PATH . 'maildir/');  // Adjust path if needed
 
@@ -9,11 +9,15 @@ define('MAILDIR_BASE', ROOT_PATH . 'maildir/');  // Adjust path if needed
 $enableCache = filter_var($_ENV['ENABLE_CACHE'] ?? 'false', FILTER_VALIDATE_BOOLEAN);
 define('ENABLE_CACHE', $enableCache);
 
+// Load asset source flag from .env
+$useCDNAssets = filter_var($_ENV['USE_CDN_ASSETS'] ?? 'false', FILTER_VALIDATE_BOOLEAN);
+define('USE_CDN_ASSETS', $useCDNAssets);
+
 try {
     $host = $_ENV['DB_HOST'] ?? 'localhost';
     $dbname = $_ENV['DB_NAME'] ?? 'lead_platform';
-    $username = $_ENV['DB_USER'] ?? 'root';
-    $password = $_ENV['DB_PASS'] ?? '';
+    $username = $_ENV['DB_USER'] ?? 'username';
+    $password = $_ENV['DB_PASS'] ?? 'password';
 
     $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
     $options = [

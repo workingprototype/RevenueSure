@@ -156,11 +156,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['profile_picture']) &&
             <h2 class="text-xl font-bold text-gray-800 mb-4">Profile Information</h2>
                <div class="mb-4 flex justify-center relative">
                      <?php if($user['profile_picture']): ?>
-                          <img src="<?php echo $user['profile_picture']; ?>" alt="Profile Picture" class="rounded-full w-32 h-32 object-cover">
+                          <img src="<?php echo BASE_URL . $user['profile_picture']; ?>" alt="Profile Picture" class="rounded-full w-32 h-32 object-cover">
                            <form method="post" action="" class="absolute top-0 right-0">
                            <?php echo csrfTokenInput(); ?>
-                                 <button type="submit" name="remove_profile_picture" class="bg-red-500 text-white p-1 rounded-full hover:bg-red-700 transition duration-300">
-                                      <i class="fas fa-trash-alt fa-xs"></i>
+                                 <button type="submit" name="remove_profile_picture" class="remove_item bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-700 transition duration-300">
+                                      <i class="fas fa-trash-alt"></i></button>
                                   </button>
                            </form>
                       <?php else: ?>
