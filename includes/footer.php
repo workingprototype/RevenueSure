@@ -28,3 +28,17 @@
          echo $footerContent; // Output the content
      }
     ?>
+    <script>
+    function showToast(message, type = 'success') {
+        var toast = document.getElementById('toast');
+        toast.textContent = message;
+
+        toast.className = 'fixed top-5 right-5 z-50 px-4 py-3 rounded shadow-md transition-opacity duration-300 ease-in-out';
+        toast.classList.add('fade-in', type === 'success' ? 'bg-green-100 border-green-500 text-green-700' : 'bg-red-100 border-red-500 text-red-700');
+        toast.style.display = "block";
+        // Hide after 3 seconds
+        setTimeout(function () {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+</script>

@@ -1,0 +1,196 @@
+/* Ensure styles are scoped within .ck-content and use !important to force application */
+.ck-content .default-text {
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+}
+
+.ck-content .report-title {
+    color: #2E86C1 !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+.ck-content .report-intro {
+    line-height: 1.6 !important;
+}
+
+.ck-content .report-section {
+    color: #2874A6 !important;
+}
+
+.ck-content .report-details {
+    line-height: 1.6 !important;
+}
+
+.ck-content .proposal-title {
+    color: #27AE60 !important;
+}
+
+.ck-content .proposal-summary {
+    margin-bottom: 10px !important;
+}
+
+.ck-content .proposal-problem {
+    border-bottom: 2px solid #27AE60 !important;
+    padding-bottom: 5px !important;
+}
+
+.ck-content .proposal-desc {
+    margin-bottom: 10px !important;
+}
+
+.ck-content .proposal-solution {
+    border-bottom: 2px solid #27AE60 !important;
+    padding-bottom: 5px !important;
+}
+
+.ck-content .meeting-title {
+    font-size: 24px !important;
+}
+
+.ck-content .meeting-section {
+    font-size: 20px !important;
+    margin-top: 20px !important;
+}
+
+.ck-content .meeting-list {
+    list-style: disc inside !important;
+    margin-left: 20px !important;
+}
+
+.ck-content .meeting-desc {
+    margin-bottom: 10px !important;
+}
+
+.ck-content .invoice-container {
+    max-width: 800px !important;
+    margin: auto !important;
+    padding: 20px !important;
+    border: 1px solid #ccc !important;
+}
+
+.ck-content .invoice-header {
+    text-align: center !important;
+}
+
+.ck-content .invoice-date {
+    margin-bottom: 20px !important;
+}
+
+.ck-content .invoice-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-top: 20px !important;
+}
+
+.ck-content .invoice-table th,
+.ck-content .invoice-table td {
+    border: 1px solid #ddd !important;
+    padding: 8px !important;
+    text-align: left !important;
+}
+
+.ck-content .invoice-table th {
+    background-color: #f2f2f2 !important;
+}
+
+.ck-content .invoice-total {
+    margin-top: 20px !important;
+    text-align: right !important;
+}
+
+.ck-content .newsletter-container {
+    font-family: Helvetica, sans-serif !important;
+    padding: 20px !important;
+    background-color: #f9f9f9 !important;
+}
+
+.ck-content .newsletter-header {
+    text-align: center !important;
+    background-color: #333 !important;
+    color: #fff !important;
+    padding: 10px !important;
+}
+
+.ck-content .newsletter-content {
+    margin-top: 20px !important;
+}
+
+.ck-content .resume-container {
+    max-width: 800px !important;
+    margin: auto !important;
+    font-family: 'Times New Roman', serif !important;
+}
+
+.ck-content .resume-header {
+    text-align: center !important;
+    margin-bottom: 20px !important;
+}
+
+.ck-content .resume-section {
+    margin-bottom: 20px !important;
+}
+
+.ck-content .resume-section h2 {
+    border-bottom: 1px solid #ccc !important;
+    padding-bottom: 5px !important;
+}
+
+.ck-content .portfolio-container {
+    font-family: Arial, sans-serif !important;
+    padding: 20px !important;
+}
+
+.ck-content .portfolio-projects {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+}
+
+.ck-content .project {
+    flex: 1 1 calc(33% - 20px) !important;
+    border: 1px solid #ccc !important;
+    padding: 10px !important;
+}
+
+.ck-content .flyer-container {
+    text-align: center !important;
+    font-family: Verdana, sans-serif !important;
+    padding: 20px !important;
+    background: #fefefe !important;
+    border: 2px solid #333 !important;
+}
+
+.ck-content .flyer-title {
+    font-size: 36px !important;
+    color: #C0392B !important;
+    margin-bottom: 10px !important;
+}
+
+.ck-content .flyer-date,
+.ck-content .flyer-location,
+.ck-content .flyer-desc {
+    font-size: 18px !important;
+    margin: 5px 0 !important;
+}
+
+.ck-content .blog-container {
+    font-family: Georgia, serif !important;
+    line-height: 1.8 !important;
+}
+
+.ck-content .blog-header {
+    background: url('header-image.jpg') no-repeat center center !important;
+    background-size: cover !important;
+    padding: 60px 20px !important;
+    color: #fff !important;
+    text-align: center !important;
+}
+
+.ck-content .blog-header-image {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+.ck-content .blog-content {
+    padding: 20px !important;
+}

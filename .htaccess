@@ -2,7 +2,12 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /RevenueSure/
+    RewriteBase /revenuesure/
+
+    RewriteCond %{REQUEST_URI} !^documents/actions/.*$
+
+    # Exempt assets and actions directories
+    RewriteRule ^(assets|documents/actions|reminders/actions|api|mail/actions)/ - [L]
 
     # Enforce default routes
     RewriteRule ^dashboard/?$ dashboard/index [L]
@@ -51,6 +56,8 @@ Header always set X-Frame-Options "SAMEORIGIN"
 Header always set X-XSS-Protection "1; mode=block"
 Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+AddType text/css .css
 
 Options -Indexes
 

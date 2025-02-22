@@ -227,12 +227,43 @@ $routes = [
 
     'admin/create_maildirs' => 'admin/create_maildirs.php',
 
+    'documents/manage' => 'documents/manage.php',
+    'documents/add' => 'documents/add.php',
+    'documents/edit' => 'documents/edit.php',
+    'documents/view' => 'documents/view.php',
+    'documents/delete' => 'documents/delete.php',
+    
+    // 'documents/actions/save' => 'documents/actions/save.php',
+    // 'documents/actions/fetch_content' => 'documents/actions/fetch_content.php',
+    // 'documents/actions/add_collaborator' => 'documents/actions/add_collaborator.php',
+    // 'documents/actions/remove_collaborator' => 'documents/actions/remove_collaborator.php',
+
+    
+
 ];
 
 // Define routes that should not include header and footer
 $excludeHeaderFooter = ['leads/fetch', 'admin/mail_dirs'];
 
 if (array_key_exists($uri, $routes)) {
+    // Check if the request is for a file in the api, assets or reminders
+    if (strpos($uri, 'api/') === 0 ||
+        strpos($uri, 'assets/') === 0 ||
+        strpos($uri, 'reminders/actions/') === 0 ||
+        strpos($uri, 'documents/actions/') === 0 ||
+        strpos($uri, 'actions/') === 0 ||
+         strpos($uri, 'mail/actions/') === 0) {
+        // Serve the asset directly
+        if (file_exists($uri)) {
+            require $uri;
+        } else {
+            header("HTTP/1.0 404 Not Found");
+            echo "<h1>404 Not Found</h1>";
+            echo "The requested resource `", htmlspecialchars($uri), "` was not found.";
+            exit;
+        }
+        return; // Important: stop further execution
+    }
     if (session_status() == PHP_SESSION_NONE) {
         session_start();
     }

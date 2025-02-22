@@ -71,12 +71,7 @@ function loginRedirect(string $role): void {
  * @param bool $admin_only If true, only admins are allowed.
  */
 function redirectIfUnauthorized(bool $admin_only = false) {
-        if (session_status() == PHP_SESSION_NONE) {
-           // echo 'Starting a new session';
-           session_start();
-        } else {
-           // echo 'Session already started';
-        }
+   // REMOVE session_start() from here
 
     if (!isset($_SESSION['user_id'])) {
         header("Location: " . BASE_URL . "auth/login"); // Use BASE_URL here!
@@ -98,4 +93,10 @@ function createNoteCard(array $note): string {
                <p class="text-gray-600 text-sm">Category: ' . htmlspecialchars($note['category_name'] ?: 'Uncategorized') . '</p>
                <p class="text-gray-600 text-sm mt-2">Created: ' . htmlspecialchars($note['created_at']) . '</p>
            </div>';
+}
+function getUserList($conn, $currentUserId) {
+    $stmt = $conn->prepare("SELECT id, username, email FROM users WHERE id != :currentUserId");
+    $stmt->bindParam(':currentUserId', $currentUserId, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
