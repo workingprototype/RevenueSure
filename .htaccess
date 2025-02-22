@@ -30,6 +30,7 @@
     RewriteRule ^(reminders)$ $1/manage [L,R=301]
     RewriteRule ^(reports)$ $1/manage [L,R=301]
     RewriteRule ^(messaging)$ $1/index [L,R=301]
+    RewriteRule ^(documents)$ $1/index [L,R=301]
 
     RewriteRule ^support_tickets/?$ support_tickets/manage [L,R=301]
     RewriteRule ^support_tickets/ticket_tasks/?$ support_tickets/ticket_tasks/manage [L,R=301]

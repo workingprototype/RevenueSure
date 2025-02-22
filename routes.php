@@ -226,7 +226,9 @@ $routes = [
     'mail/actions/fetch_emails' => 'mail/actions/fetch_emails.php',
 
     'admin/create_maildirs' => 'admin/create_maildirs.php',
-
+    
+    'documents' => 'documents/manage.php',
+    'documents/index' => 'documents/manage.php',
     'documents/manage' => 'documents/manage.php',
     'documents/add' => 'documents/add.php',
     'documents/edit' => 'documents/edit.php',
