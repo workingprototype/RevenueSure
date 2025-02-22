@@ -384,16 +384,16 @@ CREATE TABLE IF NOT EXISTS `documents` (
   CONSTRAINT `documents_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table lead_platform.documents: ~0 rows (approximately)
+-- Dumping data for table lead_platform.documents: ~8 rows (approximately)
 REPLACE INTO `documents` (`id`, `title`, `content`, `created_by`, `created_at`, `updated_at`) VALUES
 	(1, 'Collaborative Doc', 'Hi there,\r\nMy Name is Test', 2, '2025-02-21 06:53:20', NULL),
-	(2, 'test2', '<figure class="table"><table><tbody><tr><td>&nbsp;</td><td>test</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>f</td><td>&nbsp;</td><td>sdf</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>sdf</td><td>&nbsp;</td><td>sd</td><td>&nbsp;</td><td>df</td><td>test</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>df</td><td>s</td><td>sdf</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table></figure><p>Test</p><p>This works, right?</p>', 2, '2025-02-21 12:49:44', '2025-02-21 23:01:02'),
-	(3, 'test', '<p>&lt;p&gt;gfgh&lt;/p&gt;</p>', 5, '2025-02-21 15:14:06', '2025-02-21 15:15:28'),
+	(2, 'test2', '<figure class="table"><table><tbody><tr><td>&nbsp;</td><td>test</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>f</td><td>&nbsp;</td><td>sdf</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>sdf</td><td>&nbsp;</td><td>sd</td><td>&nbsp;</td><td>df</td><td>test</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>df</td><td>s</td><td>sdf</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table></figure><p>Test</p><p>This works, right?</p>', 2, '2025-02-21 12:49:44', '2025-02-22 19:08:21'),
+	(3, 'test', '<p>Hello there Fellas!</p>', 5, '2025-02-21 15:14:06', '2025-02-22 19:03:51'),
 	(4, 'collab bro', '<p>&lt;p&gt;wsoon this stuff&amp;nbsp;&lt;/p&gt;</p>', 5, '2025-02-21 15:14:51', '2025-02-21 15:15:18'),
 	(5, 'tes', 'df', 2, '2025-02-21 22:14:01', NULL),
 	(6, 'test', '<h2>Meeting Notes</h2><h2>Attendees</h2><ul><li>Name, Title</li></ul><h2>Agenda</h2><ul><li>Topic 1</li><li>Topic 2</li></ul><h2>Discussion</h2><p>Key points and action items...</p>', 2, '2025-02-21 22:15:52', NULL),
 	(7, 'Portfolio Test', '<p>.portfolio { font-family: Arial, sans-serif; padding: 20px; } .portfolio-grid { display: flex; flex-wrap: wrap; gap: 20px; } .portfolio-item { flex: 1 1 calc(33% - 20px); border: 1px solid #ccc; padding: 10px; }&nbsp;</p><h2>Portfolio</h2><h2>Project 1</h2><p>Description of project 1...</p><h2>Project 2</h2><p>Description of project 2...</p><h2>Project 3</h2><p>Description of project 3...</p>', 2, '2025-02-21 22:20:19', '2025-02-21 22:20:54'),
-	(8, 'ytyt', '<h2>Monthly Newsletter</h2><p>Welcome to our monthly newsletter. Here are the</p><p>&nbsp;</p><p>&nbsp;highlights...</p>', 2, '2025-02-21 23:48:12', '2025-02-21 23:59:52');
+	(8, 'ytyt', '<h2>Monthly Newsletter</h2><p>Welcome to our monthly newsletter. Here are the</p><p>&nbsp;</p><p>&nbsp;highlights...</p>', 2, '2025-02-21 23:48:12', '2025-02-22 13:08:28');
 
 -- Dumping structure for table lead_platform.document_collaborators
 CREATE TABLE IF NOT EXISTS `document_collaborators` (
@@ -406,11 +406,12 @@ CREATE TABLE IF NOT EXISTS `document_collaborators` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `document_collaborators_ibfk_1` FOREIGN KEY (`document_id`) REFERENCES `documents` (`id`) ON DELETE CASCADE,
   CONSTRAINT `document_collaborators_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table lead_platform.document_collaborators: ~0 rows (approximately)
+-- Dumping data for table lead_platform.document_collaborators: ~2 rows (approximately)
 REPLACE INTO `document_collaborators` (`id`, `document_id`, `user_id`, `permissions`) VALUES
-	(6, 2, 5, 'read');
+	(6, 2, 5, 'read'),
+	(8, 3, 2, 'read');
 
 -- Dumping structure for table lead_platform.document_versions
 CREATE TABLE IF NOT EXISTS `document_versions` (
@@ -427,7 +428,7 @@ CREATE TABLE IF NOT EXISTS `document_versions` (
   CONSTRAINT `document_versions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table lead_platform.document_versions: ~0 rows (approximately)
+-- Dumping data for table lead_platform.document_versions: ~1 rows (approximately)
 REPLACE INTO `document_versions` (`id`, `document_id`, `version`, `content`, `created_at`, `user_id`) VALUES
 	(1, 2, 1, '<p>test Doc cone</p>', '2025-02-21 12:49:44', 2);
 
@@ -1593,7 +1594,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Dumping data for table lead_platform.users: ~4 rows (approximately)
 REPLACE INTO `users` (`id`, `username`, `email`, `password`, `credits`, `created_at`, `role`, `profile_picture`, `role_id`, `department_id`, `imap_server`, `imap_port`, `imap_username`, `imap_password`, `smtp_server`, `smtp_port`, `smtp_username`, `smtp_password`, `smtp_security`, `theme`) VALUES
 	(1, 'Peel Hullin', 'user@demo.com', '$2y$10$8z2JpAs7QU3aMkHL59SC.O4rjZevbePDApd7947XYt.LfdOVlvA7.', 100, '2025-01-26 05:53:17', 'user', NULL, 5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'tls', 'default'),
-	(2, 'Bruh', 'admin@demo.com', '$2y$10$qtyaY8G3jceTluy42gCT.ey.SYmGAUcj5Oi3bnDxOxnCL.7w4nbJq', 0, '2025-01-26 06:17:01', 'admin', 'public/uploads/profile/67b5719a63938_angienotion-1707764852790.png', NULL, NULL, 'imap.hostinger.com', 993, 'support@milddreams.com', 'WDhxb3Qzci8yMktrVnFzVjNTNXZlUT09OjpMM66cNwmRZOa/gFsJRawd', 'smtp.hostinger.com', 465, 'support@milddreams.com', 'N0gyQ2FQNnhaSmV2L0JaOTR4TFMvZz09Ojp7h/Xxialq5pmPSjggg5+6', 'ssl', 'office'),
+	(2, 'Bruh', 'admin@demo.com', '$2y$10$qtyaY8G3jceTluy42gCT.ey.SYmGAUcj5Oi3bnDxOxnCL.7w4nbJq', 0, '2025-01-26 06:17:01', 'admin', 'public/uploads/profile/67b5719a63938_angienotion-1707764852790.png', NULL, NULL, 'imap.hostinger.com', 993, 'support@milddreams.com', 'WDhxb3Qzci8yMktrVnFzVjNTNXZlUT09OjpMM66cNwmRZOa/gFsJRawd', 'smtp.hostinger.com', 465, 'support@milddreams.com', 'N0gyQ2FQNnhaSmV2L0JaOTR4TFMvZz09Ojp7h/Xxialq5pmPSjggg5+6', 'ssl', 'default'),
 	(4, 'John The Support Man', 'john@support.com', '$2y$10$6mZ3cSv8FM7fxg3Ui6JwquHyYnTtHsx1H9ZxtaFYqHG/anoV0C1o.', 0, '2025-01-30 14:46:28', 'user', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'tls', 'default'),
 	(5, 'admin2', 'admin2@demo.com', '$2y$10$xhjAQ4eMVDwSaP5gB2x0sus4lk/9uU7MJZF9NHcQ0o9cyZifO6.b6', 0, '2025-01-31 21:26:14', 'admin', 'public/uploads/profile/679d4030dfe71_M0ekXd9R_400x400.jpg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'tls', 'default');
 
