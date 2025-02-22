@@ -27,7 +27,7 @@ $collaborators = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Fetch all users for collaborator selection (except the current user)
 $allUsers = getUserList($conn, $_SESSION['user_id']);
 
-// Check if the user has permission to view the document (creator or collaborator)
+// Check if the user has permission to view the document
 $isCollaboratorStmt = $conn->prepare("SELECT 1 FROM document_collaborators WHERE document_id = :document_id AND user_id = :user_id");
 $isCollaboratorStmt->bindParam(':document_id', $document_id, PDO::PARAM_INT);
 $isCollaboratorStmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
@@ -35,11 +35,29 @@ $isCollaboratorStmt->execute();
 $isCollaborator = $isCollaboratorStmt->fetch();
 
 if ($document['created_by'] != $_SESSION['user_id'] && !$isCollaborator) {
-    echo "You do not have permission to edit this document. Please ask the document owner for more information.";
-    exit; // Or redirect to an error page
+    echo "You do not have permission to edit this document.";
+    exit;
 }
 
+// Get current user details for TogetherJS
+$currentUserStmt = $conn->prepare("SELECT username, email, profile_picture FROM users WHERE id = :user_id");
+$currentUserStmt->bindParam(':user_id', $_SESSION['user_id']);
+$currentUserStmt->execute();
+$currentUser = $currentUserStmt->fetch(PDO::FETCH_ASSOC);
 
+// Function to convert image to data URL
+function getImageDataUrl($imagePath) {
+    if (file_exists($imagePath)) {
+        $type = pathinfo($imagePath, PATHINFO_EXTENSION);
+        $data = file_get_contents($imagePath);
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
+    }
+    // If file doesn't exist, return path to default image
+    return 'data:image/png;base64,' . base64_encode(file_get_contents('public/uploads/profile/default_profile.png'));
+}
+
+// Get image data URL
+$avatarUrl = getImageDataUrl($currentUser['profile_picture']);
 ?>
 
 <div class="container mx-auto p-6 fade-in">
@@ -60,7 +78,6 @@ if ($document['created_by'] != $_SESSION['user_id'] && !$isCollaborator) {
     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
         <h2 class="text-xl font-bold text-gray-800 mb-4">Document Content</h2>
         <div id="ckeditor"><?php echo $document['content']; ?></div>
-
     </div>
 
     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
@@ -84,11 +101,11 @@ if ($document['created_by'] != $_SESSION['user_id'] && !$isCollaborator) {
             <ul>
                 <?php foreach ($collaborators as $collaborator): ?>
                     <li class="mb-2"><?php echo htmlspecialchars($collaborator['username']); ?>
-                                        <form method='POST' action='actions/drop_collaborator.php'>
-                                        <input type='hidden' name='document_id' value='<?php echo $document_id ?>'>
-                                        <input type='hidden' name='user_id' value='<?php echo $collaborator['id'] ?>'>
-                                        <button type='submit' class='bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300'>Drop</button>
-                                        </form>
+                        <form method='POST' action='actions/drop_collaborator.php'>
+                            <input type='hidden' name='document_id' value='<?php echo $document_id ?>'>
+                            <input type='hidden' name='user_id' value='<?php echo $collaborator['id'] ?>'>
+                            <button type='submit' class='bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300'>Drop</button>
+                        </form>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -99,46 +116,61 @@ if ($document['created_by'] != $_SESSION['user_id'] && !$isCollaborator) {
 
     <div class="mt-6 flex justify-center">
         <a href="<?php echo BASE_URL; ?>documents/manage" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300">Back to Documents</a>
-        <button onclick="TogetherJS(this); return false;" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 ml-4">Start Collaborating</button>
+        <button id="startCollaboration" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 ml-4">Start Collaborating</button>
     </div>
 </div>
-
-<style>
-    /* Optional: Style the CKEditor container */
-    .ck-editor__editable_inline {
-        min-height: 200px;
-    }
-</style>
-<script>
-TogetherJSConfig_hubBase = "https://togetherjs-hub.glitch.me/" // Consider hosting your own hub
-</script>
 <script src="https://insanelyelegant.com/WriteTogether/togetherjs.js"></script>
 
 <script>
+// TogetherJS Configuration
+TogetherJSConfig_hubBase = "https://togetherjs-hub.glitch.me/";
+TogetherJSConfig_getUserName = function () {
+    return <?php echo json_encode($currentUser['username']); ?>;
+};
+TogetherJSConfig_getUserAvatar = function () {
+    return <?php echo json_encode($avatarUrl); ?>;
+};
+TogetherJSConfig_suppressJoinConfirmation = true;
+TogetherJSConfig_suppressInvite = true;
+
+// Auto-start collaboration if URL contains the collaboration parameter
 document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const startCollab = urlParams.get('collaborate');
+    
+    if (startCollab === 'true') {
+        // Small delay to ensure TogetherJS is fully loaded
+        setTimeout(() => {
+            if (!TogetherJS.running) {
+                TogetherJS();
+            }
+        }, 1000);
+    }
+
+    // Manual collaboration button
+    document.getElementById('startCollaboration').addEventListener('click', function() {
+        if (!TogetherJS.running) {
+            TogetherJS();
+        }
+    });
+
     let editor;
 
     ClassicEditor
-        .create(document.querySelector('#ckeditor'), {
-            // Minimal configuration
-        })
+        .create(document.querySelector('#ckeditor'))
         .then(newEditor => {
             editor = newEditor;
+            editor.setData(<?php echo json_encode($document['content']); ?>);
 
-            // Load the document content into the editor
-            editor.setData('<?php echo $document['content']; ?>');
-
-            // Autosave every 2 seconds
+            // Autosave setup
             setInterval(function () {
-                var content = editor.getData();
-                saveContent(content);
+                saveContent(editor.getData());
             }, 2000);
         })
         .catch(error => {
             console.error("Error initializing CKEditor:", error);
         });
 
-    // Function to save content
     function saveContent(content) {
         fetch('actions/save.php', {
             method: 'POST',
@@ -149,9 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.status === 'success') {
-                console.log('Save result:', data);
-            } else {
+            if (data.status !== 'success') {
                 console.error('Save error:', data.message);
                 alert('Error saving document: ' + data.message);
             }
@@ -162,5 +192,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
 </script>
