@@ -112,7 +112,7 @@ if ($document['created_by'] != $_SESSION['user_id'] && !$isCollaborator) {
 <script>
 TogetherJSConfig_hubBase = "https://togetherjs-hub.glitch.me/" // Consider hosting your own hub
 </script>
-<script src="https://togetherjs.com/togetherjs.js"></script>
+<script src="https://insanelyelegant.com/WriteTogether/togetherjs.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
