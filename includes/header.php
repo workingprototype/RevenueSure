@@ -33,6 +33,8 @@ if (ENABLE_CACHE && isCacheValid($cacheKey, $cacheExpiration)) {
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.umd.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.css">
+        
+
     <?php else: ?>
         <!-- Local Assets -->
         <link href="<?= BASE_URL; ?>assets/css/all.min.css" rel="stylesheet">
@@ -44,6 +46,7 @@ if (ENABLE_CACHE && isCacheValid($cacheKey, $cacheExpiration)) {
         <script src="<?= BASE_URL; ?>assets/js/chartjs-4.4.8.js"></script>
         <script src="<?= BASE_URL; ?>assets/js/frappe-gantt.umd.js"></script>
         <link rel="stylesheet" href="<?= BASE_URL; ?>assets/css/frappe-gantt.umd.css">
+        
     <?php endif; ?>
 
 
@@ -1093,7 +1096,10 @@ fieldset {
             <i class="fa-solid fa-wallet mr-2"></i>Manage Credits
           </a>
           <a href="<?php echo BASE_URL; ?>notes/manage" class="block py-2 px-4 hover: px-4 py-3 <?php echo isActive('notes/manage') ? 'active' : ''; ?>">
-            <i class="fa-solid fa-sticky-note mr-2"></i>Note Taking
+            <i class="fa-solid fa-sticky-note mr-2"></i>Notebook
+          </a>
+          <a href="<?php echo BASE_URL; ?>documents/manage" class="block py-2 px-4 hover: px-4 py-3 <?php echo isActive('notes/manage') ? 'active' : ''; ?>">
+            <i class="fa-regular fa-file-word mr-2"></i>Docs
           </a>
 
           <!-- Admin Menu -->
