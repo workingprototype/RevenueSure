@@ -226,7 +226,7 @@ $routes = [
     'mail/actions/fetch_emails' => 'mail/actions/fetch_emails.php',
 
     'admin/create_maildirs' => 'admin/create_maildirs.php',
-    
+
     'documents' => 'documents/manage.php',
     'documents/index' => 'documents/manage.php',
     'documents/manage' => 'documents/manage.php',
@@ -234,7 +234,17 @@ $routes = [
     'documents/edit' => 'documents/edit.php',
     'documents/view' => 'documents/view.php',
     'documents/delete' => 'documents/delete.php',
+
     
+    'drawings' => 'drawings/manage.php',
+    'drawings/index' => 'drawings/manage.php',
+    'drawings/manage' => 'drawings/manage.php',
+    'drawings/add' => 'drawings/add.php',
+    'drawings/edit' => 'drawings/edit.php',
+    'drawings/view' => 'drawings/view.php',
+    'drawings/delete' => 'drawings/delete.php', //Todo: Need to make this
+    
+    'ai/index' => 'ai/index.php',
     // 'documents/actions/save' => 'documents/actions/save.php',
     // 'documents/actions/fetch_content' => 'documents/actions/fetch_content.php',
     // 'documents/actions/add_collaborator' => 'documents/actions/add_collaborator.php',
