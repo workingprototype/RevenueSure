@@ -6,43 +6,47 @@ $error = '';
 $success = '';
 $user_id = $_SESSION['user_id'];
 
-// Clear conversation_id from the session to start a new conversation
-unset($_SESSION['conversation_id']);
-
-// Check if there's an existing conversation ID in the session
-if (isset($_SESSION['conversation_id'])) {
-    $conversation_id = $_SESSION['conversation_id'];
-} else {
-    $conversation_id = null;
-}
-
-// Fetch conversations
-$stmt = $conn->prepare("SELECT * FROM ai_conversations WHERE user_id = :user_id ORDER BY created_at DESC");
+// Fetch conversations *before* determining the conversation ID
+$stmt = $conn->prepare("SELECT id, title FROM ai_conversations WHERE user_id = :user_id ORDER BY created_at DESC");
 $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 $stmt->execute();
 $conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Determine the conversation ID to display
+$conversation_id = null; // Initialize
+
 if (isset($_GET['conversation_id'])) {
-    $conversation_id = (int)$_GET['conversation_id'];
-} else {
-    $conversation_id = !empty($conversations) ? $conversations[0]['id'] : null;
+    // Verify the conversation ID against the user's conversations
+    $hashed_conversation_id = $_GET['conversation_id'];
+    foreach ($conversations as $convo) {
+        if (hash('sha256', (string)$convo['id']) === $hashed_conversation_id) {
+            $conversation_id = $convo['id'];
+            break;
+        }
+    }
+    //If no conversations were found with the conversation ID and User ID, redirect to the index.
+    if(empty($conversation_id)) {
+        header("Location: /ai/"); //Important: Absolute URL
+        exit;
+    }
+
+} elseif (!empty($conversations)) {
+    // If no conversation ID is in the GET request, use the most recent.
+    $conversation_id = $conversations[0]['id'];
 }
 
-// If no conversations exist, start a new one
-if (empty($conversations)) {
-    $stmt = $conn->prepare("INSERT INTO ai_conversations (user_id) VALUES (:user_id)");
-    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->execute();
-    $conversation_id = $conn->lastInsertId();
+// If no conversations exist for this user, create one.
+if (empty($conversations) && !isset($_GET['conversation_id'])) {
+        $stmt = $conn->prepare("INSERT INTO ai_conversations (user_id) VALUES (:user_id)");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $conversation_id = $conn->lastInsertId();
 
-    // Store the new conversation ID in the session
-$_SESSION['conversation_id'] = $conversation_id;
-
-    // Redirect to the new conversation
-    header("Location: ?conversation_id=" . $conversation_id);
-    exit;
+        // Redirect to the new conversation *after* creation
+        header("Location: ?conversation_id=" . hash('sha256', (string)$conversation_id));  // Cast to string
+        exit;
 }
+
 
 // Fetch messages for the selected conversation
 $messages = [];
@@ -52,6 +56,10 @@ if ($conversation_id) {
     $stmt->execute();
     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// Set current conversation ID.  Important for the JavaScript.
+$_SESSION['conversation_id'] = $conversation_id;
+
 ?>
 
 <style>
@@ -112,7 +120,6 @@ if ($conversation_id) {
     align-self: flex-start;  /* Left-align for AI */
 }
 
-
 /* Typing indicator */
 #typingIndicator {
     padding: 0.75rem 1rem;
@@ -142,7 +149,6 @@ if ($conversation_id) {
     align-self: flex-end; /* Align the button to the right */
     height: fit-content; /* Adjust height based on content */
 }
-
 </style>
 </head>
 <div class="container mx-auto p-6 fade-in">
@@ -153,15 +159,15 @@ if ($conversation_id) {
         <div class="md:col-span-1">
             <div class="bg-white p-4 rounded-lg shadow">
                 <h2 class="text-xl font-semibold mb-4">Conversations</h2>
-            <ul>
-                <?php foreach ($conversations as $convo): ?>
-                    <li>
-                        <a href="?conversation_id=<?php echo $convo['id']; ?>" data-conversation-id="<?php echo $convo['id']; ?>">
-                            <?php echo htmlspecialchars($convo['title'] ?: 'Conversation ' . $convo['id']); ?>
-                        </a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+                <ul class="conversation-list">
+                    <?php foreach ($conversations as $convo): ?>
+                        <li>
+                            <a href="?conversation_id=<?php echo hash('sha256', (string)$convo['id']); ?>" data-conversation-id="<?php echo hash('sha256', (string)$convo['id']); ?>">
+                                <?php echo htmlspecialchars($convo['title'] ?: 'Conversation ' . $convo['id']); ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
                 <button onclick="startNewConversation()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">New Conversation</button>
             </div>
         </div>
@@ -181,8 +187,8 @@ if ($conversation_id) {
                         </div>
                     <?php endforeach; ?>
                 </div>
-                 <div id="typingIndicator" class="hidden">AI is typing...</div>
-                 <div class="input-container mt-4">
+                <div id="typingIndicator" class="hidden">AI is typing...</div>
+                <div class="input-container mt-4">
                     <textarea id="userInput" placeholder="Type your message..." class="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                     <button onclick="sendMessage()" class="send-button bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition duration-300">Send</button>
                 </div>
@@ -199,7 +205,8 @@ if ($conversation_id) {
 
 <script src="https://js.puter.com/v2/"></script>
 <script>
-let currentConversationId = <?php echo $conversation_id ?: 'null'; ?>;
+// Use the *hashed* conversation ID from PHP.  Critical for consistency.
+let currentConversationId = '<?php echo hash('sha256', (string)$conversation_id); ?>';
 
 async function startNewConversation() {
     try {
@@ -214,7 +221,7 @@ async function startNewConversation() {
 
         let data = await response.json();
         if (data.status === 'success') {
-            currentConversationId = data.conversation_id; // Update the global variable
+            currentConversationId = data.conversation_id; // Update the global variable.  This is now the *hashed* ID.
             window.location.href = '?conversation_id=' + currentConversationId;
         } else {
             console.error("Could not create conversation", data.message);
@@ -226,21 +233,16 @@ async function startNewConversation() {
     }
 }
 
-// Start a new conversation if none exists on page load
-document.addEventListener('DOMContentLoaded', () => {
-    if (!currentConversationId) {
-        startNewConversation();
-    }
-});
 
 // Update the conversation ID when a conversation is selected from the list
 document.querySelectorAll('.conversation-list a').forEach(link => {
     link.addEventListener('click', event => {
         event.preventDefault();
-        currentConversationId = parseInt(link.getAttribute('data-conversation-id'));
+        currentConversationId = link.getAttribute('data-conversation-id');
         window.location.href = '?conversation_id=' + currentConversationId;
     });
 });
+
 
 const textarea = document.getElementById('userInput');
 
@@ -270,14 +272,9 @@ async function sendMessage() {
 
     if (!userInput) return;
 
-    console.log("User Input:", userInput); // Log user input
-    console.log("Conversation ID:", currentConversationId); // Log conversation ID
+    // Use the *unhashed* conversation ID for database operations.
+    const unhashedConversationId = <?php echo json_encode($conversation_id); ?>;
 
-    // Get conversation ID (if not already set)
-    if (!currentConversationId) {
-        await startNewConversation();
-        return;
-    }
 
     // Display user's message
     appendMessageToChat('user', userInput);
@@ -296,18 +293,19 @@ async function sendMessage() {
             },
             body: JSON.stringify({
                 message: userInput,
-                conversation_id: currentConversationId,
+                conversation_id: unhashedConversationId, // Use unhashed ID
                 model: model,
                 action: 'save_user_message'
             })
         });
 
-        console.log("Save Response:", await saveResponse.json()); // Log save response
-
         if (!saveResponse.ok) {
             const errorData = await saveResponse.json();
             throw new Error("Failed to save user message: " + (errorData.message || "Unknown error"));
         }
+        const saveData = await saveResponse.json(); //Get the json data.
+        console.log("Save Response:", saveData); // Log save response
+
 
         // Get the AI response via Puter (streaming)
         const aiResponse = await puter.ai.chat(userInput, { model: model, stream: true });
@@ -342,18 +340,19 @@ async function sendMessage() {
             },
             body: JSON.stringify({
                 message: fullAiResponse,
-                conversation_id: currentConversationId,
+                conversation_id: unhashedConversationId, // Use unhashed ID
                 model: model,
                 action: 'save_ai_response'
             })
         });
 
-        console.log("AI Save Response:", await aiSaveResponse.json()); // Log AI save response
 
         if (!aiSaveResponse.ok) {
             const errorData = await aiSaveResponse.json();
             throw new Error("Failed to save AI response: " + (errorData.message || "Unknown error"));
         }
+        const aiSaveData = await aiSaveResponse.json(); //Get the JSON.
+        console.log("AI Save Response:", aiSaveData); // Log AI save response
 
         typingIndicator.classList.add("hidden");
 
@@ -382,5 +381,4 @@ function appendMessageToChat(sender, message) {
     chatBox.appendChild(messageDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
-
 </script>
