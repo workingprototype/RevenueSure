@@ -1,5 +1,7 @@
 # Enable rewrite engine & Set the base URL for the application
-
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+</IfModule>
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /revenuesure/
@@ -7,7 +9,7 @@
     RewriteCond %{REQUEST_URI} !^documents/actions/.*$
 
     # Exempt assets and actions directories
-    RewriteRule ^(assets|documents/actions|reminders/actions|api|mail/actions)/ - [L]
+    RewriteRule ^(assets|api|reminders/actions|documents/actions|mail/actions|ai/actions)($|/) - [L]
 
     # Enforce default routes
     RewriteRule ^dashboard/?$ dashboard/index [L]

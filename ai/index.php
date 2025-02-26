@@ -1,174 +1,386 @@
-<?php 
+<?php
 require_once ROOT_PATH . 'helper/core.php';
 redirectIfUnauthorized(true);
 
 $error = '';
 $success = '';
+$user_id = $_SESSION['user_id'];
+
+// Clear conversation_id from the session to start a new conversation
+unset($_SESSION['conversation_id']);
+
+// Check if there's an existing conversation ID in the session
+if (isset($_SESSION['conversation_id'])) {
+    $conversation_id = $_SESSION['conversation_id'];
+} else {
+    $conversation_id = null;
+}
+
+// Fetch conversations
+$stmt = $conn->prepare("SELECT * FROM ai_conversations WHERE user_id = :user_id ORDER BY created_at DESC");
+$stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+$stmt->execute();
+$conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Determine the conversation ID to display
+if (isset($_GET['conversation_id'])) {
+    $conversation_id = (int)$_GET['conversation_id'];
+} else {
+    $conversation_id = !empty($conversations) ? $conversations[0]['id'] : null;
+}
+
+// If no conversations exist, start a new one
+if (empty($conversations)) {
+    $stmt = $conn->prepare("INSERT INTO ai_conversations (user_id) VALUES (:user_id)");
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $conversation_id = $conn->lastInsertId();
+
+    // Store the new conversation ID in the session
+$_SESSION['conversation_id'] = $conversation_id;
+
+    // Redirect to the new conversation
+    header("Location: ?conversation_id=" . $conversation_id);
+    exit;
+}
+
+// Fetch messages for the selected conversation
+$messages = [];
+if ($conversation_id) {
+    $stmt = $conn->prepare("SELECT * FROM ai_messages WHERE conversation_id = :conversation_id ORDER BY sent_at ASC");
+    $stmt->bindParam(':conversation_id', $conversation_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat</title>
-    <script src="https://js.puter.com/v2/"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f8;
-            margin: 0;
-            padding: 0;
-        }
 
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            justify-content: flex-end;
-            padding: 20px;
-        }
+<style>
+/* --- Chat Bubble Styles --- */
 
-        .chat-box {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            flex-grow: 1;
-            padding: 15px;
-            max-height: calc(100vh - 120px);
-        }
+/* Container for the entire chat area */
+/* Chat Bubble Styles */
+.chat-container {
+    overflow-y: auto;        /* Enable vertical scrolling */
+    max-height: 60vh;        /* Limit height (adjust as needed) */
+    padding-bottom: 1rem;    /* Add padding at the bottom */
+}
 
-        .chat-message {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-        }
+.chat-message {
+    margin-bottom: 1rem;
+    clear: both; /* Prevent floating next to each other */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the start (left) */
+}
 
-        .chat-message.user {
-            align-items: flex-end;
-        }
+.chat-message .message-content {
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    max-width: 75%;         /* Limit message width */
+    word-wrap: break-word;  /* Handle long words */
+    margin-bottom: 0.25rem; /* Space below message content */
+    position: relative;     /* For timestamp positioning */
+}
 
-        .chat-message.ai {
-            align-items: flex-start;
-        }
+/* User message styles */
+.user .message-content {
+    background-color: #DCF8C6; /* Light green */
+    align-self: flex-end;      /* Align to the right */
+    border-bottom-right-radius: 0; /* Remove bottom-right corner radius */
+}
 
-        .message-content {
-            background-color: #e1e1e1;
-            border-radius: 10px;
-            padding: 10px 15px;
-            max-width: 70%;
-            word-wrap: break-word;
-        }
+/* AI message styles */
+.ai .message-content {
+    background-color: #F0F0F0; /* Light gray */
+    align-self: flex-start;     /* Align to the left */
+    border-bottom-left-radius: 0;  /* Remove bottom-left corner radius */
+}
 
-        .message-content.user {
-            background-color: #0078d4;
-            color: white;
-        }
+/* Timestamp styling */
+.chat-message .timestamp {
+    font-size: 0.7rem;
+    color: #888;
+    align-self: flex-end; /* Align timestamp to the right for user messages */
+    margin-top: 0.25rem;  /* Space above the timestamp */
+}
 
-        .message-content.ai {
-            background-color: #f1f1f1;
-        }
+.user .timestamp {
+    align-self: flex-end; /* Right-align for user */
+}
 
-        .input-container {
-            display: flex;
-            margin-top: 10px;
-            gap: 10px;
-            align-items: flex-end;
-        }
+.ai .timestamp {
+    align-self: flex-start;  /* Left-align for AI */
+}
 
-        .input-container textarea {
-            flex-grow: 1;
-            padding: 10px;
-            border-radius: 20px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            resize: none; /* Prevents manual resizing */
-            min-height: 40px;
-            max-height: 200px; /* Adjust max height as per preference */
-            overflow-y: auto;
-            line-height: 1.4;
-            white-space: pre-wrap;
-        }
 
-        .input-container button {
-            padding: 10px 15px;
-            background-color: #0078d4;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-        }
+/* Typing indicator */
+#typingIndicator {
+    padding: 0.75rem 1rem;
+    background: #e0e0e0;
+    border-radius: 1rem;
+}
 
-        .input-container button:hover {
-            background-color: #005a9e;
-        }
-    </style>
+.input-container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start (left) */
+    gap: 10px; /* Space between textarea and button */
+}
+
+#userInput {
+    width: 100%;
+    min-height: 40px; /* Minimum height */
+    max-height: 200px; /* Maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    transition: height 0.2s ease; /* Smooth height transition */
+    resize: none; /* Disable manual resizing */
+    padding: 10px; /* Add padding for better appearance */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
+}
+
+.send-button {
+    align-self: flex-end; /* Align the button to the right */
+    height: fit-content; /* Adjust height based on content */
+}
+
+</style>
 </head>
-<body>
-    <div class="chat-container">
-        <div class="chat-box" id="chatBox">
-            <!-- Messages will be displayed here -->
+<div class="container mx-auto p-6 fade-in">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">AI Chat</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Conversation List (Sidebar) -->
+        <div class="md:col-span-1">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Conversations</h2>
+            <ul>
+                <?php foreach ($conversations as $convo): ?>
+                    <li>
+                        <a href="?conversation_id=<?php echo $convo['id']; ?>" data-conversation-id="<?php echo $convo['id']; ?>">
+                            <?php echo htmlspecialchars($convo['title'] ?: 'Conversation ' . $convo['id']); ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+                <button onclick="startNewConversation()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">New Conversation</button>
+            </div>
         </div>
-        <div class="input-container">
-            <textarea id="userInput" placeholder="Type your message..." oninput="adjustHeight(this)" onkeydown="handleKeyDown(event)"></textarea>
-            <button onclick="sendMessage()">Send</button>
+
+        <!-- Chat Window -->
+        <div class="md:col-span-3">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="chat-container" id="chatBox">
+                    <?php foreach ($messages as $message): ?>
+                        <div class="chat-message <?php echo $message['sender'] === 'user' ? 'user' : 'ai'; ?>">
+                            <div class="message-content">
+                                <?php echo nl2br(htmlspecialchars($message['message'])); ?>
+                            </div>
+                            <div class="timestamp">
+                                <?php echo date('M j, g:i A', strtotime($message['sent_at'])); ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                 <div id="typingIndicator" class="hidden">AI is typing...</div>
+                 <div class="input-container mt-4">
+                    <textarea id="userInput" placeholder="Type your message..." class="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <button onclick="sendMessage()" class="send-button bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition duration-300">Send</button>
+                </div>
+                <div class="mt-4">
+                    <label for="model" class="block text-gray-700">AI Model:</label>
+                    <select id="model" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="claude-3-5-sonnet">Claude 3.5 Sonnet</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // Function to adjust the height of the textarea dynamically as the user types
-        function adjustHeight(textarea) {
-            textarea.style.height = 'auto';  // Reset height to auto
-            textarea.style.height = (textarea.scrollHeight) + 'px';  // Adjust height based on content
+<script src="https://js.puter.com/v2/"></script>
+<script>
+let currentConversationId = <?php echo $conversation_id ?: 'null'; ?>;
+
+async function startNewConversation() {
+    try {
+        let response = await fetch('actions/new_conversation.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '<?php echo $_SESSION['csrf_token']; ?>'
+            },
+            body: JSON.stringify({ user_id: <?php echo $_SESSION['user_id']; ?> })
+        });
+
+        let data = await response.json();
+        if (data.status === 'success') {
+            currentConversationId = data.conversation_id; // Update the global variable
+            window.location.href = '?conversation_id=' + currentConversationId;
+        } else {
+            console.error("Could not create conversation", data.message);
+            alert("Could not create conversation: " + data.message);
+        }
+    } catch (error) {
+        console.error('Error during fetch:', error);
+        alert("Failed to create conversation: " + error.message);
+    }
+}
+
+// Start a new conversation if none exists on page load
+document.addEventListener('DOMContentLoaded', () => {
+    if (!currentConversationId) {
+        startNewConversation();
+    }
+});
+
+// Update the conversation ID when a conversation is selected from the list
+document.querySelectorAll('.conversation-list a').forEach(link => {
+    link.addEventListener('click', event => {
+        event.preventDefault();
+        currentConversationId = parseInt(link.getAttribute('data-conversation-id'));
+        window.location.href = '?conversation_id=' + currentConversationId;
+    });
+});
+
+const textarea = document.getElementById('userInput');
+
+textarea.addEventListener('input', function() {
+    // Adjust the height based on the content
+    this.style.height = 'auto'; // Reset height to auto
+    let newHeight = this.scrollHeight;
+
+    // Set the new height with a maximum limit
+    if (newHeight > 200) {
+        this.style.height = '200px';
+        this.style.overflowY = 'scroll'; // Enable scrolling
+    } else {
+        this.style.height = newHeight + 'px';
+        this.style.overflowY = 'hidden'; // Hide scrollbar if within limit
+    }
+});
+
+// Trigger the resize on initial load in case there's pre-filled text
+textarea.dispatchEvent(new Event('input'));
+
+async function sendMessage() {
+    const userInput = document.getElementById("userInput").value.trim();
+    const chatBox = document.getElementById("chatBox");
+    const model = document.getElementById("model").value;
+    const typingIndicator = document.getElementById("typingIndicator");
+
+    if (!userInput) return;
+
+    console.log("User Input:", userInput); // Log user input
+    console.log("Conversation ID:", currentConversationId); // Log conversation ID
+
+    // Get conversation ID (if not already set)
+    if (!currentConversationId) {
+        await startNewConversation();
+        return;
+    }
+
+    // Display user's message
+    appendMessageToChat('user', userInput);
+    document.getElementById("userInput").value = '';
+
+    // Show typing indicator
+    typingIndicator.classList.remove("hidden");
+
+    try {
+        // Save user message
+        const saveResponse = await fetch('actions/chat.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '<?php echo $_SESSION['csrf_token']; ?>'
+            },
+            body: JSON.stringify({
+                message: userInput,
+                conversation_id: currentConversationId,
+                model: model,
+                action: 'save_user_message'
+            })
+        });
+
+        console.log("Save Response:", await saveResponse.json()); // Log save response
+
+        if (!saveResponse.ok) {
+            const errorData = await saveResponse.json();
+            throw new Error("Failed to save user message: " + (errorData.message || "Unknown error"));
         }
 
-        // Handle "Enter" key press to send message or insert a new line
-        function handleKeyDown(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();  // Prevent the default "Enter" action of creating a new line
-                sendMessage();  // Send message on Enter press
-            }
-        }
+        // Get the AI response via Puter (streaming)
+        const aiResponse = await puter.ai.chat(userInput, { model: model, stream: true });
+        const aiMessageDiv = document.createElement("div");
+        aiMessageDiv.classList.add("chat-message", "ai");
+        const aiMessageContentDiv = document.createElement("div");
+        aiMessageContentDiv.classList.add("message-content");
+        aiMessageDiv.appendChild(aiMessageContentDiv);
+        // Add timestamp div *inside* the main message div, but after the content
+        const aiTimestampDiv = document.createElement("div");
+        aiTimestampDiv.classList.add("timestamp");
+        aiMessageDiv.appendChild(aiTimestampDiv);
 
-        async function sendMessage() {
-            const userInput = document.getElementById("userInput").value.trim();
-
-            if (!userInput) {
-                return; // Do nothing if input is empty
-            }
-
-            // Display user's message in the chat box
-            const chatBox = document.getElementById("chatBox");
-            const userMessage = document.createElement("div");
-            userMessage.classList.add("chat-message", "user");
-            const userMessageContent = document.createElement("div");
-            userMessageContent.classList.add("message-content", "user");
-            userMessageContent.innerText = userInput;
-            userMessage.appendChild(userMessageContent);
-            chatBox.appendChild(userMessage);
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            document.getElementById("userInput").value = ''; // Clear input field
-
-            // Call the API with user input
-            const response = await puter.ai.chat(userInput, { model: 'claude-3-5-sonnet', stream: true });
-
-            // Display AI's streaming response
-            const aiMessage = document.createElement("div");
-            aiMessage.classList.add("chat-message", "ai");
-            const aiMessageContent = document.createElement("div");
-            aiMessageContent.classList.add("message-content", "ai");
-            aiMessageContent.innerText = ''; // Initially empty content
-            aiMessage.appendChild(aiMessageContent);
-            chatBox.appendChild(aiMessage);
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // Stream the response from the AI and update the chat box
-            for await (const part of response) {
-                aiMessageContent.innerText += part?.text;
+        chatBox.appendChild(aiMessageDiv);
+        let fullAiResponse = '';
+        for await (const part of aiResponse) {
+            if (part && part.text) {
+                fullAiResponse += part.text;
+                aiMessageContentDiv.innerText = fullAiResponse;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
         }
-    </script>
-</body>
-</html>
+        // Set the timestamp *after* the streaming is complete
+        aiTimestampDiv.innerText = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
+
+        // Send the complete AI response to the server
+        const aiSaveResponse = await fetch('actions/chat.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '<?php echo $_SESSION['csrf_token']; ?>'
+            },
+            body: JSON.stringify({
+                message: fullAiResponse,
+                conversation_id: currentConversationId,
+                model: model,
+                action: 'save_ai_response'
+            })
+        });
+
+        console.log("AI Save Response:", await aiSaveResponse.json()); // Log AI save response
+
+        if (!aiSaveResponse.ok) {
+            const errorData = await aiSaveResponse.json();
+            throw new Error("Failed to save AI response: " + (errorData.message || "Unknown error"));
+        }
+
+        typingIndicator.classList.add("hidden");
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert("An error occurred: " + error.message);
+        typingIndicator.classList.add("hidden"); // Hide on error too
+    }
+}
+
+function appendMessageToChat(sender, message) {
+    const chatBox = document.getElementById("chatBox");
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("chat-message", sender);
+    const messageContentDiv = document.createElement("div");
+    messageContentDiv.classList.add("message-content");
+    messageContentDiv.innerText = message;
+    messageDiv.appendChild(messageContentDiv);
+
+    // Add timestamp div *inside* the main message div
+    const timestampDiv = document.createElement("div");
+    timestampDiv.classList.add("timestamp");
+    timestampDiv.innerText = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
+    messageDiv.appendChild(timestampDiv);
+
+    chatBox.appendChild(messageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+</script>

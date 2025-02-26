@@ -245,6 +245,7 @@ $routes = [
     'drawings/delete' => 'drawings/delete.php', //Todo: Need to make this
     
     'ai/index' => 'ai/index.php',
+    'ai/actions/chat' => 'ai/actions/chat.php',
     // 'documents/actions/save' => 'documents/actions/save.php',
     // 'documents/actions/fetch_content' => 'documents/actions/fetch_content.php',
     // 'documents/actions/add_collaborator' => 'documents/actions/add_collaborator.php',
