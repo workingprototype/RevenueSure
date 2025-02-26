@@ -275,6 +275,18 @@ async function sendMessage() {
     // Use the *unhashed* conversation ID for database operations.
     const unhashedConversationId = <?php echo json_encode($conversation_id); ?>;
 
+    // Build the conversation history for context.  Crucial for context.
+    let conversationHistory = [];
+    document.querySelectorAll('.chat-message').forEach(msg => {
+      const sender = msg.classList.contains('user') ? 'user' : 'assistant'; // Use 'assistant' for Puter AI
+      const messageText = msg.querySelector('.message-content').innerText;
+      conversationHistory.push({ role: sender, content: messageText });
+    });
+
+    // Add the current user input to the history.
+    conversationHistory.push({role: 'user', content: userInput});
+
+
 
     // Display user's message
     appendMessageToChat('user', userInput);
@@ -307,8 +319,8 @@ async function sendMessage() {
         console.log("Save Response:", saveData); // Log save response
 
 
-        // Get the AI response via Puter (streaming)
-        const aiResponse = await puter.ai.chat(userInput, { model: model, stream: true });
+       // Get the AI response via Puter (streaming), including context
+        const aiResponse = await puter.ai.chat(conversationHistory, { model: model, stream: true }); // Pass the history
         const aiMessageDiv = document.createElement("div");
         aiMessageDiv.classList.add("chat-message", "ai");
         const aiMessageContentDiv = document.createElement("div");
