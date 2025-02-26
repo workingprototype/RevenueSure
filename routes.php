@@ -247,6 +247,14 @@ $routes = [
     'ai' => 'ai/index.php',
     'ai/index' => 'ai/index.php',
     'ai/actions/chat' => 'ai/actions/chat.php',
+    
+    // AI Workbooks Routes
+    'ai/workbooks/manage' => 'ai/workbooks/manage.php',
+    'ai/workbooks/add' => 'ai/workbooks/add.php',
+    'ai/workbooks/edit' => 'ai/workbooks/edit.php',
+    'ai/workbooks/delete' => 'ai/workbooks/delete.php',
+    'ai/actions/process_workbook' => 'ai/actions/process_workbook.php',
+    
     // 'documents/actions/save' => 'documents/actions/save.php',
     // 'documents/actions/fetch_content' => 'documents/actions/fetch_content.php',
     // 'documents/actions/add_collaborator' => 'documents/actions/add_collaborator.php',
