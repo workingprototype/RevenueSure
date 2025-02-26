@@ -1101,6 +1101,9 @@ fieldset {
           <a href="<?php echo BASE_URL; ?>documents/manage" class="block py-2 px-4 hover: px-4 py-3 <?php echo isActive('notes/manage') ? 'active' : ''; ?>">
             <i class="fa-regular fa-file-word mr-2"></i>Docs
           </a>
+          <a href="<?php echo BASE_URL; ?>ai/index" class="block py-2 px-4 hover: px-4 py-3 <?php echo isActive('ai/index') ? 'active' : ''; ?>">
+          <i class="fa-solid fa-magic mr-2"></i>AI
+          </a>
 
           <!-- Admin Menu -->
           <?php if ($_SESSION['role'] === 'admin'): ?>

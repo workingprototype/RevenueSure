@@ -149,6 +149,42 @@ $_SESSION['conversation_id'] = $conversation_id;
     align-self: flex-end; /* Align the button to the right */
     height: fit-content; /* Adjust height based on content */
 }
+/* Styling for the edit and delete buttons */
+.edit-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 5px; /* Add some space below the button */
+    font-size: 0.8em;
+}
+
+.edit-button:hover {
+    background-color: #3e8e41; /* Darker green on hover */
+}
+/* Initially hide the delete icons */
+.delete-icon {
+    display: none; /* Hidden by default */
+    cursor: pointer;
+    color: red;
+    margin-left: 5px;
+    font-size: 1em; /* Adjust size as needed */
+}
+.conversation-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+}
+.conversation-list a {
+    flex-grow: 1; /* Allow the link to take up remaining space */
+}
+
+/* Show delete icons when edit mode is active */
+.edit-mode .delete-icon {
+    display: inline-block; /* Show when in edit mode */
+}
 </style>
 </head>
 <div class="container mx-auto p-6 fade-in">
@@ -159,13 +195,15 @@ $_SESSION['conversation_id'] = $conversation_id;
         <div class="md:col-span-1">
             <div class="bg-white p-4 rounded-lg shadow">
                 <h2 class="text-xl font-semibold mb-4">Conversations</h2>
+                 <button id="editConversations" class="edit-button">Edit Conversations</button>
                 <ul class="conversation-list">
                     <?php foreach ($conversations as $convo): ?>
-                        <li>
-                            <a href="?conversation_id=<?php echo hash('sha256', (string)$convo['id']); ?>" data-conversation-id="<?php echo hash('sha256', (string)$convo['id']); ?>">
-                                <?php echo htmlspecialchars($convo['title'] ?: 'Conversation ' . $convo['id']); ?>
-                            </a>
-                        </li>
+                        <li class="conversation-item">
+    <a href="?conversation_id=<?php echo hash('sha256', (string)$convo['id']); ?>" data-conversation-id="<?php echo hash('sha256', (string)$convo['id']); ?>">
+        <?php echo htmlspecialchars($convo['title'] ?: 'Conversation ' . $convo['id']); ?>
+    </a>
+    <i class="fas fa-trash-alt delete-icon" data-conversation-id="<?php echo hash('sha256', (string)$convo['id']); ?>"></i>
+</li>
                     <?php endforeach; ?>
                 </ul>
                 <button onclick="startNewConversation()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">New Conversation</button>
@@ -207,6 +245,7 @@ $_SESSION['conversation_id'] = $conversation_id;
 <script>
 // Use the *hashed* conversation ID from PHP.  Critical for consistency.
 let currentConversationId = '<?php echo hash('sha256', (string)$conversation_id); ?>';
+let editMode = false; // Track edit mode state
 
 async function startNewConversation() {
     try {
@@ -242,6 +281,63 @@ document.querySelectorAll('.conversation-list a').forEach(link => {
         window.location.href = '?conversation_id=' + currentConversationId;
     });
 });
+
+
+// Edit button functionality
+const editButton = document.getElementById('editConversations');
+editButton.addEventListener('click', () => {
+    editMode = !editMode; // Toggle edit mode
+    const conversationList = document.querySelector('.conversation-list');
+    conversationList.classList.toggle('edit-mode', editMode);
+      if (editMode) {
+        editButton.textContent = 'Done Editing';
+        editButton.style.backgroundColor = '#ff6347'; // Change to red
+    } else {
+        editButton.textContent = 'Edit Conversations';
+        editButton.style.backgroundColor = '#4CAF50';
+    }
+});
+
+// Add event listener for delete icons (using event delegation)
+document.querySelector('.conversation-list').addEventListener('click', async (event) => {
+    if (event.target.classList.contains('delete-icon')) {
+        const hashedConversationIdToDelete = event.target.dataset.conversationId;
+        if (confirm('Are you sure you want to delete this conversation?')) {
+            try {
+                const response = await fetch('actions/delete_conversation.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '<?php echo $_SESSION["csrf_token"]; ?>'
+                    },
+                    body: JSON.stringify({ conversation_id: hashedConversationIdToDelete })
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    // Remove the conversation list item from the DOM
+                    event.target.closest('li').remove();
+
+                    // If the deleted conversation is the current one, redirect to a new or existing conversation
+                    if (hashedConversationIdToDelete === currentConversationId) {
+                        const remainingConversations = document.querySelectorAll('.conversation-list a');
+                        if (remainingConversations.length > 0) {
+                            window.location.href = remainingConversations[0].getAttribute('href');
+                        } else {
+                            startNewConversation();
+                        }
+                    }
+                } else {
+                    alert('Error deleting conversation: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the conversation.');
+            }
+        }
+    }
+});
+
 
 
 const textarea = document.getElementById('userInput');
