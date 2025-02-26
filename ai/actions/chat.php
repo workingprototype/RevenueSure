@@ -35,15 +35,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 error_log("Received Input: " . json_encode($input)); // Log received input
 
-if (!isset($input['message'], $input['conversation_id'], $input['model'], $input['action'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Missing required parameters.']);
-    exit;
-}
 
-$message = trim($input['message']);
-$conversation_id = (int)$input['conversation_id'];
-$model = $input['model'];
-$action = $input['action'];
 $csrf_token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
 
 if ($csrf_token !== $_SESSION['csrf_token']) {
@@ -51,37 +43,99 @@ if ($csrf_token !== $_SESSION['csrf_token']) {
     exit;
 }
 
-if (empty($message)) {
-    echo json_encode(['status' => 'error', 'message' => 'Message cannot be empty.']);
-    exit;
-}
-
-$stmt = $conn->prepare("SELECT 1 FROM ai_conversations WHERE id = :conversation_id AND user_id = :user_id");
-$stmt->bindParam(':conversation_id', $conversation_id, PDO::PARAM_INT);
-$stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-$stmt->execute();
-
-if (!$stmt->fetch()) {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid conversation ID.']);
-    exit;
-}
 
 try {
     $conn->beginTransaction();
 
-    if ($action === 'save_user_message') {
+    if ($input['action'] === 'save_user_message') {
+        if (!isset($input['message'], $input['conversation_id'], $input['model'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Missing required parameters.']);
+            exit;
+          }
+          $message = trim($input['message']);
+          $conversation_id = (int)$input['conversation_id'];
+          $model = $input['model'];
+
+          if (empty($message)) {
+              echo json_encode(['status' => 'error', 'message' => 'Message cannot be empty.']);
+              exit;
+          }
+          //Validate conversation
+          $stmt = $conn->prepare("SELECT 1 FROM ai_conversations WHERE id = :conversation_id AND user_id = :user_id");
+          $stmt->bindParam(':conversation_id', $conversation_id, PDO::PARAM_INT);
+          $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+          $stmt->execute();
+
+        if (!$stmt->fetch()) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid conversation ID.']);
+            exit;
+        }
+
         $stmt = $conn->prepare("INSERT INTO ai_messages (conversation_id, sender, message) VALUES (:conversation_id, 'user', :message)");
         $stmt->bindParam(':conversation_id', $conversation_id, PDO::PARAM_INT);
         $stmt->bindParam(':message', $message, PDO::PARAM_STR);
         $stmt->execute();
-        echo json_encode(['status' => 'success', 'message' => 'User message saved.']);
+        $message_id = $conn->lastInsertId(); // Get the newly inserted message ID
+        echo json_encode(['status' => 'success', 'message' => 'User message saved.', 'message_id' => $message_id]); // Return the message ID
 
-    } elseif ($action === 'save_ai_response') {
+    } elseif ($input['action'] === 'save_ai_response') {
+        if (!isset($input['message'], $input['conversation_id'], $input['model'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Missing required parameters.']);
+                exit;
+            }
+        $message = trim($input['message']);
+        $conversation_id = (int)$input['conversation_id'];
+        $model = $input['model'];
+
+        if (empty($message)) {
+            echo json_encode(['status' => 'error', 'message' => 'Message cannot be empty.']);
+            exit;
+        }
+         //Validate conversation
+        $stmt = $conn->prepare("SELECT 1 FROM ai_conversations WHERE id = :conversation_id AND user_id = :user_id");
+        $stmt->bindParam(':conversation_id', $conversation_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        if (!$stmt->fetch()) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid conversation ID.']);
+            exit;
+        }
         $stmt = $conn->prepare("INSERT INTO ai_messages (conversation_id, sender, message) VALUES (:conversation_id, 'ai', :message)");
         $stmt->bindParam(':conversation_id', $conversation_id, PDO::PARAM_INT);
         $stmt->bindParam(':message', $message, PDO::PARAM_STR);
         $stmt->execute();
-        echo json_encode(['status' => 'success', 'message' => 'AI response saved.']);
+        $message_id = $conn->lastInsertId(); // Get the newly inserted message ID
+        echo json_encode(['status' => 'success', 'message' => 'AI response saved.', 'message_id' => $message_id]); // Return the message ID
+
+    } elseif ($input['action'] === 'update_message') {
+          if (!isset($input['message_id'], $input['message'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Missing required parameters.']);
+                exit;
+            }
+        $message_id = (int)$input['message_id'];
+        $new_message = trim($input['message']);
+
+        if (empty($new_message)) {
+            echo json_encode(['status' => 'error', 'message' => 'Message cannot be empty.']);
+            exit;
+        }
+          // Validate the message ID and ensure it belongs to the current user
+        $stmt = $conn->prepare("SELECT 1 FROM ai_messages m JOIN ai_conversations c ON m.conversation_id = c.id WHERE m.id = :message_id AND c.user_id = :user_id AND m.sender = 'user'");
+        $stmt->bindParam(':message_id', $message_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        if (!$stmt->fetch()) {
+          echo json_encode(['status' => 'error', 'message' => 'Invalid message ID or you do not have permission to edit this message.']);
+          exit;
+        }
+
+
+        $stmt = $conn->prepare("UPDATE ai_messages SET message = :message WHERE id = :message_id");
+        $stmt->bindParam(':message', $new_message, PDO::PARAM_STR);
+        $stmt->bindParam(':message_id', $message_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        echo json_encode(['status' => 'success', 'message' => 'Message updated.']);
 
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Invalid action.']);
@@ -96,4 +150,3 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
 }
 exit;
-?>

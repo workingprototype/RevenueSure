@@ -33,6 +33,7 @@ if (ENABLE_CACHE && isCacheValid($cacheKey, $cacheExpiration)) {
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.umd.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.css">
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         
 
     <?php else: ?>
